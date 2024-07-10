@@ -1,5 +1,10 @@
 # rna-seq_wf
 ## RNA-seq pipeline documentation
+- Requirements
+    - Install nextflow
+    - Install docker
+    - Make sure your system has at least 36 nodes/CPUs
+
 - Clone the repo
 ```bash
 git clone https://github.com/uclanelsonlab/nl-rna-seq_wf.git
