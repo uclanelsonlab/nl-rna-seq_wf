@@ -1,0 +1,52 @@
+projectTitle: Detection of RNA Outlier Pipeline (Nelson Lab)
+htmlOutputPath: /var/snap/amazon-ssm-agent/7993/output/html
+indexWithFolderName: true
+root: /var/snap/amazon-ssm-agent/7993/output
+sampleAnnotation: /var/snap/amazon-ssm-agent/7993/nl-rna-seq_wf/drop_files/sample_annotation.tsv
+geneAnnotation:
+  v43: /var/snap/amazon-ssm-agent/7993/download/GRCh38/gencode.v43.primary_assembly.annotation.gtf
+genomeAssembly: GRCh38
+genome:
+  GRCh38: /var/snap/amazon-ssm-agent/7993/download/GRCh38/GRCh38.primary_assembly.genome.fa
+hpoFile: null
+random_seed: true
+exportCounts:
+  geneAnnotations:
+  - v43
+  excludeGroups:
+  - fibroblast_low
+aberrantExpression:
+  run: true
+  groups:
+  - fibroblast
+  minlds: 30
+  fpkmCutoff: 1
+  implementation: autoencoder
+  zScoreCutoff: 0
+  padjCutoff: 0.05
+  maxTestedDimensionProportion: 3
+  genesToTest: null
+  yieldSize: 2000000
+aberrantSplicing:
+  run: true
+  groups:
+  - fibroblast
+  minlds: 50
+  recount: true
+  longRead: false
+  keepNonStandardChrs: false
+  filter: true
+  minExpressionInOneSample: 20
+  quantileMinExpression: 10
+  quantileForFiltering: 0.95
+  minDeltaPsi: 0.05
+  implementation: PCA
+  padjCutoff: 0.1
+  maxTestedDimensionProportion: 6
+  FRASER_version: FRASER
+  deltaPsiCutoff: 0.03
+  genesToTest: null
+tools:
+  gatkCmd: gatk
+  bcftoolsCmd: bcftools
+  samtoolsCmd: samtools
