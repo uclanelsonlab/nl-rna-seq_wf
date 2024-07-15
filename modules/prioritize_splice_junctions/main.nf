@@ -1,7 +1,7 @@
 // sudo apt-get install -y libhdf5-dev
 process prioritize_splice_junctions {
     tag "Create SJ from BAM for $meta"
-    conda 'anaconda::pandas=1.5.3 conda-forge::openpyxl anaconda::pytables'
+    conda 'anaconda:python=3.8 anaconda::pandas=1.5.3 conda-forge::openpyxl conda-forge::pytables=3.8.0'
     publishDir params.outdir, mode:'symlink'
 
     input:
