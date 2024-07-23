@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 import sys
 import argparse
@@ -18,9 +20,14 @@ def main(args):
 
     # Open files to combine
     df_master = pd.read_csv(master_file, sep="\t")
+    df_master.set_index("Unnamed: 0", inplace=True)
+    print(df_master.head())
+    df_master.index.names = ['']
+    print(df_master.head())
     sample_name = os.path.basename(new_sample).split(".")[0]
     df_sample = pd.read_csv(new_sample, sep=" ", skiprows=2, names=["", sample_name])
     df_sample.set_index("", inplace=True)
+    print(df_sample.head())
     
     # Merge files and save it
     all_dfs = pd.concat([df_master, df_sample], axis=1)

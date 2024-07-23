@@ -27,11 +27,11 @@ process subread_featurecounts {
     path(versions)
 
     output:
-    path "*.gene_id.exon.ct",             emit: gene_counts
-    path "*.gene_id.exon.ct.short.txt",   emit: gene_counts_short
-    path "*.gene_id.exon.ct.summary",     emit: gene_counts_summary
-    path "*.log",                         emit: log
-    path "*versions.yml",                 emit: versions
+    tuple val(meta), path("*.gene_id.exon.ct"),             emit: gene_counts
+    tuple val(meta), path("*.gene_id.exon.ct.short.txt"),   emit: gene_counts_short
+    tuple val(meta), path("*.gene_id.exon.ct.summary"),     emit: gene_counts_summary
+    tuple val(meta), path("*.log"),                         emit: log
+    path("*versions.yml"),                                  emit: versions
 
     when:
     task.ext.when == null || task.ext.when
