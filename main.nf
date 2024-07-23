@@ -11,6 +11,8 @@ params.human_fai = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/
 params.human_dict = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.dict"
 params.human_fasta = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa"
 params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/RNAseq_hg38"
+params.tissue = "fibroblast"
+params.features_master_file = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/drop/test/fibroblast/featureCounts_fibroblast_24-07-22_test.tsv"
 
 log.info """\
     R N A - S E Q _ W F   P I P E L I N E
@@ -34,6 +36,7 @@ include { check_star_reference; star_alignreads } from './modules/star.nf'
 include { run_markdup } from './modules/picard.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
 include { download_gencode as download_gencode_normal; download_gencode as download_gencode_collapse; subread_featurecounts } from './modules/subreads.nf'
+include { download_master_featureCounts; add_sample_counts_master; run_outrider } from './modules/outrider/main.nf'
 include { RNASEQC } from './modules/rnaseqc.nf'
 include { upload_files } from './modules/upload_outputs.nf'
 
@@ -61,6 +64,9 @@ workflow {
     // Create counts by gene
     gencode_pc_ch = download_gencode_normal(params.gencode_gtf_path)
     feature_counts_ch = subread_featurecounts(gencode_pc_ch, mark_dup_ch)
+    featurecounts_master_ch = download_master_featureCounts(params.features_master_file)
+    featurecounts_updated_ch = add_sample_counts_master(featurecounts_master_ch, feature_counts_ch)
+    outrider_table_ch = run_outrider(featurecounts_updated_ch, params.tissue)
 
     // Run QC
     gencode_collapse_ch = download_gencode_collapse(params.gencode_gtf_collapse)
@@ -71,5 +77,5 @@ workflow {
     cram_ch = samtools_cram(download_human_ref_ch, mark_dup_ch)
 
     // Upload selected output files
-    upload_files(params.library, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, rnaseqc_ch, cram_ch)
+    // upload_files(params.library, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, rnaseqc_ch, cram_ch)
 }

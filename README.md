@@ -1,5 +1,29 @@
 # rna-seq_wf
 ## RNA-seq pipeline documentation
+- Make sure to have installed:
+    - [Docker](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+    ```bash
+    apt-get install ca-certificates curl
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt-get update
+    apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    docker ps
+    ```
+    - Conda
+    ```bash
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash Miniconda3-latest-Linux-x86_64.sh
+    ...
+    exec bash
+    ```
+    - Add conda-forge as priority
+    ```bash
+    conda config --add channels conda-forge
+    ```
+
 - Clone the repo
 ```bash
 git clone https://github.com/uclanelsonlab/nl-rna-seq_wf.git
