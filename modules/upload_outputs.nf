@@ -15,11 +15,14 @@ process upload_files {
     tuple val(meta), path(star_bam)
     tuple val(meta), path(star_log)
     path star_versions
-    path gene_counts
-    path gene_counts_short
-    path gene_counts_summary
-    path subread_log
+    tuple val(meta), path(gene_counts)
+    tuple val(meta), path(gene_counts_short)
+    tuple val(meta), path(gene_counts_summary)
+    tuple val(meta), path(subread_log)
     path subread_versions
+    tuple val(meta), path(outrider_table)
+    tuple val(meta), path(outrider_project)
+    tuple val(meta), path(outrider_log)
     path qc_coverage
     path qc_exon_cv
     path qc_exon_reads
@@ -49,12 +52,15 @@ process upload_files {
     aws s3 cp ${final_log} ${output_bucket}/${prefix}/${library}/alignment/${final_log}
     aws s3 cp ${sj_tab} ${output_bucket}/${prefix}/${library}/alignment/${sj_tab}
     aws s3 cp ${star_log} ${output_bucket}/${prefix}/${library}/alignment/${star_log}
+    aws s3 cp ${star_bam} ${output_bucket}/${prefix}/${library}/alignment/${star_bam}
     aws s3 cp ${star_versions} ${output_bucket}/${prefix}/${library}/alignment/${star_versions}
     aws s3 cp ${gene_counts} ${output_bucket}/${prefix}/${library}/counts/${gene_counts}
     aws s3 cp ${gene_counts_short} ${output_bucket}/${prefix}/${library}/counts/${gene_counts_short}
     aws s3 cp ${gene_counts_summary} ${output_bucket}/${prefix}/${library}/counts/${gene_counts_summary}
     aws s3 cp ${subread_log} ${output_bucket}/${prefix}/${library}/counts/${subread_log}
-    aws s3 cp ${subread_versions} ${output_bucket}/${prefix}/${library}/counts/${subread_versions}
+    aws s3 cp ${outrider_table} ${output_bucket}/${prefix}/${library}/outrider/${outrider_table}
+    aws s3 cp ${outrider_project} ${output_bucket}/${prefix}/${library}/outrider/${outrider_project}
+    aws s3 cp ${outrider_log} ${output_bucket}/${prefix}/${library}/outrider/${outrider_log}
     aws s3 cp ${qc_coverage} ${output_bucket}/${prefix}/${library}/qc/${qc_coverage}
     aws s3 cp ${qc_exon_cv} ${output_bucket}/${prefix}/${library}/qc/${qc_exon_cv}
     aws s3 cp ${qc_exon_reads} ${output_bucket}/${prefix}/${library}/qc/${qc_exon_reads}

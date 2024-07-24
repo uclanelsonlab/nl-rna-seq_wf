@@ -22,6 +22,7 @@ option_list = list(
  
 opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
+tissue = opt$tissue
 
 if (is.null(opt$file)){
   print_help(opt_parser)
@@ -37,15 +38,26 @@ ods <- filterExpression(object = ods, minCounts = TRUE, filterGenes = TRUE);
 message(date(), ": Running estimateSizeFactors")
 ods <- estimateSizeFactors(ods)
 ## find optimal encoding dimension
-a <- 5 
-b <- min(ncol(ods), nrow(ods)) / 3   # N/3
-Nsteps <- min(20, b)   # Do at most 20 steps or N/3
+# a <- 5 
+# b <- min(ncol(ods), nrow(ods)) / 3   # N/3
+# Nsteps <- min(20, b)   # Do at most 20 steps or N/3
 # Do unique in case 2 were repeated
 implementation = 'autoencoder'
-pars_q <- round(exp(seq(log(a),log(b),length.out = Nsteps))) %>% unique
-message(date(), ": Running findEncodingDim")
-ods <- findEncodingDim(ods, params = pars_q, implementation = implementation)
-opt_q <- getBestQ(ods)
+# pars_q <- round(exp(seq(log(a),log(b),length.out = Nsteps))) %>% unique
+# message(date(), ": Running findEncodingDim")
+# ods <- findEncodingDim(ods, params = pars_q, implementation = implementation)
+# opt_q <- getBestQ(ods) # 22
+if (tissue == 'blood') {
+  opt_q <- 10;
+} else if (tissue == 'fibroblast') {
+  opt_q <- 22;
+} else if (tissue == 'muscle') {
+  opt_q <- 8;
+} else if (tissue == 'fat') {
+  opt_q <- 2;
+} else if (tissue == 'liver') {
+  opt_q <- 2;
+}
 ## fit OUTRIDER
 message(date(), ": Running SizeFactor estimation")
 ods <- estimateSizeFactors(ods)
@@ -72,9 +84,8 @@ padj_cols <- grep("padjust", colnames(res), value=TRUE)
 res <- res[do.call(pmin, c(res[,padj_cols, with=FALSE], list(na.rm = TRUE))) 
                 <= 0.05]
 # Save results
-file <- paste0('ods_', opt$tissue, '.rds');
+file <- paste0('ods_', opt$out, '.rds');
 saveRDS(object = ods, file = file);
-output_file <- paste0(opt$tissue, opt$out)
-fwrite(res, output_file, sep = "\t", quote = F)
+fwrite(res, opt$out, sep = "\t", quote = F)
 
 message(date(), sessionInfo())

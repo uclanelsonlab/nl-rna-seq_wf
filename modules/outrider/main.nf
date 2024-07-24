@@ -45,7 +45,7 @@ process run_outrider {
     val tissue
 
     output:
-    tuple val(meta), path("*._results.tsv"),    emit: outrider_table
+    tuple val(meta), path("*_results.tsv"),    emit: outrider_table
     tuple val(meta), path("*.rds"),             emit: outrider_project
     tuple val(meta), path("*.log"),             emit: log
 
