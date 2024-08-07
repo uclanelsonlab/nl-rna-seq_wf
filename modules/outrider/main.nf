@@ -56,6 +56,6 @@ process run_outrider {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
     """
-    run_outrider.R -f ${featurecounts_updated} -t ${tissue} -o ${prefix}_${tissue}_results.tsv 2> >(tee ${prefix}.outrider.log >&2
+    run_outrider.R -f ${featurecounts_updated} -t ${tissue} -o ${prefix}_${tissue}_results.tsv 2> >(tee ${prefix}.outrider.log >&2)
     """
 }
