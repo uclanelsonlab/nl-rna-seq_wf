@@ -12,7 +12,7 @@ params.human_dict = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43
 params.human_fasta = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa"
 params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/RNAseq_hg38"
 params.tissue = "fibroblast"
-params.features_master_file = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/drop/test/fibroblast/featureCounts_fibroblast_24-07-22_test.tsv"
+params.features_master_file = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/drop/test/fibroblast/featureCounts_fibroblast_24-07-22.tsv"
 
 log.info """\
     R N A - S E Q _ W F   P I P E L I N E
