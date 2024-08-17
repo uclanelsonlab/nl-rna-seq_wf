@@ -23,6 +23,10 @@
     ```bash
     conda config --add channels conda-forge
     ```
+- Requirements
+    - Install nextflow
+    - Install docker
+    - Make sure your system has at least 36 nodes/CPUs
 
 - Clone the repo
 ```bash
