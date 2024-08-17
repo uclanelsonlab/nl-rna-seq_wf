@@ -3,37 +3,76 @@ process upload_files {
 
     input:
     val library
+    val output_bucket
     path flagstat_rrna
-    path flagstat_globinrna
-    path reads_gene
-    path reads_gene_log
-    path final_log
-    path sj_tab
-    path star_bam
-    path sj_tab_gz
-    path rare_junctions
-    path all_rare_junctions
-    path gene_counts
-    path gene_counts_short
-    path gene_counts_summary
-    path rna_cram
-    path rna_crai
+    path flagstat_rrna_v
+    path flagstat_globinrna 
+    path flagstat_globinrna_v
+    tuple val(meta), path(reads_gene) 
+    tuple val(meta), path(reads_gene_log)
+    tuple val(meta), path(final_log)
+    tuple val(meta), path(sj_tab)
+    tuple val(meta), path(star_bam)
+    tuple val(meta), path(star_log)
+    path star_versions
+    tuple val(meta), path(gene_counts)
+    tuple val(meta), path(gene_counts_short)
+    tuple val(meta), path(gene_counts_summary)
+    tuple val(meta), path(subread_log)
+    path subread_versions
+    tuple val(meta), path(outrider_table)
+    tuple val(meta), path(outrider_project)
+    tuple val(meta), path(outrider_log)
+    path qc_coverage
+    path qc_exon_cv
+    path qc_exon_reads
+    path qc_gene_fragments
+    path qc_gene_reads
+    path qc_gene_tpm
+    path qc_metrics
+    path qc_log
+    path qc_versions
+    tuple val(meta), path(cram)
+    tuple val(meta), path(crai)
+    path cram_log
+    path cram_versions
+
 
     script:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta}"
+
     """
-    aws s3 cp ${flagstat_rrna} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/star_output/${library}/${flagstat_rrna}
-    aws s3 cp ${flagstat_globinrna} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/star_output/${library}/${flagstat_globinrna}
-    aws s3 cp ${reads_gene} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/star_output/${library}/${reads_gene}
-    aws s3 cp ${reads_gene_log} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/star_output/${library}/${reads_gene_log}
-    aws s3 cp ${final_log} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/star_output/${library}/${final_log}
-    aws s3 cp ${sj_tab} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/star_output/${library}/${sj_tab}
-    aws s3 cp ${sj_tab_gz} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/bam2sj/${library}/${sj_tab_gz}
-    aws s3 cp ${all_rare_junctions} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/rare_junctions/${library}/${all_rare_junctions}
-    aws s3 cp ${rare_junctions} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/rare_junctions/${library}/${rare_junctions}
-    aws s3 cp ${gene_counts} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/featurecounts_pc_unstranded/${library}/${gene_counts}
-    aws s3 cp ${gene_counts_short} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/featurecounts_pc_unstranded/${library}/${gene_counts_short}
-    aws s3 cp ${gene_counts_summary} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/featurecounts_pc_unstranded/${library}/${gene_counts_summary}
-    aws s3 cp ${rna_cram} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/star_output/${library}/${rna_cram}
-    aws s3 cp ${rna_crai} s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/star_output/${library}/${rna_crai}
+    aws s3 cp ${flagstat_rrna} ${output_bucket}/${prefix}/${library}/qc/${flagstat_rrna}
+    aws s3 cp ${flagstat_rrna_v} ${output_bucket}/${prefix}/${library}/qc/${flagstat_rrna_v}
+    aws s3 cp ${flagstat_globinrna} ${output_bucket}/${prefix}/${library}/qc/${flagstat_globinrna}
+    aws s3 cp ${flagstat_globinrna_v} ${output_bucket}/${prefix}/${library}/qc/${flagstat_globinrna_v}
+    aws s3 cp ${reads_gene} ${output_bucket}/${prefix}/${library}/alignment/${reads_gene}
+    aws s3 cp ${reads_gene_log} ${output_bucket}/${prefix}/${library}/alignment/${reads_gene_log}
+    aws s3 cp ${final_log} ${output_bucket}/${prefix}/${library}/alignment/${final_log}
+    aws s3 cp ${sj_tab} ${output_bucket}/${prefix}/${library}/alignment/${sj_tab}
+    aws s3 cp ${star_log} ${output_bucket}/${prefix}/${library}/alignment/${star_log}
+    aws s3 cp ${star_bam} ${output_bucket}/${prefix}/${library}/alignment/${star_bam}
+    aws s3 cp ${star_versions} ${output_bucket}/${prefix}/${library}/alignment/${star_versions}
+    aws s3 cp ${gene_counts} ${output_bucket}/${prefix}/${library}/counts/${gene_counts}
+    aws s3 cp ${gene_counts_short} ${output_bucket}/${prefix}/${library}/counts/${gene_counts_short}
+    aws s3 cp ${gene_counts_summary} ${output_bucket}/${prefix}/${library}/counts/${gene_counts_summary}
+    aws s3 cp ${subread_log} ${output_bucket}/${prefix}/${library}/counts/${subread_log}
+    aws s3 cp ${outrider_table} ${output_bucket}/${prefix}/${library}/outrider/${outrider_table}
+    aws s3 cp ${outrider_project} ${output_bucket}/${prefix}/${library}/outrider/${outrider_project}
+    aws s3 cp ${outrider_log} ${output_bucket}/${prefix}/${library}/outrider/${outrider_log}
+    aws s3 cp ${qc_coverage} ${output_bucket}/${prefix}/${library}/qc/${qc_coverage}
+    aws s3 cp ${qc_exon_cv} ${output_bucket}/${prefix}/${library}/qc/${qc_exon_cv}
+    aws s3 cp ${qc_exon_reads} ${output_bucket}/${prefix}/${library}/qc/${qc_exon_reads}
+    aws s3 cp ${qc_gene_fragments} ${output_bucket}/${prefix}/${library}/qc/${qc_gene_fragments}
+    aws s3 cp ${qc_gene_reads} ${output_bucket}/${prefix}/${library}/qc/${qc_gene_reads}
+    aws s3 cp ${qc_gene_tpm} ${output_bucket}/${prefix}/${library}/qc/${qc_gene_tpm}
+    aws s3 cp ${qc_metrics} ${output_bucket}/${prefix}/${library}/qc/${qc_metrics}
+    aws s3 cp ${qc_log} ${output_bucket}/${prefix}/${library}/qc/${qc_log}
+    aws s3 cp ${qc_versions} ${output_bucket}/${prefix}/${library}/qc/${qc_versions}
+    aws s3 cp ${cram} ${output_bucket}/${prefix}/${library}/alignment/${cram}
+    aws s3 cp ${crai} ${output_bucket}/${prefix}/${library}/alignment/${crai}
+    aws s3 cp ${cram_log} ${output_bucket}/${prefix}/${library}/alignment/${cram_log}
+    aws s3 cp ${cram_versions} ${output_bucket}/${prefix}/${library}/alignment/${cram_versions}
     """
 }
