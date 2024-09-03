@@ -36,6 +36,16 @@ process upload_files {
     tuple val(meta), path(crai)
     path cram_log
     path cram_versions
+    tuple val(meta), path(irfinder_chr_coverage)
+    tuple val(meta), path(irfinder_dir_val)
+    tuple val(meta), path(irfinder_dir)
+    tuple val(meta), path(irfinder_nondir_val)
+    tuple val(meta), path(irfinder_nondir)
+    tuple val(meta), path(irfinder_junc_count)
+    tuple val(meta), path(irfinder_roi)
+    tuple val(meta), path(irfinder_spans_point)
+    tuple val(meta), path(irfinder_log)
+    tuple val(meta), path(irfinder_versions)
 
 
     script:
@@ -74,5 +84,15 @@ process upload_files {
     aws s3 cp ${crai} ${output_bucket}/${prefix}/${library}/alignment/${crai}
     aws s3 cp ${cram_log} ${output_bucket}/${prefix}/${library}/alignment/${cram_log}
     aws s3 cp ${cram_versions} ${output_bucket}/${prefix}/${library}/alignment/${cram_versions}
+    aws s3 cp ${irfinder_chr_coverage} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_chr_coverage}
+    aws s3 cp ${irfinder_dir_val} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_dir_val}
+    aws s3 cp ${irfinder_dir} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_dir}
+    aws s3 cp ${irfinder_nondir_val} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_nondir_val}
+    aws s3 cp ${irfinder_nondir} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_nondir}
+    aws s3 cp ${irfinder_junc_count} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_junc_count}
+    aws s3 cp ${irfinder_roi} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_roi}
+    aws s3 cp ${irfinder_spans_point} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_spans_point}
+    aws s3 cp ${irfinder_log} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_log}
+    aws s3 cp ${irfinder_versions} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_versions}
     """
 }
