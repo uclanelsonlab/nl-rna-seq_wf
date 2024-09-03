@@ -1,13 +1,11 @@
 process IRFINDER {
     tag "Generate counts by gene using featureCounts"
-    container "cloxd/irfinder:2.0"
+    container "quay.io/biocontainers/irfinder:1.3.1--h031d066_5"
     cpus 12
     publishDir params.outdir, mode:'symlink'
 
     input:
-    path fasta
-    path fai
-    path dict
+    path ir_reference_dir
     tuple val(meta), path(bam)
     tuple val(meta), path(log)
     path versions
@@ -30,13 +28,13 @@ process IRFINDER {
     script:
     def prefix = task.ext.prefix ?: "${meta}"
     """
-    /usr/local/IRFinder/bin/IRFinder BAM -r ${reference} -d irfinder_output/ ${bam} 2> >(tee ${prefix}.IRFinder.log >&2
+    IRFinder -m BAM -t $task.cpus -r ${ir_reference_dir} -d irfinder_output/ ${bam} 2> >(tee ${prefix}.IRFinder.log >&2)
     
     for output in \$(ls ls irfinder_output/*txt); do file=\$(basename \$output); echo \$output ${prefix}_\$file; done
     
     cat <<-END_VERSIONS > IRFinder_versions.yml
     "${task.process}":
-        IRFinder: \$(echo \$(/usr/local/IRFinder/bin/IRFinder -v 2>&1) | awk '{print \$2}' )
+        IRFinder: \$(echo \$(IRFinder -v 2>&1) | awk '{print \$2}' )
     END_VERSIONS
     """
 }
