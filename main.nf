@@ -39,6 +39,7 @@ include { download_gencode as download_gencode_normal; download_gencode as downl
 include { download_master_featureCounts; add_sample_counts_master; run_outrider } from './modules/outrider/main.nf'
 include { RNASEQC } from './modules/rnaseqc.nf'
 include { upload_files } from './modules/upload_outputs.nf'
+include {IRFINDER } from './modules/irfinder.nf'
 
 workflow {
     download_fastqs_ch = download_fastqs(params.sample_name, params.library, params.fastq_bucket)
@@ -76,6 +77,9 @@ workflow {
     download_human_ref_ch = download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
     cram_ch = samtools_cram(download_human_ref_ch, mark_dup_ch)
 
+    // Run IRFinder
+    irfinder_ch = IRFINDER(download_human_ref_ch, mark_dup_ch)
+
     // Upload selected output files
-    upload_files(params.library, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, outrider_table_ch, rnaseqc_ch, cram_ch)
+    upload_files(params.library, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, outrider_table_ch, rnaseqc_ch, cram_ch, irfinder_ch)
 }
