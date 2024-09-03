@@ -32,6 +32,22 @@ process download_rna_ref {
     """
 }
 
+process download_ir_ref {
+    tag "Download IRFinder reference files"
+
+    input:
+    val ir_ref
+
+    output:
+    path "ir_reference", emit: ir_reference_dir
+
+    script:
+    """
+    mkdir ir_reference
+    aws s3 cp ${ir_reference_dir}/ ir_reference/ --recursive
+    """
+}
+
 process download_human_ref {
     tag "Download rna reference files"
 
