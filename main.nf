@@ -14,6 +14,7 @@ params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases"
 params.proband = "SAMPLE"
 params.tissue = "fibroblast"
 params.features_master_file = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/drop/test/fibroblast/featureCounts_fibroblast_24-07-22.tsv"
+params.ir_ref = "s3://ucla-rare-diseases/UCLA-UDN/assets/IRFinder-1.3.1/REF/GRCh38.p13/"
 
 log.info """\
     R N A - S E Q _ W F   P I P E L I N E
@@ -27,7 +28,7 @@ log.info """\
     """
     .stripIndent(true)
 
-include { download_fastqs; download_rna_ref as download_rrna; download_rna_ref as download_globinrna; download_human_ref } from './modules/download_files.nf'
+include { download_fastqs; download_rna_ref as download_rrna; download_rna_ref as download_globinrna; download_human_ref; download_ir_ref } from './modules/download_files.nf'
 include { run_fastp } from './modules/fastp.nf'
 include { filter_fastq } from './modules/filters.nf'
 include { bwa_mem as bwa_mem_rrna; bwa_mem as bwa_mem_globinrna } from './modules/bwa.nf'
@@ -79,7 +80,8 @@ workflow {
     cram_ch = samtools_cram(download_human_ref_ch, mark_dup_ch)
 
     // Run IRFinder
-    irfinder_ch = IRFINDER(download_human_ref_ch, mark_dup_ch)
+    ir_ref_ch = download_ir_ref(params.ir_ref)
+    irfinder_ch = IRFINDER(ir_ref_ch, mark_dup_ch)
 
     // Upload selected output files
     upload_files(params.proband, params.tissue, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, outrider_table_ch, rnaseqc_ch, cram_ch, irfinder_ch)
