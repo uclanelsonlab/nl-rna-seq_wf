@@ -10,7 +10,8 @@ params.outdir = "results"
 params.human_fai = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa.fai"
 params.human_dict = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.dict"
 params.human_fasta = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa"
-params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/RNAseq_hg38"
+params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases"
+params.proband = "SAMPLE"
 params.tissue = "fibroblast"
 params.features_master_file = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/drop/test/fibroblast/featureCounts_fibroblast_24-07-22.tsv"
 
@@ -81,5 +82,5 @@ workflow {
     irfinder_ch = IRFINDER(download_human_ref_ch, mark_dup_ch)
 
     // Upload selected output files
-    upload_files(params.library, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, outrider_table_ch, rnaseqc_ch, cram_ch, irfinder_ch)
+    upload_files(params.proband, params.tissue, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, outrider_table_ch, rnaseqc_ch, cram_ch, irfinder_ch)
 }
