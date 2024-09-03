@@ -2,7 +2,8 @@ process upload_files {
     tag "Upload all the necessary output files"
 
     input:
-    val library
+    val proband
+    val tissue
     val output_bucket
     path flagstat_rrna
     path flagstat_rrna_v
@@ -53,46 +54,46 @@ process upload_files {
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
-    aws s3 cp ${flagstat_rrna} ${output_bucket}/${prefix}/${library}/qc/${flagstat_rrna}
-    aws s3 cp ${flagstat_rrna_v} ${output_bucket}/${prefix}/${library}/qc/${flagstat_rrna_v}
-    aws s3 cp ${flagstat_globinrna} ${output_bucket}/${prefix}/${library}/qc/${flagstat_globinrna}
-    aws s3 cp ${flagstat_globinrna_v} ${output_bucket}/${prefix}/${library}/qc/${flagstat_globinrna_v}
-    aws s3 cp ${reads_gene} ${output_bucket}/${prefix}/${library}/alignment/${reads_gene}
-    aws s3 cp ${reads_gene_log} ${output_bucket}/${prefix}/${library}/alignment/${reads_gene_log}
-    aws s3 cp ${final_log} ${output_bucket}/${prefix}/${library}/alignment/${final_log}
-    aws s3 cp ${sj_tab} ${output_bucket}/${prefix}/${library}/alignment/${sj_tab}
-    aws s3 cp ${star_log} ${output_bucket}/${prefix}/${library}/alignment/${star_log}
-    aws s3 cp ${star_bam} ${output_bucket}/${prefix}/${library}/alignment/${star_bam}
-    aws s3 cp ${star_versions} ${output_bucket}/${prefix}/${library}/alignment/${star_versions}
-    aws s3 cp ${gene_counts} ${output_bucket}/${prefix}/${library}/counts/${gene_counts}
-    aws s3 cp ${gene_counts_short} ${output_bucket}/${prefix}/${library}/counts/${gene_counts_short}
-    aws s3 cp ${gene_counts_summary} ${output_bucket}/${prefix}/${library}/counts/${gene_counts_summary}
-    aws s3 cp ${subread_log} ${output_bucket}/${prefix}/${library}/counts/${subread_log}
-    aws s3 cp ${outrider_table} ${output_bucket}/${prefix}/${library}/outrider/${outrider_table}
-    aws s3 cp ${outrider_project} ${output_bucket}/${prefix}/${library}/outrider/${outrider_project}
-    aws s3 cp ${outrider_log} ${output_bucket}/${prefix}/${library}/outrider/${outrider_log}
-    aws s3 cp ${qc_coverage} ${output_bucket}/${prefix}/${library}/qc/${qc_coverage}
-    aws s3 cp ${qc_exon_cv} ${output_bucket}/${prefix}/${library}/qc/${qc_exon_cv}
-    aws s3 cp ${qc_exon_reads} ${output_bucket}/${prefix}/${library}/qc/${qc_exon_reads}
-    aws s3 cp ${qc_gene_fragments} ${output_bucket}/${prefix}/${library}/qc/${qc_gene_fragments}
-    aws s3 cp ${qc_gene_reads} ${output_bucket}/${prefix}/${library}/qc/${qc_gene_reads}
-    aws s3 cp ${qc_gene_tpm} ${output_bucket}/${prefix}/${library}/qc/${qc_gene_tpm}
-    aws s3 cp ${qc_metrics} ${output_bucket}/${prefix}/${library}/qc/${qc_metrics}
-    aws s3 cp ${qc_log} ${output_bucket}/${prefix}/${library}/qc/${qc_log}
-    aws s3 cp ${qc_versions} ${output_bucket}/${prefix}/${library}/qc/${qc_versions}
-    aws s3 cp ${cram} ${output_bucket}/${prefix}/${library}/alignment/${cram}
-    aws s3 cp ${crai} ${output_bucket}/${prefix}/${library}/alignment/${crai}
-    aws s3 cp ${cram_log} ${output_bucket}/${prefix}/${library}/alignment/${cram_log}
-    aws s3 cp ${cram_versions} ${output_bucket}/${prefix}/${library}/alignment/${cram_versions}
-    aws s3 cp ${irfinder_chr_coverage} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_chr_coverage}
-    aws s3 cp ${irfinder_dir_val} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_dir_val}
-    aws s3 cp ${irfinder_dir} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_dir}
-    aws s3 cp ${irfinder_nondir_val} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_nondir_val}
-    aws s3 cp ${irfinder_nondir} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_nondir}
-    aws s3 cp ${irfinder_junc_count} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_junc_count}
-    aws s3 cp ${irfinder_roi} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_roi}
-    aws s3 cp ${irfinder_spans_point} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_spans_point}
-    aws s3 cp ${irfinder_log} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_log}
-    aws s3 cp ${irfinder_versions} ${output_bucket}/${prefix}/${library}/irfinder/${irfinder_versions}
+    aws s3 cp ${flagstat_rrna} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${flagstat_rrna}
+    aws s3 cp ${flagstat_rrna_v} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${flagstat_rrna_v}
+    aws s3 cp ${flagstat_globinrna} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${flagstat_globinrna}
+    aws s3 cp ${flagstat_globinrna_v} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${flagstat_globinrna_v}
+    aws s3 cp ${reads_gene} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${reads_gene}
+    aws s3 cp ${reads_gene_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${reads_gene_log}
+    aws s3 cp ${final_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${final_log}
+    aws s3 cp ${sj_tab} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${sj_tab}
+    aws s3 cp ${star_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${star_log}
+    aws s3 cp ${star_bam} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${star_bam}
+    aws s3 cp ${star_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${star_versions}
+    aws s3 cp ${gene_counts} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/counts/${gene_counts}
+    aws s3 cp ${gene_counts_short} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/counts/${gene_counts_short}
+    aws s3 cp ${gene_counts_summary} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/counts/${gene_counts_summary}
+    aws s3 cp ${subread_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/counts/${subread_log}
+    aws s3 cp ${outrider_table} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/outrider/${outrider_table}
+    aws s3 cp ${outrider_project} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/outrider/${outrider_project}
+    aws s3 cp ${outrider_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/outrider/${outrider_log}
+    aws s3 cp ${qc_coverage} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${qc_coverage}
+    aws s3 cp ${qc_exon_cv} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${qc_exon_cv}
+    aws s3 cp ${qc_exon_reads} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${qc_exon_reads}
+    aws s3 cp ${qc_gene_fragments} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${qc_gene_fragments}
+    aws s3 cp ${qc_gene_reads} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${qc_gene_reads}
+    aws s3 cp ${qc_gene_tpm} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${qc_gene_tpm}
+    aws s3 cp ${qc_metrics} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${qc_metrics}
+    aws s3 cp ${qc_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${qc_log}
+    aws s3 cp ${qc_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${qc_versions}
+    aws s3 cp ${cram} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${cram}
+    aws s3 cp ${crai} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${crai}
+    aws s3 cp ${cram_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${cram_log}
+    aws s3 cp ${cram_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${cram_versions}
+    aws s3 cp ${irfinder_chr_coverage} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_chr_coverage}
+    aws s3 cp ${irfinder_dir_val} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_dir_val}
+    aws s3 cp ${irfinder_dir} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_dir}
+    aws s3 cp ${irfinder_nondir_val} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_nondir_val}
+    aws s3 cp ${irfinder_nondir} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_nondir}
+    aws s3 cp ${irfinder_junc_count} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_junc_count}
+    aws s3 cp ${irfinder_roi} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_roi}
+    aws s3 cp ${irfinder_spans_point} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_spans_point}
+    aws s3 cp ${irfinder_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_log}
+    aws s3 cp ${irfinder_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_versions}
     """
 }
