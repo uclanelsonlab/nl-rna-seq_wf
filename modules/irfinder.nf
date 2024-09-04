@@ -1,6 +1,6 @@
 process IRFINDER {
-    tag "Generate counts by gene using featureCounts"
-    container "quay.io/biocontainers/irfinder:1.3.1--h031d066_5"
+    tag "Generate IRratio for all the introns"
+    container "gvcn/irfinder-s:2.0.1"
     cpus 12
     publishDir params.outdir, mode:'symlink'
 
