@@ -44,7 +44,7 @@ process download_ir_ref {
     script:
     """
     mkdir ir_reference
-    aws s3 cp ${ir_reference_dir}/ ir_reference/ --recursive
+    aws s3 cp ${ir_ref} ir_reference/ --recursive
     """
 }
 
