@@ -30,7 +30,7 @@ process IRFINDER {
     """
     IRFinder -m BAM -t $task.cpus -r ${ir_reference_dir} -d irfinder_output/ ${bam} 2> >(tee ${prefix}.IRFinder.log >&2)
     
-    for output in \$(ls ls irfinder_output/*txt); do file=\$(basename \$output); echo \$output ${prefix}_\$file; done
+    for output in \$(ls irfinder_output/*txt); do file=\$(basename \$output); mv \$output ${prefix}_\$file; done
     
     cat <<-END_VERSIONS > IRFinder_versions.yml
     "${task.process}":
