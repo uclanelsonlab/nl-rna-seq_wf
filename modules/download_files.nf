@@ -3,6 +3,7 @@ process download_fastqs {
 
     input:
     val meta
+    val tissue
     val library
     val fastq_bucket
 
@@ -11,7 +12,7 @@ process download_fastqs {
 
     script:
     """
-    aws s3 cp ${fastq_bucket}/${library}/ . --exclude "*" --recursive --include "${meta}*"
+    aws s3 cp ${fastq_bucket}/${library}/ . --exclude "*" --recursive --include "${meta}*${tissue}*"
     """
 }
 

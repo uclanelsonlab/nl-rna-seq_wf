@@ -55,6 +55,7 @@ process star_alignreads {
     
     input:
     val meta
+    val tissue
     val reference
     val sjdb_overhang
     tuple val(meta), path(reads)
@@ -63,22 +64,22 @@ process star_alignreads {
     tuple val(meta), path(log)
 
     output:
-    path "${meta}.ReadsPerGene.out.tab.gz", emit: reads_gene
-    path "${meta}.ReadsPerGene.log.out", emit: reads_gene_log
-    path "${meta}.Log.final.out", emit: final_log
-    path "${meta}.SJ.out.tab.gz", emit: sj_tab
-    path "${meta}.Aligned.sortedByCoord.out.bam", emit: star_bam
+    path "*.ReadsPerGene.out.tab.gz", emit: reads_gene
+    path "*.ReadsPerGene.log.out", emit: reads_gene_log
+    path "*.Log.final.out", emit: final_log
+    path "*.SJ.out.tab.gz", emit: sj_tab
+    path "*.Aligned.sortedByCoord.out.bam", emit: star_bam
 
     script:
     """
     STAR --runMode alignReads --runThreadN $task.cpus --genomeDir ${reference} --twopassMode Basic --sjdbOverhang ${sjdb_overhang} --readFilesIn ${reads[0]} ${reads[1]} --readFilesCommand zcat --outFileNamePrefix ${meta}. --alignSoftClipAtReferenceEnds Yes --quantMode GeneCounts --outSAMtype BAM SortedByCoordinate --outBAMcompression -1 --outSAMunmapped Within --genomeLoad NoSharedMemory --outBAMsortingThreadN $task.cpus --outSAMattrRGline ID:rg1 SM:${meta} PL:Illumina LB:${meta}
     
-    echo -e "Gene\t${meta}.Unstranded\t${meta}.Antisense\t${meta}.Sense" > tempgene_counts
-    tail -n +5 ${meta}.ReadsPerGene.out.tab >> tempgene_counts
-    echo -e "Gene\t${meta}.Unstranded\t${meta}.Antisense\t${meta}.Sense" > tempgene_stats
-    head -n +4 ${meta}.ReadsPerGene.out.tab >> tempgene_stats
-    mv tempgene_counts ${meta}.ReadsPerGene.out.tab
-    mv tempgene_stats ${meta}.ReadsPerGene.log.out
-    gzip ${meta}.SJ.out.tab ${meta}.ReadsPerGene.out.tab
+    echo -e "Gene\t${meta}-${tissue}.Unstranded\t${meta}-${tissue}.Antisense\t${meta}-${tissue}.Sense" > tempgene_counts
+    tail -n +5 ${meta}-${tissue}.ReadsPerGene.out.tab >> tempgene_counts
+    echo -e "Gene\t${meta}-${tissue}.Unstranded\t${meta}-${tissue}.Antisense\t${meta}-${tissue}.Sense" > tempgene_stats
+    head -n +4 ${meta}-${tissue}.ReadsPerGene.out.tab >> tempgene_stats
+    mv tempgene_counts ${meta}-${tissue}.ReadsPerGene.out.tab
+    mv tempgene_stats ${meta}-${tissue}.ReadsPerGene.log.out
+    gzip ${meta}-${tissue}.SJ.out.tab ${meta}-${tissue}.ReadsPerGene.out.tab
     """
 }

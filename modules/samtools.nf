@@ -5,15 +5,16 @@ process samtools_view {
 
     input:
     val meta
+    val tissue
     path bwa_bam
     val reference
 
     output:
-    path "${meta}_${reference}.view.bam", emit: view_bam
+    path "*.view.bam", emit: view_bam
     
     script:
     """
-    samtools view -@ $task.cpus -bS -F 2304 -o ${meta}_${reference}.view.bam ${bwa_bam}
+    samtools view -@ $task.cpus -bS -F 2304 -o ${meta}-${tissue}_${reference}.view.bam ${bwa_bam}
     """
 }
 
@@ -24,15 +25,16 @@ process samtools_flagstat {
 
     input:
     val meta
+    val tissue
     path view_bam
     val reference
 
     output:
-    path "${meta}_${reference}.flagstat.txt", emit: flagstat_file
+    path "*.flagstat.txt", emit: flagstat_file
     
     script:
     """
-    samtools flagstat ${view_bam} > ${meta}_${reference}.flagstat.txt
+    samtools flagstat ${view_bam} > ${meta}-${tissue}_${reference}.flagstat.txt
     """
 }
 
@@ -64,6 +66,7 @@ process samtools_view_sj {
 
     input:
     val meta
+    val tissue
     path reads_gene
     path reads_gene_log
     path final_log
@@ -71,11 +74,11 @@ process samtools_view_sj {
     path star_bam
 
     output:
-    path "tmp_${meta}_bamview.sam", emit: sam_view
+    path "*_bamview.sam", emit: sam_view
     
     script:
     """
-    samtools view -@ $task.cpus -h ${star_bam} > tmp_${meta}_bamview.sam
+    samtools view -@ $task.cpus -h ${star_bam} > tmp_${meta}-${tissue}_bamview.sam
     """
 }
 
@@ -87,6 +90,7 @@ process samtools_cram {
 
     input:
     val meta
+    val tissue
     path fasta
     path fai
     path dict
@@ -97,12 +101,12 @@ process samtools_cram {
     path bam
 
     output:
-    path "${meta}.hg19_rna.normal.cram", emit: rna_cram
-    path "${meta}.hg19_rna.normal.cram.crai", emit: rna_crai
+    path "*.hg19_rna.normal.cram", emit: rna_cram
+    path "*.hg19_rna.normal.cram.crai", emit: rna_crai
     
     script:
     """
-    samtools view -@ $task.cpus -T ${fasta} -C --output-fmt-option normal -o ${meta}.hg19_rna.normal.cram ${bam}
-    samtools index -@ $task.cpus ${meta}.hg19_rna.normal.cram
+    samtools view -@ $task.cpus -T ${fasta} -C --output-fmt-option normal -o ${meta}-${tissue}.hg19_rna.normal.cram ${bam}
+    samtools index -@ $task.cpus ${meta}-${tissue}.hg19_rna.normal.cram
     """
 }

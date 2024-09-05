@@ -4,14 +4,15 @@ process bam2sj {
 
     input:
     val meta
+    val tissue
     path sam_view
 
     output:
-    path "${meta}.bam2SJ.out.tab.gz", emit: sj_tab_gz
+    path "*.bam2SJ.out.tab.gz", emit: sj_tab_gz
 
     script:
     """
-    bam2sj.pl ${sam_view} > ${meta}.bam2SJ.out.tab
-    gzip ${meta}.bam2SJ.out.tab
+    bam2sj.pl ${sam_view} > ${meta}-${tissue}.bam2SJ.out.tab
+    gzip ${meta}-${tissue}.bam2SJ.out.tab
     """
 }
