@@ -6,7 +6,6 @@ process subread_featurecounts {
 
     input:
     val meta
-    val tissue
     path gencode_pc
     path reads_gene
     path reads_gene_log
@@ -21,8 +20,8 @@ process subread_featurecounts {
 
     script:
     """
-    featureCounts -T $task.cpus -t exon -g gene_id -a ${gencode_pc} -o ${meta}-${tissue}.gene_id.exon.ct -p -C --primary ${bam}
-    awk -F \$' ' 'BEGIN {OFS=FS} { print \$1, \$7 }' ${meta}-${tissue}.gene_id.exon.ct > ${meta}-${tissue}.gene_id.exon.ct.short.txt
+    featureCounts -T $task.cpus -t exon -g gene_id -a ${gencode_pc} -o ${meta}.gene_id.exon.ct -p -C --primary ${bam}
+    awk -F \$' ' 'BEGIN {OFS=FS} { print \$1, \$7 }' ${meta}.gene_id.exon.ct > ${meta}.gene_id.exon.ct.short.txt
     """
 }
 

@@ -2,6 +2,7 @@ nextflow.enable.dsl = 2
 
 params.sample_name = "NB-8204-M"
 params.tissue = "muscle"
+meta = params.sample_name + "-" + params.tissue
 params.proband = "NB-8204-M"
 params.library = "SN_7RNA_S-24-0479_XA044"
 params.fastq_bucket = "s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq"
@@ -45,7 +46,7 @@ include { download_gencode; subread_featurecounts } from './modules/subreads.nf'
 include { upload_files } from './modules/upload_outputs.nf'
 
 workflow {
-    download_fastqs_ch = download_fastqs(params.sample_name, params.tissue, params.library, params.fastq_bucket)
+    download_fastqs_ch = download_fastqs(meta, params.library, params.fastq_bucket)
     download_rrna_ch = download_rrna(params.rib_reference_path, "rrna")
     download_globinrna_ch = download_globinrna(params.rib_reference_path, "globinrna")
 
@@ -54,30 +55,30 @@ workflow {
     filtered_fastq_ch = filter_fastq(fastp_ch)
     rrna_bwa_ch = bwa_mem_rrna(filtered_fastq_ch, download_rrna_ch, "human_rRNA_strict.fasta", "rrna")
     globinrna_bwa_ch = bwa_mem_globinrna(filtered_fastq_ch, download_globinrna_ch, "human_globinRNA.fa", "globinrna")
-    rrna_samtools_view_ch = samtools_view_rrna(params.sample_name, params.tissue, rrna_bwa_ch, "rrna")
-    globinrna_samtools_view_ch = samtools_view_globinrna(params.sample_name, params.tissue, globinrna_bwa_ch, "globinrna")
-    rrna_samtools_flagstat_ch = samtools_flagstat_rrna(params.sample_name, params.tissue, rrna_samtools_view_ch, "rrna")
-    globinrna_samtools_flagstat_ch = samtools_flagstat_globinrna(params.sample_name, params.tissue, globinrna_samtools_view_ch, "globinrna")
+    rrna_samtools_view_ch = samtools_view_rrna(meta, rrna_bwa_ch, "rrna")
+    globinrna_samtools_view_ch = samtools_view_globinrna(meta, globinrna_bwa_ch, "globinrna")
+    rrna_samtools_flagstat_ch = samtools_flagstat_rrna(meta, rrna_samtools_view_ch, "rrna")
+    globinrna_samtools_flagstat_ch = samtools_flagstat_globinrna(meta, globinrna_samtools_view_ch, "globinrna")
 
     // STAR alignment
     star_index_ref_ch = check_star_reference(download_fastqs_ch)
-    star_alignreads_ch = star_alignreads(params.sample_name, params.tissue, star_index_ref_ch, fastp_ch)
+    star_alignreads_ch = star_alignreads(meta, star_index_ref_ch, fastp_ch)
     samtools_index(star_alignreads_ch)
 
     // Create SJ tab file
-    sam_ch = samtools_view_sj(params.sample_name, params.tissue, star_alignreads_ch) 
-    sj_tab_ch = bam2sj(params.sample_name, params.tissue, sam_ch)
+    sam_ch = samtools_view_sj(meta, star_alignreads_ch) 
+    sj_tab_ch = bam2sj(meta, sam_ch)
 
     // Create spreadsheet with prioritize splice junctions
-    splice_junctions_ch = prioritize_splice_junctions(params.sample_name, params.tissue, sj_tab_ch, params.latest_directory_date, params.latest_udn_id_key, params.sjdblist, params.genemap, params.constraint, params.gencode_cds)
+    splice_junctions_ch = prioritize_splice_junctions(meta, sj_tab_ch, params.latest_directory_date, params.latest_udn_id_key, params.sjdblist, params.genemap, params.constraint, params.gencode_cds)
 
     // Create counts by gene
     gencode_pc_ch = download_gencode(params.gencode_gtf_path)
-    feature_counts_ch = subread_featurecounts(params.sample_name, params.tissue, gencode_pc_ch, star_alignreads_ch)
+    feature_counts_ch = subread_featurecounts(meta, gencode_pc_ch, star_alignreads_ch)
 
     // Create CRAM files
     download_human_ref_ch = download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
-    cram_ch = samtools_cram(params.sample_name, params.tissue, download_human_ref_ch, star_alignreads_ch)
+    cram_ch = samtools_cram(meta, download_human_ref_ch, star_alignreads_ch)
 
     // Upload selected output files
     upload_files(params.sample_name, params.proband, params.tissue, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, sj_tab_ch, splice_junctions_ch, feature_counts_ch, cram_ch, params.output_bucket)

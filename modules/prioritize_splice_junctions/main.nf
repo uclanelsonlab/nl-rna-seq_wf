@@ -6,7 +6,6 @@ process prioritize_splice_junctions {
 
     input:
     val meta
-    val tissue
     path sj_tab_gz
     val latest_directory_date
     val latest_udn_id_key
@@ -38,21 +37,21 @@ process prioritize_splice_junctions {
         --output_dir . --sjdb sjdbList.fromGTF.out.tab
     done
 
-    tsv_filename=${meta}-${tissue}_rare_junctions_all.tsv
-    head -n 1 ${meta}-${tissue}_rare_junctions_chr_22.tsv > \${tsv_filename}
+    tsv_filename=${meta}_rare_junctions_all.tsv
+    head -n 1 ${meta}_rare_junctions_chr_22.tsv > \${tsv_filename}
     for chrom in {1..22} X Y; do
-        tail -n +2 ${meta}-${tissue}_rare_junctions_chr_\${chrom}.tsv >> \${tsv_filename}
+        tail -n +2 ${meta}_rare_junctions_chr_\${chrom}.tsv >> \${tsv_filename}
     done
 
-    filtered_tsv_filename=${meta}-${tissue}_rare_junctions_filtered.tsv
+    filtered_tsv_filename=${meta}_rare_junctions_filtered.tsv
     head -n 1 \${tsv_filename} > \${filtered_tsv_filename}
     awk '(\$7 >= 0.4 && \$13 <= 2) || (\$7 >= 0.3 && \$12 <= 2) || (\$7 >= 0.2 && \$11 <= 2) || (\$7 >= 0.1 && \$10 <= 2) {print}' \${tsv_filename} >> \${filtered_tsv_filename}
     
     add_omim_download_to_tsv.py --input \${filtered_tsv_filename} --omim genemap2_2020-08-02_disease_genes_with_hg19.txt --output_dir .
     
-    add_constraints_to_tsv.py --input ${meta}-${tissue}_rare_junctions_filtered_with_omim.tsv --output_dir . --constraint constraint_with_interval_canonical.txt
-    xlsx_filename=${meta}-${tissue}_rare_junctions_filtered.xlsx
+    add_constraints_to_tsv.py --input ${meta}_rare_junctions_filtered_with_omim.tsv --output_dir . --constraint constraint_with_interval_canonical.txt
+    xlsx_filename=${meta}_rare_junctions_filtered.xlsx
 
-    postprocess.py --input_tsv ${meta}-${tissue}_rare_junctions_filtered_with_omim_with_constraints.tsv --output_filename \${xlsx_filename} --gencode gencode_exons_cds_only.tsv
+    postprocess.py --input_tsv ${meta}_rare_junctions_filtered_with_omim_with_constraints.tsv --output_filename \${xlsx_filename} --gencode gencode_exons_cds_only.tsv
     """
 }
