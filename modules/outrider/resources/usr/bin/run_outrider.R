@@ -46,7 +46,6 @@ implementation = 'autoencoder'
 # pars_q <- round(exp(seq(log(a),log(b),length.out = Nsteps))) %>% unique
 # message(date(), ": Running findEncodingDim")
 # ods <- findEncodingDim(ods, params = pars_q, implementation = implementation)
-# opt_q <- getBestQ(ods) # 22
 if (tissue == 'blood') {
   opt_q <- 10;
 } else if (tissue == 'fibroblast') {
@@ -57,7 +56,10 @@ if (tissue == 'blood') {
   opt_q <- 2;
 } else if (tissue == 'liver') {
   opt_q <- 2;
+} else {
+  opt_q <- getBestQ(ods);
 }
+message(tissue, " best Q: ", opt_q)
 ## fit OUTRIDER
 message(date(), ": Running SizeFactor estimation")
 ods <- estimateSizeFactors(ods)
