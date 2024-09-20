@@ -2,6 +2,7 @@ process upload_files {
     tag "Upload all the necessary output files"
 
     input:
+    val sample_name
     val proband
     val tissue
     val output_bucket
@@ -51,7 +52,7 @@ process upload_files {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta}"
+    def prefix = task.ext.prefix ?: "${sample_name}"
 
     """
     aws s3 cp ${flagstat_rrna} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${flagstat_rrna}
