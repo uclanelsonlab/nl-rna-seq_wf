@@ -46,7 +46,7 @@ implementation = 'autoencoder'
 # pars_q <- round(exp(seq(log(a),log(b),length.out = Nsteps))) %>% unique
 # message(date(), ": Running findEncodingDim")
 # ods <- findEncodingDim(ods, params = pars_q, implementation = implementation)
-if (tissue == 'blood') {
+if (tissue == 'blood' || tissue == "pbmc") {
   opt_q <- 10;
 } else if (tissue == 'fibroblast') {
   opt_q <- 22;
