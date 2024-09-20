@@ -1,7 +1,10 @@
 nextflow.enable.dsl = 2
 
-params.sample_name = 'NB-8204-M-muscle'
+params.sample_name = 'NB-8204-M'
 params.library = "SN_7RNA_S-24-0479_XA044"
+params.proband = "SAMPLE"
+params.tissue = "fibroblast"
+meta = params.sample_name + "-" + params.tissue
 params.fastq_bucket = "s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq"
 params.rib_reference_path = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference"
 params.gencode_gtf_path = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/gencode.v43.primary_assembly.annotation.gtf"
@@ -10,9 +13,9 @@ params.outdir = "results"
 params.human_fai = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa.fai"
 params.human_dict = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.dict"
 params.human_fasta = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa"
-params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/RNAseq_hg38"
-params.tissue = "fibroblast"
+params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases"
 params.features_master_file = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/drop/test/fibroblast/featureCounts_fibroblast_24-07-22.tsv"
+params.ir_ref = "s3://ucla-rare-diseases/UCLA-UDN/assets/IRFinder-1.3.1/REF/GRCh38.p13/"
 
 log.info """\
     R N A - S E Q _ W F   P I P E L I N E
@@ -26,7 +29,7 @@ log.info """\
     """
     .stripIndent(true)
 
-include { download_fastqs; download_rna_ref as download_rrna; download_rna_ref as download_globinrna; download_human_ref } from './modules/download_files.nf'
+include { download_fastqs; download_rna_ref as download_rrna; download_rna_ref as download_globinrna; download_human_ref; download_ir_ref } from './modules/download_files.nf'
 include { run_fastp } from './modules/fastp.nf'
 include { filter_fastq } from './modules/filters.nf'
 include { bwa_mem as bwa_mem_rrna; bwa_mem as bwa_mem_globinrna } from './modules/bwa.nf'
@@ -39,9 +42,10 @@ include { download_gencode as download_gencode_normal; download_gencode as downl
 include { download_master_featureCounts; add_sample_counts_master; run_outrider } from './modules/outrider/main.nf'
 include { RNASEQC } from './modules/rnaseqc.nf'
 include { upload_files } from './modules/upload_outputs.nf'
+include {IRFINDER } from './modules/irfinder.nf'
 
 workflow {
-    download_fastqs_ch = download_fastqs(params.sample_name, params.library, params.fastq_bucket)
+    download_fastqs_ch = download_fastqs(meta, params.library, params.fastq_bucket)
     download_rrna_ch = download_rrna(params.rib_reference_path, "rrna")
     download_globinrna_ch = download_globinrna(params.rib_reference_path, "globinrna")
 
@@ -76,6 +80,10 @@ workflow {
     download_human_ref_ch = download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
     cram_ch = samtools_cram(download_human_ref_ch, mark_dup_ch)
 
+    // Run IRFinder
+    ir_ref_ch = download_ir_ref(params.ir_ref)
+    irfinder_ch = IRFINDER(ir_ref_ch, mark_dup_ch)
+
     // Upload selected output files
-    upload_files(params.library, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, outrider_table_ch, rnaseqc_ch, cram_ch)
+    upload_files(params.sample_name, params.proband, params.tissue, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, outrider_table_ch, rnaseqc_ch, cram_ch, irfinder_ch)
 }
