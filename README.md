@@ -42,7 +42,7 @@ nextflow run main.nf --sample_name SH1311-P-muscle --proband SH1311-P --library 
 
 - Check if you have your outputs on S3:
 ```bash
-aws s3 ls s3://ucla-rare-diseases/UCLA-UDN/rnaseq/output/ --recursive | grep SH1311-P-muscle
+aws s3 ls s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases/ --recursive | grep SH1311-P-muscle
 ```
 
 - The expected outputs:
