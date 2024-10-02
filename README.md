@@ -37,7 +37,7 @@ git clone https://github.com/uclanelsonlab/nl-rna-seq_wf.git
 ```bash
 cd nl-rna-seq_wf/
 chmod u+x -R modules/
-nextflow run main.nf --sample_name SH1311-P-muscle --library SN_7RNA_S-24-0479_XA044 -with-trace -with-report SH1311-P-muscle_report.html -with-timeline SH1311-P-muscle_timeline.html
+nextflow run main.nf --sample_name SH1311-P-muscle --proband SH1311-P --library SN_7RNA_S-24-0479_XA044
 ```
 
 - Check if you have your outputs on S3:
