@@ -46,8 +46,8 @@ process upload_files {
     tuple val(meta), path(irfinder_junc_count)
     tuple val(meta), path(irfinder_roi)
     tuple val(meta), path(irfinder_spans_point)
-    tuple val(meta), path(irfinder_log)
-    tuple val(meta), path(irfinder_versions)
+    path irfinder_log
+    path irfinder_versions
 
 
     script:
