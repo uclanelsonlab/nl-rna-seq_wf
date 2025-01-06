@@ -48,7 +48,7 @@ process check_star_reference {
 }
 
 process star_alignreads {
-    conda 'bioconda::star=2.7.11b'
+    container 'quay.io/biocontainers/star:2.7.11b--h5ca1c30_4'
     cpus 32
     publishDir params.outdir, mode:'symlink'
     tag "STAR alignReads on $meta"   
