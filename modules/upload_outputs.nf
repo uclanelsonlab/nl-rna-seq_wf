@@ -76,7 +76,6 @@ process upload_files {
     aws s3 cp ${qc_metrics} ${output_bucket}/${proband}/${sample_dir}_rna/hg38/qc/${qc_metrics}
     aws s3 cp ${qc_log} ${output_bucket}/${proband}/${sample_dir}_rna/hg38/qc/${qc_log}
     aws s3 cp ${qc_versions} ${output_bucket}/${proband}/${sample_dir}_rna/hg38/qc/${qc_versions}
-    aws s3 cp ${fastp_reads} ${output_bucket}/${proband}/${sample_dir}_rna/hg38/qc/${fastp_reads}
     aws s3 cp ${fastp_json} ${output_bucket}/${proband}/${sample_dir}_rna/hg38/qc/${fastp_json}
     aws s3 cp ${fastp_html} ${output_bucket}/${proband}/${sample_dir}_rna/hg38/qc/${fastp_html}
     aws s3 cp ${fastp_log} ${output_bucket}/${proband}/${sample_dir}_rna/hg38/qc/${fastp_log}
