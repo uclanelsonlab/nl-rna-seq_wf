@@ -24,7 +24,7 @@ include { download_human_ref; DOWNLOAD_CRAM } from './modules/download_files.nf'
 workflow {
     // Download CRAM and reference files
     download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
-    DOWNLOAD_CRAM(params.cram)
+    DOWNLOAD_CRAM(params.sample_name, params.cram)
     // download_cram_ch = download_cram(params.cram, params.crai)
     // CRAM to BAM 
 
