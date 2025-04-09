@@ -68,3 +68,19 @@ process download_human_ref {
     aws s3 cp ${dict} .
     """
 }
+
+process DOWNLOAD_CRAM {
+    label "download_cram"
+
+    input:
+    val sample_name
+    path cram_path
+
+    output:
+    tuple val(sample_name), path('*.cram'), emit: cram
+
+    script:
+    """
+    aws s3 cp ${cram_path} ."
+    """
+}

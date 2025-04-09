@@ -18,12 +18,13 @@ log.info """\
     """
     .stripIndent(true)
 
-include { download_human_ref } from './modules/download_files.nf'
+include { download_human_ref; DOWNLOAD_CRAM } from './modules/download_files.nf'
 
 
 workflow {
     // Download CRAM and reference files
-    download_human_ref_ch = download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
+    download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
+    DOWNLOAD_CRAM(params.cram)
     // download_cram_ch = download_cram(params.cram, params.crai)
     // CRAM to BAM 
 
