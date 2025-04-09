@@ -81,6 +81,6 @@ process DOWNLOAD_CRAM {
 
     script:
     """
-    aws s3 cp ${cram_path} ."
+    aws s3 cp ${cram_path} .
     """
 }
