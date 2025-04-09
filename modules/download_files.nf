@@ -75,12 +75,14 @@ process DOWNLOAD_CRAM {
     input:
     val sample_name
     val cram_path
+    val crai_path
 
     output:
-    tuple val(sample_name), path('*.cram'), emit: cram
+    tuple val(sample_name), path('*.cram'), path('*.crai'), emit: cram
 
     script:
     """
     aws s3 cp ${cram_path} .
+    aws s3 cp ${crai_path} .
     """
 }
