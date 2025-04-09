@@ -74,7 +74,7 @@ process DOWNLOAD_CRAM {
 
     input:
     val sample_name
-    path cram_path
+    val cram_path
 
     output:
     tuple val(sample_name), path('*.cram'), emit: cram
