@@ -154,8 +154,6 @@ process SAMTOOLS_CRAM2BAM {
 
     script:
     """
-     -o $PWD/bam/UDN816434-F-blood.hg19_rna.normal.bam $PWD/bam/UDN816434-F-blood.hg19_rna.normal.cram;
-
     samtools view -@ $task.cpus -T ${fasta} --input-fmt-option normal -o ${sample_name}.hg38_rna.normal.bam ${cram} 2> >(tee ${sample_name}.cram.log >&2)
     samtools index -@ $task.cpus ${sample_name}.hg38_rna.normal.bam
 
