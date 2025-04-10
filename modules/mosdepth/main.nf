@@ -13,8 +13,8 @@ process MOSDEPTH_BED {
     path "*.mosdepth.global.dist.txt", emit: global_dist
     path "*.mosdepth.region.dist.txt", emit: region_dist
     path "*.mosdepth.summary.txt",     emit: summary
-    path "*.per-base.bed.gz",          emit: per-base
-    path "*.per-base.bed.gz.csi",      emit: per-base_index
+    path "*.per-base.bed.gz",          emit: perbase
+    path "*.per-base.bed.gz.csi",      emit: perbase_index
     path "*.regions.bed.gz",           emit: regions_bed
     path "*.regions.bed.gz.csi",       emit: regions_bed_index
     path '*.log',                      emit: log
