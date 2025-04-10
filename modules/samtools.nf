@@ -136,7 +136,7 @@ process samtools_cram {
 process SAMTOOLS_CRAM2SAM {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 40
-    tag "Samtools view on $sample_name BAM to CRAM"
+    tag "Samtools view on $sample_name CRAM to SAM"
     publishDir params.outdir, mode:'symlink'
 
     input:
@@ -144,8 +144,7 @@ process SAMTOOLS_CRAM2SAM {
     tuple val(sample_name), path(cram), path(crai)
 
     output:
-    tuple val(sample_name), path("*.hg38_rna.normal.bam"),       emit: rna_cram
-    tuple val(sample_name), path("*.hg38_rna.normal.bam.bai"),   emit: rna_crai
+    tuple val(sample_name), path("*.hg38_rna.normal.sam"),       emit: rna_sam
     path '*.log',                                                emit: log
     path "*versions.yml",                                        emit: versions
     
