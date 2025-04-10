@@ -38,5 +38,15 @@ workflow {
     // SAM to SJ
     BAM2SJ(SAMTOOLS_CRAM2SAM.out.rna_sam)
     // Uplaod SJ
-    UP_SJ(BAM2SJ.out.sj_tab_gz, params.output_bucket)
+    UP_SJ(
+        BAM2SJ.out.sj_tab_gz,
+        MOSDEPTH_BED.out.global_dist, 
+        MOSDEPTH_BED.out.region_dist, 
+        MOSDEPTH_BED.out.summary, 
+        MOSDEPTH_BED.out.perbase, 
+        MOSDEPTH_BED.out.perbase_index, 
+        MOSDEPTH_BED.out.regions_bed, 
+        MOSDEPTH_BED.out.regions_bed_index,
+        params.output_bucket
+        )
     }
