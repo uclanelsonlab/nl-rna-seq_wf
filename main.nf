@@ -31,7 +31,7 @@ workflow {
     // CRAM to SAM 
     SAMTOOLS_CRAM2SAM(download_human_ref.out.human_ref, DOWNLOAD_CRAM.out.data)
     // SAM to SJ
-    BAM2SJ(SAMTOOLS_CRAM2SAM.out.sam)
+    BAM2SJ(SAMTOOLS_CRAM2SAM.out.rna_sam)
     // Uplaod SJ
     // UP_SJ(BAM2SJ.out.sj_tab_gz, params.output_bucket)
     }
