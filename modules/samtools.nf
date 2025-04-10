@@ -142,7 +142,6 @@ process SAMTOOLS_CRAM2BAM {
     input:
     tuple path(fasta), path(fai), path(dict)
     tuple val(sample_name), path(cram), path(crai)
-    path versions
 
     output:
     tuple val(sample_name), path("*.hg38_rna.normal.bam"),       emit: rna_cram

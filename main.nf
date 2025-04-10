@@ -27,7 +27,7 @@ workflow {
     download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
     DOWNLOAD_CRAM(params.sample_name, params.cram, params.cram_crai)
     // CRAM to BAM 
-    SAMTOOLS_CRAM2BAM(download_human_ref.out.human_ref)
+    SAMTOOLS_CRAM2BAM(download_human_ref.out.human_re, DOWNLOAD_CRAM.out.data)
     // BAM to SAM
     // SAM to SJ
     // Uplaod SJ

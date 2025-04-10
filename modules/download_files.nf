@@ -76,7 +76,7 @@ process DOWNLOAD_CRAM {
     val crai_path
 
     output:
-    tuple val(sample_name), path('*.cram'), path('*.crai'), emit: cram
+    tuple val(sample_name), path('*.cram'), path('*.crai'), emit: data
 
     script:
     """
