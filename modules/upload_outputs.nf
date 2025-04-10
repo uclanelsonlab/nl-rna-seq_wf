@@ -98,3 +98,17 @@ process upload_files {
     aws s3 cp ${irfinder_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_versions}
     """
 }
+
+process UP_SJ {
+    tag "Upload SJ file"
+
+    input:
+    path sj_tab_gz
+    val output_bucket
+
+    script:
+
+    """
+    aws s3 cp ${sj_tab_gz} ${output_bucket}/bam2sj/${sj_tab_gz}
+    """
+}

@@ -20,17 +20,18 @@ log.info """\
 
 include { download_human_ref; DOWNLOAD_CRAM } from './modules/download_files.nf'
 include { SAMTOOLS_CRAM2SAM } from './modules/samtools.nf'
+include { BAM2SJ } from './modules/bam2sj/main.nf'
+include { UP_SJ } from './modules/upload_outputs.nf'
 
 
 workflow {
     // Download CRAM and reference files
     download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
     DOWNLOAD_CRAM(params.sample_name, params.cram, params.cram_crai)
-    // CRAM to BAM 
+    // CRAM to SAM 
     SAMTOOLS_CRAM2SAM(download_human_ref.out.human_ref, DOWNLOAD_CRAM.out.data)
-    // BAM to SAM
     // SAM to SJ
+    BAM2SJ(SAMTOOLS_CRAM2SAM.out.sam)
     // Uplaod SJ
-    // cram_ch = samtools_cram(download_human_ref_ch, mark_dup_ch)
-
+    // UP_SJ(BAM2SJ.out.sj_tab_gz, params.output_bucket)
     }
