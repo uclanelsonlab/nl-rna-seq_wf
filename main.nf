@@ -33,5 +33,5 @@ workflow {
     // SAM to SJ
     BAM2SJ(SAMTOOLS_CRAM2SAM.out.rna_sam)
     // Uplaod SJ
-    // UP_SJ(BAM2SJ.out.sj_tab_gz, params.output_bucket)
+    UP_SJ(BAM2SJ.out.sj_tab_gz, params.output_bucket)
     }
