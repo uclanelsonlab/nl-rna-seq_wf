@@ -133,10 +133,10 @@ process samtools_cram {
     """
 }
 
-process SAMTOOLS_CRAM2BAM {
+process SAMTOOLS_CRAM2SAM {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 40
-    tag "Samtools view on $meta BAM to CRAM"
+    tag "Samtools view on $sample_name BAM to CRAM"
     publishDir params.outdir, mode:'symlink'
 
     input:
@@ -154,8 +154,7 @@ process SAMTOOLS_CRAM2BAM {
 
     script:
     """
-    samtools view -@ $task.cpus -T ${fasta} --input-fmt-option normal -o ${sample_name}.hg38_rna.normal.bam ${cram} 2> >(tee ${sample_name}.cram.log >&2)
-    samtools index -@ $task.cpus ${sample_name}.hg38_rna.normal.bam
+    samtools view -@ $task.cpus -T ${fasta} --input-fmt-option normal -o ${sample_name}.hg38_rna.normal.sam ${cram} 2> >(tee ${sample_name}.cram.log >&2)
 
     cat <<-END_VERSIONS > cram_versions.yml
     "${task.process}":
