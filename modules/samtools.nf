@@ -132,3 +132,37 @@ process samtools_cram {
     END_VERSIONS
     """
 }
+
+process SAMTOOLS_CRAM2BAM {
+    container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
+    cpus 40
+    tag "Samtools view on $meta BAM to CRAM"
+    publishDir params.outdir, mode:'symlink'
+
+    input:
+    tuple path(fasta), path(fai), path(dict)
+    tuple val(sample_name), path(cram), path(crai)
+    path versions
+
+    output:
+    tuple val(sample_name), path("*.hg38_rna.normal.bam"),       emit: rna_cram
+    tuple val(sample_name), path("*.hg38_rna.normal.bam.bai"),   emit: rna_crai
+    path '*.log',                                                emit: log
+    path "*versions.yml",                                        emit: versions
+    
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:
+    """
+     -o $PWD/bam/UDN816434-F-blood.hg19_rna.normal.bam $PWD/bam/UDN816434-F-blood.hg19_rna.normal.cram;
+
+    samtools view -@ $task.cpus -T ${fasta} --input-fmt-option normal -o ${sample_name}.hg38_rna.normal.bam ${cram} 2> >(tee ${sample_name}.cram.log >&2)
+    samtools index -@ $task.cpus ${sample_name}.hg38_rna.normal.bam
+
+    cat <<-END_VERSIONS > cram_versions.yml
+    "${task.process}":
+        samtools: \$(echo \$(samtools --version 2>&1) | awk '{print \$2}' )
+    END_VERSIONS
+    """
+}

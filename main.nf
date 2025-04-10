@@ -19,15 +19,15 @@ log.info """\
     .stripIndent(true)
 
 include { download_human_ref; DOWNLOAD_CRAM } from './modules/download_files.nf'
+include { SAMTOOLS_CRAM2BAM } from './modules/samtools.nf'
 
 
 workflow {
     // Download CRAM and reference files
     download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
     DOWNLOAD_CRAM(params.sample_name, params.cram, params.cram_crai)
-    // download_cram_ch = download_cram(params.cram, params.crai)
     // CRAM to BAM 
-
+    SAMTOOLS_CRAM2BAM(download_human_ref.out.human_ref)
     // BAM to SAM
     // SAM to SJ
     // Uplaod SJ
