@@ -6,7 +6,7 @@ params.cram_crai = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases/UDN01812
 params.human_fai = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa.fai"
 params.human_dict = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.dict"
 params.human_fasta = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa"
-params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases/UDN018129/UDN343710-S_fibroblast_rna/hg38/"
+params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases/UDN018129/UDN343710-S_fibroblast_rna/hg38"
 params.outdir = "results"
 
 log.info """\
