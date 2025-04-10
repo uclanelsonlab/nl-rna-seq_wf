@@ -1,5 +1,5 @@
 process MOSDEPTH_BED {
-    container "quay.io/biocontainers/mosdepth:0.3.3"
+    container "quay.io/biocontainers/mosdepth:0.3.10--h4e814b3_1"
     cpus 40
     tag "Mosdepth BED coverage"
     publishDir params.outdir, mode:'symlink'
