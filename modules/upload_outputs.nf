@@ -108,3 +108,31 @@ process upload_files {
     aws s3 cp ${fastp_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_versions}
     """
 }
+
+process UP_SJ {
+    tag "Upload SJ file"
+
+    input:
+    path sj_tab_gz
+    path global_dist
+    path region_dist
+    path summary
+    path perbase
+    path perbase_index
+    path regions_bed
+    path regions_bed_index
+    val output_bucket
+
+    script:
+
+    """
+    aws s3 cp ${sj_tab_gz} ${output_bucket}/bam2sj/${sj_tab_gz}
+    aws s3 cp ${global_dist} ${output_bucket}/mosdepth/${global_dist}
+    aws s3 cp ${region_dist} ${output_bucket}/mosdepth/${region_dist}
+    aws s3 cp ${summary} ${output_bucket}/mosdepth/${summary}
+    aws s3 cp ${perbase} ${output_bucket}/mosdepth/${perbase}
+    aws s3 cp ${perbase_index} ${output_bucket}/mosdepth/${perbase_index}
+    aws s3 cp ${regions_bed} ${output_bucket}/mosdepth/${regions_bed}
+    aws s3 cp ${regions_bed_index} ${output_bucket}/mosdepth/${regions_bed_index}
+    """
+}

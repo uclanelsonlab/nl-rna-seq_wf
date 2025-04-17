@@ -68,3 +68,18 @@ process download_human_ref {
     aws s3 cp ${dict} .
     """
 }
+
+process DOWNLOAD_BED {
+    label "download_bed"
+
+    input:
+    val bed
+
+    output:
+    path "*.bed", emit: bed
+
+    script:
+    """
+    aws s3 cp ${bed} .
+    """
+}

@@ -29,25 +29,28 @@ log.info """\
     """
     .stripIndent(true)
 
-include { download_fastqs; download_rna_ref as download_rrna; download_rna_ref as download_globinrna; download_human_ref; download_ir_ref } from './modules/download_files.nf'
+include { download_fastqs; download_rna_ref as download_rrna; download_rna_ref as download_globinrna; download_human_ref; download_ir_ref; DOWNLOAD_BED } from './modules/download_files.nf'
 include { run_fastp } from './modules/fastp.nf'
 include { filter_fastq } from './modules/filters.nf'
 include { bwa_mem as bwa_mem_rrna; bwa_mem as bwa_mem_globinrna } from './modules/bwa.nf'
 include { samtools_view as samtools_view_rrna; samtools_flagstat as samtools_flagstat_rrna; samtools_index; samtools_cram } from './modules/samtools.nf'
-include { samtools_view as samtools_view_globinrna; samtools_flagstat as samtools_flagstat_globinrna } from './modules/samtools.nf'
+include { samtools_view as samtools_view_globinrna; samtools_flagstat as samtools_flagstat_globinrna; SAMTOOLS_CRAM2SAM } from './modules/samtools.nf'
 include { check_star_reference; star_alignreads } from './modules/star.nf'
 include { run_markdup } from './modules/picard.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
 include { download_gencode as download_gencode_normal; download_gencode as download_gencode_collapse; subread_featurecounts } from './modules/subreads.nf'
 include { download_master_featureCounts; add_sample_counts_master; run_outrider } from './modules/outrider/main.nf'
 include { RNASEQC } from './modules/rnaseqc.nf'
-include { upload_files } from './modules/upload_outputs.nf'
+include { upload_files; UP_SJ } from './modules/upload_outputs.nf'
 include {IRFINDER } from './modules/irfinder.nf'
+include { BAM2SJ } from './modules/bam2sj/main.nf'
+include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
 
 workflow {
     download_fastqs_ch = download_fastqs(params.meta, params.library, params.fastq_bucket)
     download_rrna_ch = download_rrna(params.rib_reference_path, "rrna")
     download_globinrna_ch = download_globinrna(params.rib_reference_path, "globinrna")
+    DOWNLOAD_BED(params.bed)
 
     // contamination check
     fastp_ch = run_fastp(download_fastqs_ch)
@@ -84,6 +87,15 @@ workflow {
     ir_ref_ch = download_ir_ref(params.ir_ref)
     irfinder_ch = IRFINDER(ir_ref_ch, mark_dup_ch)
 
+    // Calculate XBP1 coverage
+    MOSDEPTH_BED(download_human_ref.out.human_ref, DOWNLOAD_BED.out.bed, cram_ch)
+    
+    // CRAM to SAM 
+    SAMTOOLS_CRAM2SAM(download_human_ref.out.human_ref, cram_ch)
+    
+    // SAM to SJ
+    BAM2SJ(SAMTOOLS_CRAM2SAM.out.rna_sam)
+    
     // Upload selected output files
     upload_files(
         params.sample_name, 
@@ -100,4 +112,17 @@ workflow {
         irfinder_ch,
         fastp_ch
     )
+
+    // Uplaod SJ
+    UP_SJ(
+        BAM2SJ.out.sj_tab_gz,
+        MOSDEPTH_BED.out.global_dist, 
+        MOSDEPTH_BED.out.region_dist, 
+        MOSDEPTH_BED.out.summary, 
+        MOSDEPTH_BED.out.perbase, 
+        MOSDEPTH_BED.out.perbase_index, 
+        MOSDEPTH_BED.out.regions_bed, 
+        MOSDEPTH_BED.out.regions_bed_index,
+        params.output_bucket
+        )
 }
