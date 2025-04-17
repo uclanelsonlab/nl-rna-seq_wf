@@ -142,7 +142,8 @@ process SAMTOOLS_CRAM2SAM {
     input:
     val fasta
     val fai
-    val dict    tuple val(meta), path(cram)
+    val dict    
+    tuple val(meta), path(cram)
     tuple val(meta2), path(crai)
     tuple val(meta3), path(cram_log)
     tuple val(meta4), path(cram_version)
