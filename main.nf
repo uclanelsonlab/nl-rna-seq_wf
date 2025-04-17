@@ -16,6 +16,7 @@ params.human_fasta = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode4
 params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases"
 params.features_master_file = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/drop/test/fibroblast/featureCounts_fibroblast_24-07-22.tsv"
 params.ir_ref = "s3://ucla-rare-diseases/UCLA-UDN/assets/IRFinder-1.3.1/REF/GRCh38.p13/"
+params.bed = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/rnaseq/hg38/XBP1-NM_001079539-hg38.bed"
 
 log.info """\
     R N A - S E Q _ W F   P I P E L I N E
