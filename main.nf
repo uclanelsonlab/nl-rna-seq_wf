@@ -89,10 +89,10 @@ workflow {
     irfinder_ch = IRFINDER(ir_ref_ch, mark_dup_ch)
 
     // Calculate XBP1 coverage
-    MOSDEPTH_BED(download_human_ref.out.human_ref, DOWNLOAD_BED.out.bed, cram_ch)
+    MOSDEPTH_BED(download_human_ref_ch, DOWNLOAD_BED.out.bed, cram_ch)
     
     // CRAM to SAM 
-    SAMTOOLS_CRAM2SAM(download_human_ref.out.human_ref, cram_ch)
+    SAMTOOLS_CRAM2SAM(download_human_ref_ch, cram_ch)
     
     // SAM to SJ
     BAM2SJ(SAMTOOLS_CRAM2SAM.out.rna_sam)

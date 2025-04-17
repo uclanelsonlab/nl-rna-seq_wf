@@ -5,8 +5,9 @@ process MOSDEPTH_BED {
     publishDir params.outdir, mode:'symlink'
 
     input:
-    tuple path(fasta), path(fai), path(dict)
-    path bed
+    val fasta
+    val fai
+    val dict    path bed
     tuple val(meta), path(cram)
     tuple val(meta2), path(crai)
     tuple val(meta3), path(cram_log)
