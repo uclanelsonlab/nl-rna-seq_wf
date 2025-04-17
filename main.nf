@@ -15,6 +15,7 @@ log.info """\
     ===================================
     sample_name         : ${params.sample_name}
     cram                : ${params.cram}
+    cram_crai           : ${params.cram_crai}
     bucket output       : ${params.output_bucket}
     """
     .stripIndent(true)

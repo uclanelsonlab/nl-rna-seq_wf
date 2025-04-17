@@ -1,6 +1,6 @@
 process MOSDEPTH_BED {
     container "quay.io/biocontainers/mosdepth:0.3.10--h4e814b3_1"
-    cpus 40
+    cpus 20
     tag "Mosdepth BED coverage"
     publishDir params.outdir, mode:'symlink'
 
@@ -25,6 +25,7 @@ process MOSDEPTH_BED {
 
     script:
     """
+    ls ${crai}
     mosdepth -t $task.cpus --by ${bed} -f ${fasta} ${sample_name}_mosdepth ${cram} 2> >(tee ${sample_name}.mosdepth.log >&2)
 
     cat <<-END_VERSIONS > cram_versions.yml
