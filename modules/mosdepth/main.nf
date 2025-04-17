@@ -7,7 +7,8 @@ process MOSDEPTH_BED {
     input:
     val fasta
     val fai
-    val dict    path bed
+    val dict    
+    path bed
     tuple val(meta), path(cram)
     tuple val(meta2), path(crai)
     tuple val(meta3), path(cram_log)
