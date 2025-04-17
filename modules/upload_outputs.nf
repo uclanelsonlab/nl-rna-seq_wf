@@ -48,7 +48,11 @@ process upload_files {
     tuple val(meta), path(irfinder_spans_point)
     path irfinder_log
     path irfinder_versions
-
+    tuple val(meta), path(fastp_reads)
+    tuple val(meta), path(fastp_json)
+    tuple val(meta), path(fastp_html)
+    tuple val(meta), path(fastp_log)
+    path fastp_versions
 
     script:
     def args = task.ext.args ?: ''
@@ -96,5 +100,11 @@ process upload_files {
     aws s3 cp ${irfinder_spans_point} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_spans_point}
     aws s3 cp ${irfinder_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_log}
     aws s3 cp ${irfinder_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_versions}
+    
+    aws s3 cp ${fastp_reads} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_reads}
+    aws s3 cp ${fastp_json} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_json}
+    aws s3 cp ${fastp_html} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_html}
+    aws s3 cp ${fastp_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_log}
+    aws s3 cp ${fastp_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_versions}
     """
 }

@@ -4,7 +4,7 @@ params.sample_name = 'NB-8204-M'
 params.library = "SN_7RNA_S-24-0479_XA044"
 params.proband = "SAMPLE"
 params.tissue = "fibroblast"
-meta = params.sample_name + "-" + params.tissue
+params.meta = params.sample_name + "-" + params.tissue
 params.fastq_bucket = "s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq"
 params.rib_reference_path = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference"
 params.gencode_gtf_path = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/gencode.v43.primary_assembly.annotation.gtf"
@@ -45,7 +45,7 @@ include { upload_files } from './modules/upload_outputs.nf'
 include {IRFINDER } from './modules/irfinder.nf'
 
 workflow {
-    download_fastqs_ch = download_fastqs(meta, params.library, params.fastq_bucket)
+    download_fastqs_ch = download_fastqs(params.meta, params.library, params.fastq_bucket)
     download_rrna_ch = download_rrna(params.rib_reference_path, "rrna")
     download_globinrna_ch = download_globinrna(params.rib_reference_path, "globinrna")
 
@@ -85,5 +85,19 @@ workflow {
     irfinder_ch = IRFINDER(ir_ref_ch, mark_dup_ch)
 
     // Upload selected output files
-    upload_files(params.sample_name, params.proband, params.tissue, params.output_bucket, rrna_samtools_flagstat_ch, globinrna_samtools_flagstat_ch, star_alignreads_ch, feature_counts_ch, outrider_table_ch, rnaseqc_ch, cram_ch, irfinder_ch)
+    upload_files(
+        params.sample_name, 
+        params.proband, 
+        params.tissue, 
+        params.output_bucket, 
+        rrna_samtools_flagstat_ch, 
+        globinrna_samtools_flagstat_ch, 
+        star_alignreads_ch, 
+        feature_counts_ch, 
+        outrider_table_ch, 
+        rnaseqc_ch, 
+        cram_ch, 
+        irfinder_ch,
+        fastp_ch
+    )
 }
