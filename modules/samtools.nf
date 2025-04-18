@@ -149,16 +149,16 @@ process SAMTOOLS_CRAM2SAM {
     tuple val(meta4), path(cram_version)
 
     output:
-    tuple val(meta), path("*.hg38_rna.normal.sam"),       emit: rna_sam
-    path '*.log',                                                emit: log
-    path "*versions.yml",                                        emit: versions
+    tuple val(meta), path("*.hg38_rna.normal.sam"),  emit: rna_sam
+    path '*.sam.log',                                emit: log
+    path "*versions.yml",                            emit: versions
     
     when:
     task.ext.when == null || task.ext.when
 
     script:
     """
-    samtools view -@ $task.cpus -T ${fasta} --input-fmt-option normal -o ${meta}.hg38_rna.normal.sam ${cram} 2> >(tee ${meta}.cram.log >&2)
+    samtools view -@ $task.cpus -T ${fasta} --input-fmt-option normal -o ${meta}.hg38_rna.normal.sam ${cram} 2> >(tee ${meta}.sam.log >&2)
 
     cat <<-END_VERSIONS > cram_versions.yml
     "${task.process}":
