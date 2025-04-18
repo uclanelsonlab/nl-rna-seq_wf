@@ -35,7 +35,7 @@ include { run_fastp } from './modules/fastp.nf'
 include { filter_fastq } from './modules/filters.nf'
 include { bwa_mem as bwa_mem_rrna; bwa_mem as bwa_mem_globinrna } from './modules/bwa.nf'
 include { samtools_view as samtools_view_rrna; samtools_flagstat as samtools_flagstat_rrna; samtools_index; samtools_cram } from './modules/samtools.nf'
-include { samtools_view as samtools_view_globinrna; samtools_flagstat as samtools_flagstat_globinrna; SAMTOOLS_CRAM2SAM } from './modules/samtools.nf'
+include { samtools_view as samtools_view_globinrna; samtools_flagstat as samtools_flagstat_globinrna; SAMTOOLS_BAM2SAM } from './modules/samtools.nf'
 include { check_star_reference; star_alignreads } from './modules/star.nf'
 include { run_markdup } from './modules/picard.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
@@ -92,10 +92,10 @@ workflow {
     MOSDEPTH_BED(download_human_ref_ch, DOWNLOAD_BED.out.bed, cram_ch)
     
     // CRAM to SAM 
-    SAMTOOLS_CRAM2SAM(download_human_ref_ch, cram_ch)
+    SAMTOOLS_BAM2SAM(download_human_ref_ch, mark_dup_ch)
     
     // SAM to SJ
-    BAM2SJ(SAMTOOLS_CRAM2SAM.out.rna_sam)
+    BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
     
     // Upload selected output files
     upload_files(
