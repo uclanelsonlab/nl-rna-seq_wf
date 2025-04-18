@@ -57,9 +57,9 @@ process star_alignreads {
     val reference
     val sjdb_overhang
     tuple val(meta), path(reads)
-    tuple val(meta), path(json)
-    tuple val(meta), path(html)
-    tuple val(meta), path(log)
+    tuple val(meta2), path(json)
+    tuple val(meta3), path(html)
+    tuple val(meta4), path(log)
     path versions
 
     output:
@@ -82,7 +82,7 @@ process star_alignreads {
     STAR --runMode alignReads --runThreadN $task.cpus --genomeDir ${reference} --twopassMode Basic --sjdbOverhang ${sjdb_overhang} --readFilesIn ${reads[0]} ${reads[1]} --readFilesCommand zcat --outFileNamePrefix ${meta}. --alignSoftClipAtReferenceEnds Yes --quantMode GeneCounts --outSAMtype BAM SortedByCoordinate --outBAMcompression -1 --outSAMunmapped Within --genomeLoad NoSharedMemory --outBAMsortingThreadN $task.cpus --outSAMattrRGline ID:rg1 SM:${prefix} PL:Illumina LB:${prefix} 2> >(tee ${prefix}.star.log >&2)
     
     echo -e "Gene\t${prefix}.Unstranded\t${prefix}.Antisense\t${prefix}.Sense" > tempgene_counts
-    tail -n 5 ${prefix}.ReadsPerGene.out.tab >> tempgene_counts
+    tail -n +5 ${prefix}.ReadsPerGene.out.tab >> tempgene_counts
     echo -e "Gene\t${prefix}.Unstranded\t${prefix}.Antisense\t${prefix}.Sense" > tempgene_stats
     head -n 4 ${prefix}.ReadsPerGene.out.tab >> tempgene_stats
     mv tempgene_counts ${prefix}.ReadsPerGene.out.tab

@@ -140,9 +140,9 @@ process SAMTOOLS_CRAM2SAM {
     publishDir params.outdir, mode:'symlink'
 
     input:
-    val fasta
-    val fai
-    val dict    
+    path fasta
+    path fai
+    path dict    
     tuple val(meta), path(cram)
     tuple val(meta2), path(crai)
     tuple val(meta3), path(cram_log)
