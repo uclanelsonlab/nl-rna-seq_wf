@@ -15,7 +15,7 @@ process BAM2SJ {
             echo "Erro: Script 'bam2sj.pl' não encontrado"
             exit 1
         fi
-    bam2sj.pl ${sam_view} > ${sample_name}.bam2SJ.out.tab
+    perl \$SCRIPT_PATH ${sam_view} > ${sample_name}.bam2SJ.out.tab
     gzip ${sample_name}.bam2SJ.out.tab
     """
 }
