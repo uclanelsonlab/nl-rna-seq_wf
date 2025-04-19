@@ -68,7 +68,6 @@ process upload_files {
     aws s3 cp ${final_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${final_log}
     aws s3 cp ${sj_tab} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${sj_tab}
     aws s3 cp ${star_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${star_log}
-    aws s3 cp ${star_bam} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${star_bam}
     aws s3 cp ${star_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/alignment/${star_versions}
     aws s3 cp ${gene_counts} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/counts/${gene_counts}
     aws s3 cp ${gene_counts_short} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/counts/${gene_counts_short}
