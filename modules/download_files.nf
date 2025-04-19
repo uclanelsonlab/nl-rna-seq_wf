@@ -11,7 +11,7 @@ process download_fastqs {
 
     script:
     """
-    aws s3 cp ${fastq_bucket}/${library}/ . --exclude "*" --recursive --include "${meta}*"
+    aws s3 cp ${fastq_bucket}/${library}/ . --exclude "*" --recursive --include "${meta}*" --force-glacier-transfer
     """
 }
 
