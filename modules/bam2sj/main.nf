@@ -10,6 +10,11 @@ process BAM2SJ {
 
     script:
     """
+    SCRIPT_PATH=\$(find ${projectDir} -name "bam2sj.pl" | head -n 1)
+        if [ -z "\$SCRIPT_PATH" ]; then
+            echo "Erro: Script 'bam2sj.pl' não encontrado"
+            exit 1
+        fi
     bam2sj.pl ${sam_view} > ${sample_name}.bam2SJ.out.tab
     gzip ${sample_name}.bam2SJ.out.tab
     """
