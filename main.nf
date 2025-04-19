@@ -82,33 +82,17 @@ workflow {
 
     // Create CRAM files
     download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
-    cram_ch = samtools_cram(
-        download_human_ref.out.human_fasta, 
-        download_human_ref.out.human_fai, 
-        download_human_ref.out.human_dict, 
-        mark_dup_ch
-    )
+    cram_ch = samtools_cram(download_human_ref.out.human_fasta, download_human_ref.out.human_fai, download_human_ref.out.human_dict, mark_dup_ch)
 
     // Run IRFinder
     ir_ref_ch = download_ir_ref(params.ir_ref)
     irfinder_ch = IRFINDER(ir_ref_ch, mark_dup_ch)
 
     // Calculate XBP1 coverage
-    DOWNLOAD_BED.out.bed.view()
-    MOSDEPTH_BED(
-        download_human_ref.out.human_fasta, 
-        download_human_ref.out.human_fai, 
-        download_human_ref.out.human_dict, 
-        DOWNLOAD_BED.out.bed, cram_ch
-    )
+    MOSDEPTH_BED(download_human_ref.out.human_fasta, download_human_ref.out.human_fai, download_human_ref.out.human_dict, DOWNLOAD_BED.out.bed, cram_ch)
     
     // CRAM to SAM 
-    SAMTOOLS_BAM2SAM(
-        download_human_ref.out.human_fasta, 
-        download_human_ref.out.human_fai, 
-        download_human_ref.out.human_dict, 
-        mark_dup_ch
-    )
+    SAMTOOLS_BAM2SAM(download_human_ref.out.human_fasta, download_human_ref.out.human_fai, download_human_ref.out.human_dict, mark_dup_ch)
     
     // SAM to SJ
     BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
@@ -141,5 +125,5 @@ workflow {
         MOSDEPTH_BED.out.regions_bed, 
         MOSDEPTH_BED.out.regions_bed_index,
         params.output_bucket
-        )
+    )
 }
