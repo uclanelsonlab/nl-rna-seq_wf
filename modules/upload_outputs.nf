@@ -101,7 +101,6 @@ process upload_files {
     aws s3 cp ${irfinder_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_log}
     aws s3 cp ${irfinder_versions} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/irfinder/${irfinder_versions}
     
-    aws s3 cp ${fastp_reads} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_reads}
     aws s3 cp ${fastp_json} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_json}
     aws s3 cp ${fastp_html} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_html}
     aws s3 cp ${fastp_log} ${output_bucket}/${proband}/${prefix}_${tissue}_rna/hg38/qc/${fastp_log}

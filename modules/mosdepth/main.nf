@@ -11,8 +11,8 @@ process MOSDEPTH_BED {
     path bed
     tuple val(meta), path(cram)
     tuple val(meta2), path(crai)
-    tuple val(meta3), path(cram_log)
-    tuple val(meta4), path(cram_version)
+    path cram_log
+    path cram_version
 
 
     output:
@@ -24,7 +24,7 @@ process MOSDEPTH_BED {
     path "*.regions.bed.gz",           emit: regions_bed
     path "*.regions.bed.gz.csi",       emit: regions_bed_index
     path '*.log',                      emit: log
-    path "*versions.yml",              emit: versions
+    path "mosdepth_versions.yml",              emit: versions
     
     when:
     task.ext.when == null || task.ext.when
@@ -32,9 +32,9 @@ process MOSDEPTH_BED {
     script:
     """
     ls ${crai}
-    mosdepth -t $task.cpus --by ${bed} -f ${fasta} ${meta}_mosdepth ${cram} 2> >(tee ${sample_name}.mosdepth.log >&2)
+    mosdepth -t $task.cpus --by ${bed} -f ${fasta} ${meta}_mosdepth ${cram} 2> >(tee ${meta}.mosdepth.log >&2)
 
-    cat <<-END_VERSIONS > cram_versions.yml
+    cat <<-END_VERSIONS > mosdepth_versions.yml
     "${task.process}":
         mosdepth: \$(echo \$(mosdepth --version 2>&1) | awk '{print \$2}' )
     END_VERSIONS
