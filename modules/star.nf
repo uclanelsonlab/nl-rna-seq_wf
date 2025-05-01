@@ -48,7 +48,7 @@ process check_star_reference {
 }
 
 process star_alignreads {
-    conda 'bioconda::star=2.6.0c'
+    container 'bioconda::star=2.6.0c'
     cpus 32
     publishDir params.outdir, mode:'symlink'
     tag "STAR alignReads on $meta"   
@@ -74,9 +74,9 @@ process star_alignreads {
     STAR --runMode alignReads --runThreadN $task.cpus --genomeDir ${reference} --twopassMode Basic --sjdbOverhang ${sjdb_overhang} --readFilesIn ${reads[0]} ${reads[1]} --readFilesCommand zcat --outFileNamePrefix ${meta}. --alignSoftClipAtReferenceEnds Yes --quantMode GeneCounts --outSAMtype BAM SortedByCoordinate --outBAMcompression -1 --outSAMunmapped Within --genomeLoad NoSharedMemory --outBAMsortingThreadN $task.cpus --outSAMattrRGline ID:rg1 SM:${meta} PL:Illumina LB:${meta}
     
     echo -e "Gene\t${meta}.Unstranded\t${meta}.Antisense\t${meta}.Sense" > tempgene_counts
-    tail -n +5 ${meta}.ReadsPerGene.out.tab >> tempgene_counts
+    tail -n 5 ${meta}.ReadsPerGene.out.tab >> tempgene_counts
     echo -e "Gene\t${meta}.Unstranded\t${meta}.Antisense\t${meta}.Sense" > tempgene_stats
-    head -n +4 ${meta}.ReadsPerGene.out.tab >> tempgene_stats
+    head -n 4 ${meta}.ReadsPerGene.out.tab >> tempgene_stats
     mv tempgene_counts ${meta}.ReadsPerGene.out.tab
     mv tempgene_stats ${meta}.ReadsPerGene.log.out
     gzip ${meta}.SJ.out.tab ${meta}.ReadsPerGene.out.tab
