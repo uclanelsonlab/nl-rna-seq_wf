@@ -50,8 +50,8 @@ workflow {
         BWA_MEM_GLOBINRNA(FILTER_FASTQ.out.reads, DOWNLOAD_GLOBINRNA.out.reference_dir, "human_globinRNA.fa", "globinrna") //globinrna_bwa_ch
         SAMTOOLS_VIEW_RRNA(BWA_MEM_RRNA.out.bwa_bam, "rrna") //rrna_SAMTOOLS_VIEW_ch
         SAMTOOLS_VIEW_GLOBINRNA(BWA_MEM_GLOBINRNA.out.bwa_bam, "globinrna") //globinrna_SAMTOOLS_VIEW_ch
-        // rrna_SAMTOOLS_FLAGSTAT_ch = SAMTOOLS_FLAGSTAT_RRNA(rrna_SAMTOOLS_VIEW_ch, "rrna")
-        // globinrna_SAMTOOLS_FLAGSTAT_ch = SAMTOOLS_FLAGSTAT_GLOBINRNA(globinrna_SAMTOOLS_VIEW_ch, "globinrna")
+        SAMTOOLS_FLAGSTAT_RRNA(SAMTOOLS_VIEW_RRNA.out.view_bam, "rrna") //rrna_SAMTOOLS_FLAGSTAT_ch
+        SAMTOOLS_FLAGSTAT_GLOBINRNA(SAMTOOLS_VIEW_GLOBINRNA.out.view_bam, "globinrna") //globinrna_SAMTOOLS_FLAGSTAT_ch
 
         // STAR alignment
         // star_index_ref_ch = check_star_reference(DOWNLOAD_FASTQS_ch)

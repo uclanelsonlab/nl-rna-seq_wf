@@ -35,8 +35,6 @@ process SAMTOOLS_FLAGSTAT {
 
     input:
     tuple val(meta), path(view_bam)
-    tuple val(meta2), path(log)
-    path versions
     val reference
 
     output:
