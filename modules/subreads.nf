@@ -1,5 +1,5 @@
 
-process download_gencode {
+process DOWNLOAD_GENCODE {
     tag "Download reference GTF file for subread featureCounts"
 
     input:
@@ -14,7 +14,7 @@ process download_gencode {
     """
 }
 
-process subread_featurecounts {
+process SUBREAD_FEATURECOUNTS {
     tag "Generate counts by gene using featureCounts"
     container "quay.io/biocontainers/subread:2.0.6--he4a0461_0"
     cpus 12
@@ -23,8 +23,6 @@ process subread_featurecounts {
     input:
     path gencode_pc
     tuple val(meta), path(bam)
-    tuple val(meta), path(log)
-    path(versions)
 
     output:
     tuple val(meta), path("*.gene_id.exon.ct"),             emit: gene_counts
@@ -37,7 +35,6 @@ process subread_featurecounts {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
