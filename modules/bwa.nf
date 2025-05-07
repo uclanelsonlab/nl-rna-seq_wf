@@ -1,4 +1,4 @@
-process bwa_mem {
+process BWA_MEM {
     container "biocontainers/bwa:v0.7.17_cv1"
     cpus 12
     tag "BWA mem on $reference for $meta"
@@ -18,7 +18,6 @@ process bwa_mem {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """

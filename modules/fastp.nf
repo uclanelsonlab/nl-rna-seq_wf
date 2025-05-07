@@ -1,4 +1,4 @@
-process run_fastp {
+process RUN_FASTP {
     container "quay.io/biocontainers/fastp:0.24.1--heae3180_0"
     cpus 36
     tag "Fastp on $meta"

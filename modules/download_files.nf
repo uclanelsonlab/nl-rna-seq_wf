@@ -1,4 +1,4 @@
-process download_fastqs {
+process DOWNLOAD_FASTQS {
     tag "Download ${meta} FASTQ files"
 
     input:
@@ -15,7 +15,7 @@ process download_fastqs {
     """
 }
 
-process download_rna_ref {
+process DOWNLOAD_RNA_REF {
     tag "Download rna reference files"
 
     input:
@@ -23,7 +23,7 @@ process download_rna_ref {
     val type
 
     output:
-    path "${type}_reference", emit: rrna_reference_dir
+    path "${type}_reference", emit: reference_dir
 
     script:
     """
@@ -32,7 +32,7 @@ process download_rna_ref {
     """
 }
 
-process download_ir_ref {
+process DOWNLOAD_IR_REF {
     tag "Download IRFinder reference files"
 
     input:
@@ -48,7 +48,7 @@ process download_ir_ref {
     """
 }
 
-process download_human_ref {
+process DOWNLOAD_HUMAN_REF {
     tag "Download rna reference files"
 
     input:

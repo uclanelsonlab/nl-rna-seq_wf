@@ -5,12 +5,7 @@ process SAMBAMBA_MARKDUP {
     publishDir params.outdir, mode:'symlink'
 
     input:
-    tuple val(meta), path(reads_gene)
-    tuple val(meta), path(reads_gene_log)
-    tuple val(meta), path(final_log)
-    tuple val(meta), path(sj_tab)
     tuple val(meta), path(bam)
-    tuple val(meta), path(log)
     path versions
 
     output:
@@ -22,7 +17,6 @@ process SAMBAMBA_MARKDUP {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
