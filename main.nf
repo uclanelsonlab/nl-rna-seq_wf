@@ -47,7 +47,7 @@ workflow {
         RUN_FASTP(DOWNLOAD_FASTQS.out.reads) //fastp_ch
         FILTER_FASTQ(RUN_FASTP.out.reads) //filtered_fastq_ch
         BWA_MEM_RRNA(FILTER_FASTQ.out.reads, DOWNLOAD_RRNA.out.reference_dir, "human_rRNA_strict.fasta", "rrna") //rrna_bwa_ch
-        // globinrna_bwa_ch = BWA_MEM_GLOBINRNA(filtered_fastq_ch, DOWNLOAD_GLOBINRNA_ch, "human_globinRNA.fa", "globinrna")
+        BWA_MEM_GLOBINRNA(FILTER_FASTQ.out.reads, DOWNLOAD_GLOBINRNA.out.reference_dir, "human_globinRNA.fa", "globinrna") //globinrna_bwa_ch
         // rrna_samtools_view_ch = SAMTOOLS_VIEW_RRNA(rrna_bwa_ch, "rrna")
         // globinrna_samtools_view_ch = SAMTOOLS_VIEW_GLOBINRNA(globinrna_bwa_ch, "globinrna")
         // rrna_samtools_flagstat_ch = SAMTOOLS_FLAGSTAT_RRNA(rrna_samtools_view_ch, "rrna")
