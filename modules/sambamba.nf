@@ -6,7 +6,6 @@ process SAMBAMBA_MARKDUP {
 
     input:
     tuple val(meta), path(bam)
-    path versions
 
     output:
     tuple val(meta), path("*.markdup.bam"), emit: marked_bam

@@ -16,7 +16,10 @@ include {
     DOWNLOAD_FASTQS; 
     DOWNLOAD_RNA_REF as DOWNLOAD_RRNA; 
     DOWNLOAD_RNA_REF as DOWNLOAD_GLOBINRNA; 
-    DOWNLOAD_HUMAN_REF; DOWNLOAD_IR_REF; DOWNLOAD_BED } from './modules/download_files.nf'
+    DOWNLOAD_HUMAN_REF; 
+    DOWNLOAD_IR_REF; 
+    DOWNLOAD_BED;
+    DOWNLOAD_CRAM } from './modules/download_files.nf'
 include { RUN_FASTP } from './modules/fastp.nf'
 include { FILTER_FASTQ } from './modules/filters.nf'
 include { BWA_MEM as BWA_MEM_RRNA; BWA_MEM as BWA_MEM_GLOBINRNA } from './modules/bwa.nf'
@@ -40,7 +43,11 @@ workflow {
     
     if (params.use_cram) {
         // download cram 
+        DOWNLOAD_CRAM(params.cram)
+        // CRAM to BAM
+        
         // transform it to BAM to be mark_dup_ch
+        // SAMBAMBA_MARKDUP()
     } else {
         DOWNLOAD_FASTQS(params.meta, params.library, params.fastq_bucket) //DOWNLOAD_FASTQS_ch
         // contamination check
@@ -59,8 +66,8 @@ workflow {
             CHECK_STAR_REF.out.star_index,
             CHECK_STAR_REF.out.sjdb_overhang,
             RUN_FASTP.out.reads) //STAR_ALIGNREADS_ch
-        // SAMTOOLS_INDEX(STAR_ALIGNREADS.out.star_bam)
-        // SAMBAMBA_MARKDUP(STAR_ALIGNREADS.out.star_bam) //mark_dup_ch
+        SAMTOOLS_INDEX(STAR_ALIGNREADS.out.star_bam)
+        SAMBAMBA_MARKDUP(STAR_ALIGNREADS.out.star_bam) //mark_dup_ch
     }
 
     

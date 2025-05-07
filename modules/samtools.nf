@@ -45,7 +45,6 @@ process SAMTOOLS_FLAGSTAT {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
@@ -64,13 +63,7 @@ process SAMTOOLS_INDEX {
     tag "Samtools index on $bam"
 
     input:
-    tuple val(meta), path(reads_gene)
-    tuple val(meta2), path(reads_gene_log)
-    tuple val(meta3), path(final_log)
-    tuple val(meta4), path(sj_tab)
-    tuple val(meta5), path(bam)
-    tuple val(meta6), path(log)
-    path versions
+    tuple val(meta), path(bam)
 
     output:
     tuple val(meta), path("*.bai"), emit: bam_index
@@ -114,7 +107,6 @@ process SAMTOOLS_CRAM {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
@@ -131,7 +123,40 @@ process SAMTOOLS_CRAM {
 process SAMTOOLS_BAM2SAM {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 40
-    tag "Samtools view on $meta CRAM to SAM"
+    tag "Samtools view on $meta BAM to SAM"
+    publishDir params.outdir, mode:'symlink'
+
+    input:
+    path fasta
+    path fai
+    path dict    
+    tuple val(meta), path(bam)
+    tuple val(meta2), path(log)
+    path versions
+
+    output:
+    tuple val(meta), path("*.hg38_rna.normal.sam"),  emit: rna_sam
+    path '*.sam.log',                                emit: log
+    path "*versions.yml",                            emit: versions
+    
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:
+    """
+    samtools view -@ $task.cpus -h -o ${meta}.hg38_rna.normal.sam ${bam} 2> >(tee ${meta}.sam.log >&2)
+
+    cat <<-END_VERSIONS > cram_versions.yml
+    "${task.process}":
+        samtools: \$(echo \$(samtools --version 2>&1) | awk '{print \$2}' )
+    END_VERSIONS
+    """
+}
+
+process SAMTOOLS_CRAM2BAM {
+    container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
+    cpus 40
+    tag "Samtools view on $meta CRAM to BAM"
     publishDir params.outdir, mode:'symlink'
 
     input:

@@ -83,3 +83,18 @@ process DOWNLOAD_BED {
     aws s3 cp ${bed} .
     """
 }
+
+process DOWNLOAD_CRAM {
+    label "download_cram"
+
+    input:
+    val cram
+
+    output:
+    path "*.cram", emit: cram
+
+    script:
+    """
+    aws s3 cp ${cram} .
+    """
+}
