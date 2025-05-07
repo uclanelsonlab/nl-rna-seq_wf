@@ -12,7 +12,7 @@ process BWA_MEM {
     output:
     tuple val(meta), path("*.bwa.bam"), emit: bwa_bam
     tuple val(meta), path('*.log'),     emit: log
-    path "*versions.yml",                emit: versions
+    path "*versions.yml",               emit: versions
     
     when:
     task.ext.when == null || task.ext.when

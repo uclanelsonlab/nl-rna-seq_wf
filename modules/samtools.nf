@@ -1,12 +1,10 @@
-process samtools_view {
+process SAMTOOLS_VIEW {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 20
     tag "Samtools view on $meta"
 
     input:
     tuple val(meta), path(bwa_bam)
-    tuple val(meta2), path(log)
-    path versions
     val reference
 
     output:
@@ -18,7 +16,6 @@ process samtools_view {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
@@ -31,7 +28,7 @@ process samtools_view {
     """
 }
 
-process samtools_flagstat {
+process SAMTOOLS_FLAGSTAT {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     tag "Samtools flagstat on $meta"
     publishDir params.outdir, mode:'symlink'
@@ -63,7 +60,7 @@ process samtools_flagstat {
     """
 }
 
-process samtools_index {
+process SAMTOOLS_INDEX {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 20
     tag "Samtools index on $bam"
@@ -95,7 +92,7 @@ process samtools_index {
     """
 }
 
-process samtools_cram {
+process SAMTOOLS_CRAM {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 40
     tag "Samtools view on $meta BAM to CRAM"
