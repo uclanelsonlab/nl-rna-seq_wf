@@ -23,12 +23,23 @@ include {
 include { RUN_FASTP } from './modules/fastp.nf'
 include { FILTER_FASTQ } from './modules/filters.nf'
 include { BWA_MEM as BWA_MEM_RRNA; BWA_MEM as BWA_MEM_GLOBINRNA } from './modules/bwa.nf'
-include { SAMTOOLS_VIEW as SAMTOOLS_VIEW_RRNA; SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_RRNA; SAMTOOLS_INDEX; SAMTOOLS_CRAM } from './modules/samtools.nf'
-include { SAMTOOLS_VIEW as SAMTOOLS_VIEW_GLOBINRNA; SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA; SAMTOOLS_BAM2SAM } from './modules/samtools.nf'
+include { 
+    SAMTOOLS_VIEW as SAMTOOLS_VIEW_RRNA; 
+    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_RRNA; 
+    SAMTOOLS_INDEX; 
+    SAMTOOLS_CRAM;; 
+    SAMTOOLS_BAM2SAM;
+    SAMTOOLS_CRAM2BAM } from './modules/samtools.nf'
+include { 
+    SAMTOOLS_VIEW as SAMTOOLS_VIEW_GLOBINRNA; 
+    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA } from './modules/samtools.nf'
 include { CHECK_STAR_REF; STAR_ALIGNREADS } from './modules/star.nf'
 include { run_markdup } from './modules/picard.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
-include { download_gencode as DOWNLOAD_GENCODE_NORMAL; download_gencode as DOWNLOAD_GENCODE_COLLAPSE; subread_featurecounts } from './modules/subreads.nf'
+include { 
+    DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_NORMAL; 
+    DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_COLLAPSE; 
+    SUBREAD_FEATURECOUNTS } from './modules/subreads.nf'
 include { download_master_featureCounts; add_sample_counts_master; run_outrider } from './modules/outrider/main.nf'
 include { RNASEQC } from './modules/rnaseqc.nf'
 include { upload_files; UP_SJ } from './modules/upload_outputs.nf'
@@ -39,15 +50,21 @@ include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
 workflow {
     DOWNLOAD_RRNA(params.rib_reference_path, "rrna") //DOWNLOAD_RRNA_ch
     DOWNLOAD_GLOBINRNA(params.rib_reference_path, "globinrna") //DOWNLOAD_GLOBINRNA_ch
+    DOWNLOAD_HUMAN_REF(params.human_fasta, params.human_fai, params.human_dict)
     DOWNLOAD_BED(params.bed)
+    
     
     if (params.use_cram) {
         // download cram 
-        DOWNLOAD_CRAM(params.cram)
+        DOWNLOAD_CRAM(params.meta, params.cram)
         // CRAM to BAM
-        
+        SAMTOOLS_CRAM2BAM(
+            DOWNLOAD_HUMAN_REF.out.human_fasta,
+            DOWNLOAD_HUMAN_REF.out.human_fai,
+            DOWNLOAD_HUMAN_REF.out.human_dict,
+            DOWNLOAD_CRAM.out.cram)
         // transform it to BAM to be mark_dup_ch
-        // SAMBAMBA_MARKDUP()
+        SAMBAMBA_MARKDUP(SAMTOOLS_CRAM2BAM.out.bam)
     } else {
         DOWNLOAD_FASTQS(params.meta, params.library, params.fastq_bucket) //DOWNLOAD_FASTQS_ch
         // contamination check
@@ -73,8 +90,10 @@ workflow {
     
 
     // Create counts by gene
-    // gencode_pc_ch = DOWNLOAD_GENCODE_NORMAL(params.gencode_gtf_path)
-    // feature_counts_ch = subread_featurecounts(gencode_pc_ch, mark_dup_ch)
+    DOWNLOAD_GENCODE_NORMAL(params.gencode_gtf_path) //gencode_pc_ch
+    SUBREAD_FEATURECOUNTS(
+        DOWNLOAD_GENCODE_NORMAL.out.gencode_gtf, 
+        SAMBAMBA_MARKDUP.out.marked_bam) //feature_counts_ch
     // featurecounts_master_ch = download_master_featureCounts(params.features_master_file)
     // featurecounts_updated_ch = add_sample_counts_master(featurecounts_master_ch, feature_counts_ch)
     // outrider_table_ch = run_outrider(featurecounts_updated_ch, params.tissue)
@@ -84,7 +103,6 @@ workflow {
     // rnaseqc_ch = RNASEQC(gencode_collapse_ch, mark_dup_ch)
 
     // Create CRAM files
-    // DOWNLOAD_HUMAN_REF(params.human_fasta, params.human_fai, params.human_dict)
     // cram_ch = SAMTOOLS_CRAM(DOWNLOAD_HUMAN_REF.out.human_fasta, DOWNLOAD_HUMAN_REF.out.human_fai, DOWNLOAD_HUMAN_REF.out.human_dict, mark_dup_ch)
 
     // Run IRFinder

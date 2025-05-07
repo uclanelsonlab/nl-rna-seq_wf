@@ -88,10 +88,11 @@ process DOWNLOAD_CRAM {
     label "download_cram"
 
     input:
+    val meta
     val cram
 
     output:
-    path "*.cram", emit: cram
+    tuple val(meta), path("*.cram"), emit: cram
 
     script:
     """
