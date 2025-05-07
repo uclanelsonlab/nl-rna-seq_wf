@@ -22,7 +22,7 @@ include { FILTER_FASTQ } from './modules/filters.nf'
 include { BWA_MEM as BWA_MEM_RRNA; BWA_MEM as BWA_MEM_GLOBINRNA } from './modules/bwa.nf'
 include { SAMTOOLS_VIEW as SAMTOOLS_VIEW_RRNA; SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_RRNA; SAMTOOLS_INDEX; SAMTOOLS_CRAM } from './modules/samtools.nf'
 include { SAMTOOLS_VIEW as SAMTOOLS_VIEW_GLOBINRNA; SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA; SAMTOOLS_BAM2SAM } from './modules/samtools.nf'
-include { check_star_reference; star_alignreads } from './modules/star.nf'
+include { CHECK_STAR_REF; STAR_ALIGNREADS } from './modules/star.nf'
 include { run_markdup } from './modules/picard.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
 include { download_gencode as DOWNLOAD_GENCODE_NORMAL; download_gencode as DOWNLOAD_GENCODE_COLLAPSE; subread_featurecounts } from './modules/subreads.nf'
@@ -54,10 +54,13 @@ workflow {
         SAMTOOLS_FLAGSTAT_GLOBINRNA(SAMTOOLS_VIEW_GLOBINRNA.out.view_bam, "globinrna") //globinrna_SAMTOOLS_FLAGSTAT_ch
 
         // STAR alignment
-        // star_index_ref_ch = check_star_reference(DOWNLOAD_FASTQS_ch)
-        // star_alignreads(star_index_ref_ch, fastp_ch) //star_alignreads_ch
-        // SAMTOOLS_INDEX(star_alignreads.out.star_bam)
-        // SAMBAMBA_MARKDUP(star_alignreads.out.star_bam) //mark_dup_ch
+        CHECK_STAR_REF(DOWNLOAD_FASTQS.out.reads) //star_index_ref_ch
+        STAR_ALIGNREADS(
+            CHECK_STAR_REF.out.star_index,
+            CHECK_STAR_REF.out.sjdb_overhang,
+            RUN_FASTP.out.reads) //STAR_ALIGNREADS_ch
+        // SAMTOOLS_INDEX(STAR_ALIGNREADS.out.star_bam)
+        // SAMBAMBA_MARKDUP(STAR_ALIGNREADS.out.star_bam) //mark_dup_ch
     }
 
     
@@ -98,7 +101,7 @@ workflow {
     //     params.output_bucket, 
     //     rrna_SAMTOOLS_FLAGSTAT_ch, 
     //     globinrna_SAMTOOLS_FLAGSTAT_ch, 
-    //     star_alignreads_ch, 
+    //     STAR_ALIGNREADS_ch, 
     //     feature_counts_ch, 
     //     outrider_table_ch, 
     //     rnaseqc_ch, 
