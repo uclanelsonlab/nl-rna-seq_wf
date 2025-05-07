@@ -20,8 +20,8 @@ include {
 include { RUN_FASTP } from './modules/fastp.nf'
 include { FILTER_FASTQ } from './modules/filters.nf'
 include { BWA_MEM as BWA_MEM_RRNA; BWA_MEM as BWA_MEM_GLOBINRNA } from './modules/bwa.nf'
-include { samtools_view as SAMTOOLS_VIEW_RRNA; samtools_flagstat as SAMTOOLS_FLAGSTAT_RRNA; samtools_index; samtools_cram } from './modules/samtools.nf'
-include { samtools_view as SAMTOOLS_VIEW_GLOBINRNA; samtools_flagstat as SAMTOOLS_FLAGSTAT_GLOBINRNA; SAMTOOLS_BAM2SAM } from './modules/samtools.nf'
+include { SAMTOOLS_VIEW as SAMTOOLS_VIEW_RRNA; SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_RRNA; SAMTOOLS_INDEX; SAMTOOLS_CRAM } from './modules/samtools.nf'
+include { SAMTOOLS_VIEW as SAMTOOLS_VIEW_GLOBINRNA; SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA; SAMTOOLS_BAM2SAM } from './modules/samtools.nf'
 include { check_star_reference; star_alignreads } from './modules/star.nf'
 include { run_markdup } from './modules/picard.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
@@ -48,15 +48,15 @@ workflow {
         FILTER_FASTQ(RUN_FASTP.out.reads) //filtered_fastq_ch
         BWA_MEM_RRNA(FILTER_FASTQ.out.reads, DOWNLOAD_RRNA.out.reference_dir, "human_rRNA_strict.fasta", "rrna") //rrna_bwa_ch
         BWA_MEM_GLOBINRNA(FILTER_FASTQ.out.reads, DOWNLOAD_GLOBINRNA.out.reference_dir, "human_globinRNA.fa", "globinrna") //globinrna_bwa_ch
-        // rrna_samtools_view_ch = SAMTOOLS_VIEW_RRNA(rrna_bwa_ch, "rrna")
-        // globinrna_samtools_view_ch = SAMTOOLS_VIEW_GLOBINRNA(globinrna_bwa_ch, "globinrna")
-        // rrna_samtools_flagstat_ch = SAMTOOLS_FLAGSTAT_RRNA(rrna_samtools_view_ch, "rrna")
-        // globinrna_samtools_flagstat_ch = SAMTOOLS_FLAGSTAT_GLOBINRNA(globinrna_samtools_view_ch, "globinrna")
+        SAMTOOLS_VIEW_RRNA(BWA_MEM_RRNA.out.bwa_bam, "rrna") //rrna_SAMTOOLS_VIEW_ch
+        SAMTOOLS_VIEW_GLOBINRNA(BWA_MEM_GLOBINRNA.out.bwa_bam, "globinrna") //globinrna_SAMTOOLS_VIEW_ch
+        // rrna_SAMTOOLS_FLAGSTAT_ch = SAMTOOLS_FLAGSTAT_RRNA(rrna_SAMTOOLS_VIEW_ch, "rrna")
+        // globinrna_SAMTOOLS_FLAGSTAT_ch = SAMTOOLS_FLAGSTAT_GLOBINRNA(globinrna_SAMTOOLS_VIEW_ch, "globinrna")
 
         // STAR alignment
         // star_index_ref_ch = check_star_reference(DOWNLOAD_FASTQS_ch)
         // star_alignreads(star_index_ref_ch, fastp_ch) //star_alignreads_ch
-        // samtools_index(star_alignreads.out.star_bam)
+        // SAMTOOLS_INDEX(star_alignreads.out.star_bam)
         // SAMBAMBA_MARKDUP(star_alignreads.out.star_bam) //mark_dup_ch
     }
 
@@ -75,7 +75,7 @@ workflow {
 
     // Create CRAM files
     // DOWNLOAD_HUMAN_REF(params.human_fasta, params.human_fai, params.human_dict)
-    // cram_ch = samtools_cram(DOWNLOAD_HUMAN_REF.out.human_fasta, DOWNLOAD_HUMAN_REF.out.human_fai, DOWNLOAD_HUMAN_REF.out.human_dict, mark_dup_ch)
+    // cram_ch = SAMTOOLS_CRAM(DOWNLOAD_HUMAN_REF.out.human_fasta, DOWNLOAD_HUMAN_REF.out.human_fai, DOWNLOAD_HUMAN_REF.out.human_dict, mark_dup_ch)
 
     // Run IRFinder
     // ir_ref_ch = DOWNLOAD_IR_REF(params.ir_ref)
@@ -96,8 +96,8 @@ workflow {
     //     params.proband, 
     //     params.tissue, 
     //     params.output_bucket, 
-    //     rrna_samtools_flagstat_ch, 
-    //     globinrna_samtools_flagstat_ch, 
+    //     rrna_SAMTOOLS_FLAGSTAT_ch, 
+    //     globinrna_SAMTOOLS_FLAGSTAT_ch, 
     //     star_alignreads_ch, 
     //     feature_counts_ch, 
     //     outrider_table_ch, 
