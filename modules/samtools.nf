@@ -142,7 +142,7 @@ process SAMTOOLS_BAM2SAM {
     """
     samtools view -@ $task.cpus -h -o ${meta}.hg38_rna.normal.sam ${bam} 2> >(tee ${meta}.sam.log >&2)
 
-    cat <<-END_VERSIONS > cram_versions.yml
+    cat <<-END_VERSIONS > bam2sam_versions.yml
     "${task.process}":
         samtools: \$(echo \$(samtools --version 2>&1) | awk '{print \$2}' )
     END_VERSIONS
