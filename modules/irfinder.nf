@@ -7,8 +7,6 @@ process IRFINDER {
     input:
     path ir_reference_dir
     tuple val(meta), path(bam)
-    tuple val(meta), path(log)
-    path versions
 
     output:
     tuple val(meta), path("*IRFinder-ChrCoverage.txt"),   emit: irfinder_chr_coverage  
