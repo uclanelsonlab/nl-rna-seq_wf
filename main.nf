@@ -141,21 +141,22 @@ workflow {
     BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
     
     // Upload selected output files
-    // upload_files(
-    //     params.sample_name, 
-    //     params.proband, 
-    //     params.tissue, 
-    //     params.output_bucket, 
-    //     rrna_SAMTOOLS_FLAGSTAT_ch, 
-    //     globinrna_SAMTOOLS_FLAGSTAT_ch, 
-    //     STAR_ALIGNREADS_ch, 
-    //     feature_counts_ch, 
-    //     outrider_table_ch, 
-    //     rnaseqc_ch, 
-    //     cram_ch, 
-    //     irfinder_ch,
-    //     fastp_ch
-    // )
+    upload_files(
+        params.sample_name, 
+        params.proband, 
+        params.tissue, 
+        params.output_bucket,
+        RUN_FASTP.out.json, RUN_FASTP.out.html, RUN_FASTP.out.log, RUN_FASTP.out.versions, //fastp
+        SAMTOOLS_FLAGSTAT_RRNA.out.flagstat_file, SAMTOOLS_FLAGSTAT_RRNA.out.versions, //flagstat_rrna
+        SAMTOOLS_FLAGSTAT_GLOBINRNA.out.flagstat_file, SAMTOOLS_FLAGSTAT_GLOBINRNA.out.versions, //flagstat_globinrna
+        STAR_ALIGNREADS.out.reads_gene, STAR_ALIGNREADS.out.reads_gene_log, STAR_ALIGNREADS.out.final_log, STAR_ALIGNREADS.out.sj_tab, STAR_ALIGNREADS.out.log, STAR_ALIGNREADS.out.versions, //star
+        SAMBAMBA_MARKDUP.out.log, SAMBAMBA_MARKDUP.out.versions, //sambamba
+        SUBREAD_FEATURECOUNTS.out.gene_counts, SUBREAD_FEATURECOUNTS.out.gene_counts_short, SUBREAD_FEATURECOUNTS.out.gene_counts_summary, SUBREAD_FEATURECOUNTS.out.log, SUBREAD_FEATURECOUNTS.out.versions, //featurecounts
+        RNASEQC.out.coverage, RNASEQC.out.exon_cv, RNASEQC.out.exon_reads, RNASEQC.out.gene_fragments, RNASEQC.out.gene_reads, RNASEQC.out.gene_tpm, RNASEQC.out.metrics, RNASEQC.out.log, RNASEQC.out.versions, //rnaseqc
+        SAMTOOLS_CRAM.out.rna_cram, SAMTOOLS_CRAM.out.rna_crai, SAMTOOLS_CRAM.out.log, SAMTOOLS_CRAM.out.versions, //cram
+        IRFINDER.out.irfinder_chr_coverage, IRFINDER.out.irfinder_dir_val, IRFINDER.out.irfinder_dir, IRFINDER.out.irfinder_nondir_val, IRFINDER.out.irfinder_nondir, IRFINDER.out.irfinder_junc_count, IRFINDER.out.irfinder_roi, IRFINDER.out.irfinder_spans_point, IRFINDER.out.log, IRFINDER.out.versions, //irfinder
+        SAMTOOLS_BAM2SAM.out.log, SAMTOOLS_BAM2SAM.out.versions, //sam
+    )
 
     // Uplaod SJ
     UP_SJ(
