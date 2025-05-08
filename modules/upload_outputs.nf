@@ -51,6 +51,15 @@ process UPLOAD_FILES {
     path irfinder_versions
     path bam2sam_log
     path bam2sam_versions
+    path sj_tab_gz
+    path global_dist
+    path region_dist
+    path summary
+    path perbase
+    path perbase_index
+    path regions_bed
+    path regions_bed_index
+    val output_bucket
 
     script:
     """
@@ -104,26 +113,6 @@ process UPLOAD_FILES {
     aws s3 cp ${irfinder_spans_point} ${output_bucket}/${family_id}/${bucket_dir}/hg38/irfinder/${irfinder_spans_point}
     aws s3 cp ${irfinder_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/irfinder/${irfinder_log}
     aws s3 cp ${irfinder_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/irfinder/${irfinder_versions}
-    """
-}
-
-process UP_SJ {
-    tag "Upload SJ file"
-
-    input:
-    path sj_tab_gz
-    path global_dist
-    path region_dist
-    path summary
-    path perbase
-    path perbase_index
-    path regions_bed
-    path regions_bed_index
-    val output_bucket
-
-    script:
-
-    """
     aws s3 cp ${sj_tab_gz} ${output_bucket}/bam2sj/${sj_tab_gz}
     aws s3 cp ${global_dist} ${output_bucket}/mosdepth/${global_dist}
     aws s3 cp ${region_dist} ${output_bucket}/mosdepth/${region_dist}

@@ -56,7 +56,6 @@ workflow {
     DOWNLOAD_HUMAN_REF(params.human_fasta, params.human_fai, params.human_dict)
     DOWNLOAD_BED(params.bed)
     
-    
     if (params.use_cram) {
         // download cram 
         DOWNLOAD_CRAM(params.prefix, params.cram)
@@ -157,10 +156,6 @@ workflow {
         SAMTOOLS_CRAM.out.rna_cram, SAMTOOLS_CRAM.out.rna_crai, SAMTOOLS_CRAM.out.log, SAMTOOLS_CRAM.out.versions, //cram
         IRFINDER.out.irfinder_chr_coverage, IRFINDER.out.irfinder_dir_val, IRFINDER.out.irfinder_dir, IRFINDER.out.irfinder_nondir_val, IRFINDER.out.irfinder_nondir, IRFINDER.out.irfinder_junc_count, IRFINDER.out.irfinder_roi, IRFINDER.out.irfinder_spans_point, IRFINDER.out.log, IRFINDER.out.versions, //irfinder
         SAMTOOLS_BAM2SAM.out.log, SAMTOOLS_BAM2SAM.out.versions, //sam
-    )
-
-    // Uplaod SJ
-    UP_SJ(
         BAM2SJ.out.sj_tab_gz,
         MOSDEPTH_BED.out.global_dist, 
         MOSDEPTH_BED.out.region_dist, 
