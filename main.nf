@@ -12,30 +12,20 @@ log.info """\
     """
     .stripIndent(true)
 
-include { 
-    DOWNLOAD_FASTQS; 
-    DOWNLOAD_RNA_REF as DOWNLOAD_RRNA; 
-    DOWNLOAD_RNA_REF as DOWNLOAD_GLOBINRNA; 
-    DOWNLOAD_HUMAN_REF; 
-    DOWNLOAD_IR_REF; 
-    DOWNLOAD_BED;
-    DOWNLOAD_CRAM } from './modules/download_files.nf'
+include { RNASEQC } from './modules/rnaseqc.nf'
+include { UPLOAD_FILES; UP_SJ } from './modules/upload_outputs.nf'
+include { IRFINDER } from './modules/irfinder.nf'
+include { BAM2SJ } from './modules/bam2sj/main.nf'
+include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
 include { RUN_FASTP } from './modules/fastp.nf'
 include { FILTER_FASTQ } from './modules/filters.nf'
-include { BWA_MEM as BWA_MEM_RRNA; BWA_MEM as BWA_MEM_GLOBINRNA } from './modules/bwa.nf'
-include { 
-    SAMTOOLS_VIEW as SAMTOOLS_VIEW_RRNA; 
-    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_RRNA; 
-    SAMTOOLS_INDEX; 
-    SAMTOOLS_CRAM;; 
-    SAMTOOLS_BAM2SAM;
-    SAMTOOLS_CRAM2BAM } from './modules/samtools.nf'
-include { 
-    SAMTOOLS_VIEW as SAMTOOLS_VIEW_GLOBINRNA; 
-    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA } from './modules/samtools.nf'
 include { CHECK_STAR_REF; STAR_ALIGNREADS } from './modules/star.nf'
 include { run_markdup } from './modules/picard.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
+include { BWA_MEM as BWA_MEM_RRNA; BWA_MEM as BWA_MEM_GLOBINRNA } from './modules/bwa.nf'
+include { 
+    SAMTOOLS_VIEW as SAMTOOLS_VIEW_GLOBINRNA; 
+    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA } from './modules/samtools.nf'
 include { 
     DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_NORMAL; 
     DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_COLLAPSE; 
@@ -44,11 +34,21 @@ include {
     DOWNLOAD_MASTER_FEATURECOUNTS; 
     ADD_SAMPLE_COUNTS_MASTER; 
     RUN_OUTRIDER } from './modules/outrider/main.nf'
-include { RNASEQC } from './modules/rnaseqc.nf'
-include { UPLOAD_FILES; UP_SJ } from './modules/upload_outputs.nf'
-include { IRFINDER } from './modules/irfinder.nf'
-include { BAM2SJ } from './modules/bam2sj/main.nf'
-include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
+include { 
+    DOWNLOAD_FASTQS; 
+    DOWNLOAD_RNA_REF as DOWNLOAD_RRNA; 
+    DOWNLOAD_RNA_REF as DOWNLOAD_GLOBINRNA; 
+    DOWNLOAD_HUMAN_REF; 
+    DOWNLOAD_IR_REF; 
+    DOWNLOAD_BED;
+    DOWNLOAD_CRAM } from './modules/download_files.nf'
+include { 
+    SAMTOOLS_VIEW as SAMTOOLS_VIEW_RRNA; 
+    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_RRNA; 
+    SAMTOOLS_INDEX; 
+    SAMTOOLS_CRAM;
+    SAMTOOLS_BAM2SAM;
+    SAMTOOLS_CRAM2BAM } from './modules/samtools.nf'
 
 workflow {
     DOWNLOAD_RRNA(params.rib_reference_path, "rrna") //DOWNLOAD_RRNA_ch
@@ -95,13 +95,15 @@ workflow {
     SUBREAD_FEATURECOUNTS(
         DOWNLOAD_GENCODE_NORMAL.out.gencode_gtf, 
         SAMBAMBA_MARKDUP.out.marked_bam) //feature_counts_ch
+    
     // Run OUTRIDER
-    // DOWNLOAD_MASTER_FEATURECOUNTS(params.features_master_file) //featurecounts_master_ch
-    // ADD_SAMPLE_COUNTS_MASTER(
-    //     DOWNLOAD_MASTER_FEATURECOUNTS.out.featurecounts_master, 
-    //     SUBREAD_FEATURECOUNTS.out.gene_counts_short) //featurecounts_updated_ch
-    // RUN_OUTRIDER(ADD_SAMPLE_COUNTS_MASTER.out.featurecounts_updated, params.tissue) //outrider_table_ch
-
+    if ( params.outrider ) {
+        DOWNLOAD_MASTER_FEATURECOUNTS(params.features_master_file) //featurecounts_master_ch
+        ADD_SAMPLE_COUNTS_MASTER(
+            DOWNLOAD_MASTER_FEATURECOUNTS.out.featurecounts_master, 
+            SUBREAD_FEATURECOUNTS.out.gene_counts_short) //featurecounts_updated_ch
+        RUN_OUTRIDER(ADD_SAMPLE_COUNTS_MASTER.out.featurecounts_updated, params.tissue) //outrider_table_ch
+    }
     // Run QC
     DOWNLOAD_GENCODE_COLLAPSE(params.gencode_gtf_collapse) //gencode_collapse_ch
     RNASEQC(
