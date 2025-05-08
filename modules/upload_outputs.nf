@@ -59,7 +59,6 @@ process UPLOAD_FILES {
     path perbase_index
     path regions_bed
     path regions_bed_index
-    val output_bucket
 
     script:
     """

@@ -157,13 +157,6 @@ workflow {
         IRFINDER.out.irfinder_chr_coverage, IRFINDER.out.irfinder_dir_val, IRFINDER.out.irfinder_dir, IRFINDER.out.irfinder_nondir_val, IRFINDER.out.irfinder_nondir, IRFINDER.out.irfinder_junc_count, IRFINDER.out.irfinder_roi, IRFINDER.out.irfinder_spans_point, IRFINDER.out.log, IRFINDER.out.versions, //irfinder
         SAMTOOLS_BAM2SAM.out.log, SAMTOOLS_BAM2SAM.out.versions, //sam
         BAM2SJ.out.sj_tab_gz,
-        MOSDEPTH_BED.out.global_dist, 
-        MOSDEPTH_BED.out.region_dist, 
-        MOSDEPTH_BED.out.summary, 
-        MOSDEPTH_BED.out.perbase, 
-        MOSDEPTH_BED.out.perbase_index, 
-        MOSDEPTH_BED.out.regions_bed, 
-        MOSDEPTH_BED.out.regions_bed_index,
-        params.output_bucket
+        MOSDEPTH_BED.out.global_dist, MOSDEPTH_BED.out.region_dist, MOSDEPTH_BED.out.summary, MOSDEPTH_BED.out.perbase, MOSDEPTH_BED.out.perbase_index, MOSDEPTH_BED.out.regions_bed, MOSDEPTH_BED.out.regions_bed_index
     )
 }
