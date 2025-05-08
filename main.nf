@@ -5,10 +5,9 @@ log.info """\
     ===================================
     prefix              : ${params.prefix}
     family_id           : ${params.family_id}
-    fastq_bucket        : ${params.fastq_bucket}
+    bucket_dir          : ${params.bucket_dir}
     rib_reference_path  : ${params.rib_reference_path}
     outdir              : ${params.outdir}
-    bucket output       : ${params.bucket_dir}
     bucket output       : ${params.output_bucket}
     """
     .stripIndent(true)
