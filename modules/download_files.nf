@@ -1,17 +1,18 @@
 process DOWNLOAD_FASTQS {
-    tag "Download ${meta} FASTQ files"
+    tag "Download ${prefix} FASTQ files"
 
     input:
-    val meta
-    val library
-    val fastq_bucket
+    val prefix
+    val fastq_r1
+    val fastq_r2
 
     output:
-    tuple val(meta), path('*.fastq.gz'), emit: reads
+    tuple val(prefix), path('*.fastq.gz'), emit: reads
 
     script:
     """
-    aws s3 cp ${fastq_bucket}/${library}/ . --exclude "*" --recursive --include "${meta}*"
+    aws s3 cp ${fastq_r1} .
+    aws s3 cp ${fastq_r2} .
     """
 }
 

@@ -3,11 +3,12 @@ nextflow.enable.dsl = 2
 log.info """\
     R N A - S E Q _ W F   P I P E L I N E
     ===================================
-    sample_name         : ${params.sample_name}
-    library             : ${params.library}
+    prefix              : ${params.prefix}
+    family_id           : ${params.family_id}
     fastq_bucket        : ${params.fastq_bucket}
     rib_reference_path  : ${params.rib_reference_path}
     outdir              : ${params.outdir}
+    bucket output       : ${params.bucket_dir}
     bucket output       : ${params.output_bucket}
     """
     .stripIndent(true)
@@ -45,7 +46,7 @@ include {
     ADD_SAMPLE_COUNTS_MASTER; 
     RUN_OUTRIDER } from './modules/outrider/main.nf'
 include { RNASEQC } from './modules/rnaseqc.nf'
-include { upload_files; UP_SJ } from './modules/upload_outputs.nf'
+include { UPLOAD_FILES; UP_SJ } from './modules/upload_outputs.nf'
 include { IRFINDER } from './modules/irfinder.nf'
 include { BAM2SJ } from './modules/bam2sj/main.nf'
 include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
@@ -59,7 +60,7 @@ workflow {
     
     if (params.use_cram) {
         // download cram 
-        DOWNLOAD_CRAM(params.meta, params.cram)
+        DOWNLOAD_CRAM(params.prefix, params.cram)
         // CRAM to BAM
         SAMTOOLS_CRAM2BAM(
             DOWNLOAD_HUMAN_REF.out.human_fasta,
@@ -69,7 +70,7 @@ workflow {
         // transform it to BAM to be mark_dup_ch
         SAMBAMBA_MARKDUP(SAMTOOLS_CRAM2BAM.out.bam)
     } else {
-        DOWNLOAD_FASTQS(params.meta, params.library, params.fastq_bucket) //DOWNLOAD_FASTQS_ch
+        DOWNLOAD_FASTQS(params.prefix, params.fastq_r1, params.fastq_r2) //DOWNLOAD_FASTQS_ch
         // contamination check
         RUN_FASTP(DOWNLOAD_FASTQS.out.reads) //fastp_ch
         FILTER_FASTQ(RUN_FASTP.out.reads) //filtered_fastq_ch
@@ -141,10 +142,9 @@ workflow {
     BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
     
     // Upload selected output files
-    upload_files(
-        params.sample_name, 
-        params.proband, 
-        params.tissue, 
+    UPLOAD_FILES(
+        params.family_id, 
+        params.bucket_dir, 
         params.output_bucket,
         RUN_FASTP.out.json, RUN_FASTP.out.html, RUN_FASTP.out.log, RUN_FASTP.out.versions, //fastp
         SAMTOOLS_FLAGSTAT_RRNA.out.flagstat_file, SAMTOOLS_FLAGSTAT_RRNA.out.versions, //flagstat_rrna
