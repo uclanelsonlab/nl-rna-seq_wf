@@ -129,8 +129,6 @@ process SAMTOOLS_BAM2SAM {
     path fai
     path dict    
     tuple val(meta), path(bam)
-    tuple val(meta2), path(log)
-    path versions
 
     output:
     tuple val(meta), path("*.hg38_rna.normal.sam"),  emit: rna_sam

@@ -11,8 +11,6 @@ process MOSDEPTH_BED {
     path bed
     tuple val(meta), path(cram)
     tuple val(meta2), path(crai)
-    path cram_log
-    path cram_version
 
 
     output:

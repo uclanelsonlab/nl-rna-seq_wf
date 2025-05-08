@@ -71,6 +71,7 @@ process DOWNLOAD_HUMAN_REF {
 
 process DOWNLOAD_BED {
     label "download_bed"
+    tag "Download ${bed}"
 
     input:
     val bed
@@ -86,6 +87,8 @@ process DOWNLOAD_BED {
 
 process DOWNLOAD_CRAM {
     label "download_cram"
+    tag "Download ${cram}"
+
 
     input:
     val meta

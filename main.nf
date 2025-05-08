@@ -95,6 +95,7 @@ workflow {
     SUBREAD_FEATURECOUNTS(
         DOWNLOAD_GENCODE_NORMAL.out.gencode_gtf, 
         SAMBAMBA_MARKDUP.out.marked_bam) //feature_counts_ch
+    // Run OUTRIDER
     // DOWNLOAD_MASTER_FEATURECOUNTS(params.features_master_file) //featurecounts_master_ch
     // ADD_SAMPLE_COUNTS_MASTER(
     //     DOWNLOAD_MASTER_FEATURECOUNTS.out.featurecounts_master, 
@@ -115,17 +116,29 @@ workflow {
         SAMBAMBA_MARKDUP.out.marked_bam) //cram_ch
 
     // Run IRFinder
-    // ir_ref_ch = DOWNLOAD_IR_REF(params.ir_ref)
-    // irfinder_ch = IRFINDER(ir_ref_ch, mark_dup_ch)
+    DOWNLOAD_IR_REF(params.ir_ref) //ir_ref_ch
+    IRFINDER(
+        DOWNLOAD_IR_REF.out.ir_reference_dir, 
+        SAMBAMBA_MARKDUP.out.marked_bam) //irfinder_ch
 
     // Calculate XBP1 coverage
-    // MOSDEPTH_BED(DOWNLOAD_HUMAN_REF.out.human_fasta, DOWNLOAD_HUMAN_REF.out.human_fai, DOWNLOAD_HUMAN_REF.out.human_dict, DOWNLOAD_BED.out.bed, cram_ch)
+    MOSDEPTH_BED(
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict, 
+        DOWNLOAD_BED.out.bed, 
+        SAMTOOLS_CRAM.out.rna_cram,
+        SAMTOOLS_CRAM.out.rna_crai)
     
     // CRAM to SAM 
-    // SAMTOOLS_BAM2SAM(DOWNLOAD_HUMAN_REF.out.human_fasta, DOWNLOAD_HUMAN_REF.out.human_fai, DOWNLOAD_HUMAN_REF.out.human_dict, mark_dup_ch)
+    SAMTOOLS_BAM2SAM(
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict, 
+        SAMBAMBA_MARKDUP.out.marked_bam)
     
     // SAM to SJ
-    // BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
+    BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
     
     // Upload selected output files
     // upload_files(
@@ -145,15 +158,15 @@ workflow {
     // )
 
     // Uplaod SJ
-    // UP_SJ(
-    //     BAM2SJ.out.sj_tab_gz,
-    //     MOSDEPTH_BED.out.global_dist, 
-    //     MOSDEPTH_BED.out.region_dist, 
-    //     MOSDEPTH_BED.out.summary, 
-    //     MOSDEPTH_BED.out.perbase, 
-    //     MOSDEPTH_BED.out.perbase_index, 
-    //     MOSDEPTH_BED.out.regions_bed, 
-    //     MOSDEPTH_BED.out.regions_bed_index,
-    //     params.output_bucket
-    // )
+    UP_SJ(
+        BAM2SJ.out.sj_tab_gz,
+        MOSDEPTH_BED.out.global_dist, 
+        MOSDEPTH_BED.out.region_dist, 
+        MOSDEPTH_BED.out.summary, 
+        MOSDEPTH_BED.out.perbase, 
+        MOSDEPTH_BED.out.perbase_index, 
+        MOSDEPTH_BED.out.regions_bed, 
+        MOSDEPTH_BED.out.regions_bed_index,
+        params.output_bucket
+    )
 }
