@@ -40,7 +40,10 @@ include {
     DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_NORMAL; 
     DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_COLLAPSE; 
     SUBREAD_FEATURECOUNTS } from './modules/subreads.nf'
-include { download_master_featureCounts; add_sample_counts_master; run_outrider } from './modules/outrider/main.nf'
+include { 
+    DOWNLOAD_MASTER_FEATURECOUNTS; 
+    ADD_SAMPLE_COUNTS_MASTER; 
+    RUN_OUTRIDER } from './modules/outrider/main.nf'
 include { RNASEQC } from './modules/rnaseqc.nf'
 include { upload_files; UP_SJ } from './modules/upload_outputs.nf'
 include { IRFINDER } from './modules/irfinder.nf'
@@ -87,23 +90,29 @@ workflow {
         SAMBAMBA_MARKDUP(STAR_ALIGNREADS.out.star_bam) //mark_dup_ch
     }
 
-    
-
     // Create counts by gene
     DOWNLOAD_GENCODE_NORMAL(params.gencode_gtf_path) //gencode_pc_ch
     SUBREAD_FEATURECOUNTS(
         DOWNLOAD_GENCODE_NORMAL.out.gencode_gtf, 
         SAMBAMBA_MARKDUP.out.marked_bam) //feature_counts_ch
-    // featurecounts_master_ch = download_master_featureCounts(params.features_master_file)
-    // featurecounts_updated_ch = add_sample_counts_master(featurecounts_master_ch, feature_counts_ch)
-    // outrider_table_ch = run_outrider(featurecounts_updated_ch, params.tissue)
+    // DOWNLOAD_MASTER_FEATURECOUNTS(params.features_master_file) //featurecounts_master_ch
+    // ADD_SAMPLE_COUNTS_MASTER(
+    //     DOWNLOAD_MASTER_FEATURECOUNTS.out.featurecounts_master, 
+    //     SUBREAD_FEATURECOUNTS.out.gene_counts_short) //featurecounts_updated_ch
+    // RUN_OUTRIDER(ADD_SAMPLE_COUNTS_MASTER.out.featurecounts_updated, params.tissue) //outrider_table_ch
 
     // Run QC
-    // gencode_collapse_ch = DOWNLOAD_GENCODE_COLLAPSE(params.gencode_gtf_collapse)
-    // rnaseqc_ch = RNASEQC(gencode_collapse_ch, mark_dup_ch)
+    DOWNLOAD_GENCODE_COLLAPSE(params.gencode_gtf_collapse) //gencode_collapse_ch
+    RNASEQC(
+        DOWNLOAD_GENCODE_COLLAPSE.out.gencode_gtf, 
+        SAMBAMBA_MARKDUP.out.marked_bam) //rnaseqc_ch
 
     // Create CRAM files
-    // cram_ch = SAMTOOLS_CRAM(DOWNLOAD_HUMAN_REF.out.human_fasta, DOWNLOAD_HUMAN_REF.out.human_fai, DOWNLOAD_HUMAN_REF.out.human_dict, mark_dup_ch)
+    SAMTOOLS_CRAM(
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict, 
+        SAMBAMBA_MARKDUP.out.marked_bam) //cram_ch
 
     // Run IRFinder
     // ir_ref_ch = DOWNLOAD_IR_REF(params.ir_ref)

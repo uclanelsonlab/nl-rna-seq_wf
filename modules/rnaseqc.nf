@@ -7,8 +7,6 @@ process RNASEQC {
     input:
     path gencode_gtf
     tuple val(meta), path(bam)
-    tuple val(meta), path(log)
-    path(versions)
 
     output:
     path "*.coverage.tsv",        emit: coverage
@@ -25,7 +23,6 @@ process RNASEQC {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
