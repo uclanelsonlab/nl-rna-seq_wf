@@ -114,7 +114,7 @@ process DOWNLOAD_ZIPPED_INDEX {
     val index
 
     output:
-    tuple val(meta), path("*.gz"), path(".gz.tbi"), emit: file_tuple
+    tuple val(meta), path("*.gz"), path("*.gz.tbi"), emit: file_tuple
 
     script:
     """
