@@ -59,10 +59,6 @@ process UPLOAD_FILES {
     path perbase_index
     path regions_bed
     path regions_bed_index
-    tuple val(meta24), path(gatk_vcf)
-    tuple val(meta25), path(gatk_tbi)
-    path gatk_versions
-
 
     script:
     """
@@ -126,7 +122,41 @@ process UPLOAD_FILES {
     aws s3 cp ${perbase_index} ${output_bucket}/mosdepth/${perbase_index}
     aws s3 cp ${regions_bed} ${output_bucket}/mosdepth/${regions_bed}
     aws s3 cp ${regions_bed_index} ${output_bucket}/mosdepth/${regions_bed_index}
-    # gatk
+    """
+}
+
+process UPLOAD_OUTRIDER {
+    tag "Upload OUTRIDER output files"
+
+    input:
+    val family_id
+    val bucket_dir
+    val output_bucket
+    tuple val(meta), path(outrider_table)
+    tuple val(meta2), path(outrider_project)
+    path outrider_log
+
+    script:
+    """
+    aws s3 cp ${outrider_table} ${output_bucket}/${family_id}/${bucket_dir}/hg38/outrider/${outrider_table}
+    aws s3 cp ${outrider_project} ${output_bucket}/${family_id}/${bucket_dir}/hg38/outrider/${outrider_project}
+    aws s3 cp ${outrider_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/outrider/${outrider_log}
+    """
+}
+
+process UPLOAD_VARCALL {
+    tag "Upload GATK variant calling output files"
+
+    input:
+    val family_id
+    val bucket_dir
+    val output_bucket
+    tuple val(meta), path(gatk_vcf)
+    tuple val(meta2), path(gatk_tbi)
+    path gatk_versions
+
+    script:
+    """
     aws s3 cp ${gatk_vcf} ${output_bucket}/gatk_vc/${gatk_vcf}
     aws s3 cp ${gatk_tbi} ${output_bucket}/gatk_vc/${gatk_tbi}
     aws s3 cp ${gatk_versions} ${output_bucket}/gatk_vc/${gatk_versions}

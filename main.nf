@@ -13,7 +13,7 @@ log.info """\
     .stripIndent(true)
 
 include { RNASEQC } from './modules/rnaseqc.nf'
-include { UPLOAD_FILES } from './modules/upload_outputs.nf'
+include { UPLOAD_FILES; UPLOAD_OUTRIDER; UPLOAD_VARCALL } from './modules/upload_outputs.nf'
 include { IRFINDER } from './modules/irfinder.nf'
 include { BAM2SJ } from './modules/bam2sj/main.nf'
 include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
@@ -128,6 +128,15 @@ workflow {
             DOWNLOAD_MASTER_FEATURECOUNTS.out.featurecounts_master, 
             SUBREAD_FEATURECOUNTS.out.gene_counts_short) //featurecounts_updated_ch
         RUN_OUTRIDER(ADD_SAMPLE_COUNTS_MASTER.out.featurecounts_updated, params.tissue) //outrider_table_ch
+        // Upload OUTRIDER outputs
+        UPLOAD_OUTRIDER(
+            params.family_id, 
+            params.bucket_dir, 
+            params.output_bucket,
+            RUN_OUTRIDER.out.outrider_table,
+            RUN_OUTRIDER.out.outrider_project,
+            RUN_OUTRIDER.out.log
+        )
     }
     // Run QC
     DOWNLOAD_GENCODE_COLLAPSE(params.gencode_gtf_collapse) //gencode_collapse_ch
@@ -167,33 +176,43 @@ workflow {
     // SAM to SJ
     BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
 
-    // GATK variant calling
-    GATK4_SPLITNCIGARREADS(
-        DOWNLOAD_HUMAN_REF.out.human_fasta, 
-        DOWNLOAD_HUMAN_REF.out.human_fai, 
-        DOWNLOAD_HUMAN_REF.out.human_dict, 
-        SAMBAMBA_MARKDUP.out.marked_bam)
-    GATK4_BASERECALIBRATOR(
-        GATK4_SPLITNCIGARREADS.out.bam, 
-        DOWNLOAD_HUMAN_REF.out.human_fasta, 
-        DOWNLOAD_HUMAN_REF.out.human_fai, 
-        DOWNLOAD_HUMAN_REF.out.human_dict,  
-        ch_dbsnp,
-        ch_known_indels,
-        ch_indels_1000G,
-        ch_af_only_gnomad,
-        ch_small_exac_common_3)
-    GATK4_APPLYBQSR(
-        GATK4_SPLITNCIGARREADS.out.bam, 
-        GATK4_BASERECALIBRATOR.out.table, 
-        DOWNLOAD_HUMAN_REF.out.human_fasta,
-        DOWNLOAD_HUMAN_REF.out.human_fai, 
-        DOWNLOAD_HUMAN_REF.out.human_dict)
-    GATK4_HAPLOTYPECALLER(GATK4_APPLYBQSR.out.bam, 
-        DOWNLOAD_HUMAN_REF.out.human_fasta, 
-        DOWNLOAD_HUMAN_REF.out.human_fai, 
-        DOWNLOAD_HUMAN_REF.out.human_dict,
-        ch_dbsnp)
+    // Run GATK variant calling
+    if ( params.varcall ) {
+        GATK4_SPLITNCIGARREADS(
+            DOWNLOAD_HUMAN_REF.out.human_fasta, 
+            DOWNLOAD_HUMAN_REF.out.human_fai, 
+            DOWNLOAD_HUMAN_REF.out.human_dict, 
+            SAMBAMBA_MARKDUP.out.marked_bam)
+        GATK4_BASERECALIBRATOR(
+            GATK4_SPLITNCIGARREADS.out.bam, 
+            DOWNLOAD_HUMAN_REF.out.human_fasta, 
+            DOWNLOAD_HUMAN_REF.out.human_fai, 
+            DOWNLOAD_HUMAN_REF.out.human_dict,  
+            ch_dbsnp,
+            ch_known_indels,
+            ch_indels_1000G,
+            ch_af_only_gnomad,
+            ch_small_exac_common_3)
+        GATK4_APPLYBQSR(
+            GATK4_SPLITNCIGARREADS.out.bam, 
+            GATK4_BASERECALIBRATOR.out.table, 
+            DOWNLOAD_HUMAN_REF.out.human_fasta,
+            DOWNLOAD_HUMAN_REF.out.human_fai, 
+            DOWNLOAD_HUMAN_REF.out.human_dict)
+        GATK4_HAPLOTYPECALLER(GATK4_APPLYBQSR.out.bam, 
+            DOWNLOAD_HUMAN_REF.out.human_fasta, 
+            DOWNLOAD_HUMAN_REF.out.human_fai, 
+            DOWNLOAD_HUMAN_REF.out.human_dict,
+            ch_dbsnp)
+        UPLOAD_VARCALL(
+            params.family_id, 
+            params.bucket_dir, 
+            params.output_bucket,
+            GATK4_HAPLOTYPECALLER.out.vcf, 
+            GATK4_HAPLOTYPECALLER.out.tbi, 
+            GATK4_HAPLOTYPECALLER.out.versions
+        )
+    }
     
     // Upload selected output files
     UPLOAD_FILES(
@@ -212,6 +231,5 @@ workflow {
         SAMTOOLS_BAM2SAM.out.log, SAMTOOLS_BAM2SAM.out.versions, //sam
         BAM2SJ.out.sj_tab_gz,
         MOSDEPTH_BED.out.global_dist, MOSDEPTH_BED.out.region_dist, MOSDEPTH_BED.out.summary, MOSDEPTH_BED.out.perbase, MOSDEPTH_BED.out.perbase_index, MOSDEPTH_BED.out.regions_bed, MOSDEPTH_BED.out.regions_bed_index,
-        GATK4_HAPLOTYPECALLER.out.vcf, GATK4_HAPLOTYPECALLER.out.tbi, GATK4_HAPLOTYPECALLER.out.versions
     )
 }
