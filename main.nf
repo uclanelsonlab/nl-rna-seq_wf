@@ -35,6 +35,11 @@ include {
     ADD_SAMPLE_COUNTS_MASTER; 
     RUN_OUTRIDER } from './modules/outrider/main.nf'
 include { 
+    GATK4_SPLITNCIGARREADS; 
+    GATK4_BASERECALIBRATOR; 
+    GATK4_APPLYBQSR; 
+    GATK4_HAPLOTYPECALLER } from './modules/gatk/main.nf'
+include { 
     DOWNLOAD_FASTQS; 
     DOWNLOAD_RNA_REF as DOWNLOAD_RRNA; 
     DOWNLOAD_RNA_REF as DOWNLOAD_GLOBINRNA; 
@@ -55,6 +60,13 @@ workflow {
     DOWNLOAD_GLOBINRNA(params.rib_reference_path, "globinrna") //DOWNLOAD_GLOBINRNA_ch
     DOWNLOAD_HUMAN_REF(params.human_fasta, params.human_fai, params.human_dict)
     DOWNLOAD_BED(params.bed)
+
+    ch_dbsnp = Channel.value([[id:"dbsnp138"], params.dbsnp138, params.dbsnp138_index])
+    ch_known_indels = Channel.value([[id:"known_indels"], params.known_indels, params.known_indels_index])
+    ch_indels_1000G = Channel.value([[id:"indels_1000G"], params.indels_1000G, params.indels_1000G_index])
+    ch_af_only_gnomad = Channel.value([[id:"af_only_gnomad"], params.af_only_gnomad, params.af_only_gnomad_index])
+    ch_small_exac_common_3 = Channel.value([[id:"small_exac_common_3"], params.small_exac_common_3, params.small_exac_common_3_index])
+
     
     if (params.use_cram) {
         // download cram 
@@ -140,6 +152,34 @@ workflow {
     
     // SAM to SJ
     BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
+
+    // GATK variant calling
+    GATK4_SPLITNCIGARREADS(
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict, 
+        SAMBAMBA_MARKDUP.out.marked_bam)
+    GATK4_BASERECALIBRATOR(
+        GATK4_SPLITNCIGARREADS.out.bam, 
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict,  
+        ch_dbsnp,
+        ch_known_indels,
+        ch_indels_1000G,
+        ch_af_only_gnomad,
+        ch_small_exac_common_3)
+    GATK4_APPLYBQSR(
+        GATK4_SPLITNCIGARREADS.out.bam, 
+        GATK4_BASERECALIBRATOR.out.table, 
+        DOWNLOAD_HUMAN_REF.out.human_fasta,
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict)
+    GATK4_HAPLOTYPECALLER(GATK4_APPLYBQSR.out.bam, 
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict,
+        ch_dbsnp)
     
     // Upload selected output files
     UPLOAD_FILES(
@@ -157,6 +197,7 @@ workflow {
         IRFINDER.out.irfinder_chr_coverage, IRFINDER.out.irfinder_dir_val, IRFINDER.out.irfinder_dir, IRFINDER.out.irfinder_nondir_val, IRFINDER.out.irfinder_nondir, IRFINDER.out.irfinder_junc_count, IRFINDER.out.irfinder_roi, IRFINDER.out.irfinder_spans_point, IRFINDER.out.log, IRFINDER.out.versions, //irfinder
         SAMTOOLS_BAM2SAM.out.log, SAMTOOLS_BAM2SAM.out.versions, //sam
         BAM2SJ.out.sj_tab_gz,
-        MOSDEPTH_BED.out.global_dist, MOSDEPTH_BED.out.region_dist, MOSDEPTH_BED.out.summary, MOSDEPTH_BED.out.perbase, MOSDEPTH_BED.out.perbase_index, MOSDEPTH_BED.out.regions_bed, MOSDEPTH_BED.out.regions_bed_index
+        MOSDEPTH_BED.out.global_dist, MOSDEPTH_BED.out.region_dist, MOSDEPTH_BED.out.summary, MOSDEPTH_BED.out.perbase, MOSDEPTH_BED.out.perbase_index, MOSDEPTH_BED.out.regions_bed, MOSDEPTH_BED.out.regions_bed_index,
+        GATK4_HAPLOTYPECALLER.out.vcf, GATK4_HAPLOTYPECALLER.out.tbi, GATK4_HAPLOTYPECALLER.out.versions
     )
 }

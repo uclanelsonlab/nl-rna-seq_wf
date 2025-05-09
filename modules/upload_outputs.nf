@@ -59,6 +59,10 @@ process UPLOAD_FILES {
     path perbase_index
     path regions_bed
     path regions_bed_index
+    tuple val(meta24), path(gatk_vcf)
+    tuple val(meta25), path(gatk_tbi)
+    path gatk_versions
+
 
     script:
     """
@@ -112,7 +116,9 @@ process UPLOAD_FILES {
     aws s3 cp ${irfinder_spans_point} ${output_bucket}/${family_id}/${bucket_dir}/hg38/irfinder/${irfinder_spans_point}
     aws s3 cp ${irfinder_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/irfinder/${irfinder_log}
     aws s3 cp ${irfinder_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/irfinder/${irfinder_versions}
+    # bam2sj
     aws s3 cp ${sj_tab_gz} ${output_bucket}/bam2sj/${sj_tab_gz}
+    # mosdepth
     aws s3 cp ${global_dist} ${output_bucket}/mosdepth/${global_dist}
     aws s3 cp ${region_dist} ${output_bucket}/mosdepth/${region_dist}
     aws s3 cp ${summary} ${output_bucket}/mosdepth/${summary}
@@ -120,5 +126,9 @@ process UPLOAD_FILES {
     aws s3 cp ${perbase_index} ${output_bucket}/mosdepth/${perbase_index}
     aws s3 cp ${regions_bed} ${output_bucket}/mosdepth/${regions_bed}
     aws s3 cp ${regions_bed_index} ${output_bucket}/mosdepth/${regions_bed_index}
+    # gatk
+    aws s3 cp ${gatk_vcf} ${output_bucket}/gatk_vc/${gatk_vcf}
+    aws s3 cp ${gatk_tbi} ${output_bucket}/gatk_vc/${gatk_tbi}
+    aws s3 cp ${gatk_versions} ${output_bucket}/gatk_vc/${gatk_versions}
     """
 }
