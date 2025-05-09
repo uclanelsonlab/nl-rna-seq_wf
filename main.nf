@@ -154,34 +154,33 @@ workflow {
     BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
 
     // GATK variant calling
-    if ( params.varcall ) {
-        GATK4_SPLITNCIGARREADS(
-            DOWNLOAD_HUMAN_REF.out.human_fasta, 
-            DOWNLOAD_HUMAN_REF.out.human_fai, 
-            DOWNLOAD_HUMAN_REF.out.human_dict, 
-            SAMBAMBA_MARKDUP.out.marked_bam)
-        GATK4_BASERECALIBRATOR(
-            GATK4_SPLITNCIGARREADS.out.bam, 
-            DOWNLOAD_HUMAN_REF.out.human_fasta, 
-            DOWNLOAD_HUMAN_REF.out.human_fai, 
-            DOWNLOAD_HUMAN_REF.out.human_dict,  
-            ch_dbsnp,
-            ch_known_indels,
-            ch_indels_1000G,
-            ch_af_only_gnomad,
-            ch_small_exac_common_3)
-        GATK4_APPLYBQSR(
-            GATK4_SPLITNCIGARREADS.out.bam, 
-            GATK4_BASERECALIBRATOR.out.table, 
-            DOWNLOAD_HUMAN_REF.out.human_fasta,
-            DOWNLOAD_HUMAN_REF.out.human_fai, 
-            DOWNLOAD_HUMAN_REF.out.human_dict)
-        GATK4_HAPLOTYPECALLER(GATK4_APPLYBQSR.out.bam, 
-            DOWNLOAD_HUMAN_REF.out.human_fasta, 
-            DOWNLOAD_HUMAN_REF.out.human_fai, 
-            DOWNLOAD_HUMAN_REF.out.human_dict,
-            ch_dbsnp)
-    }
+    GATK4_SPLITNCIGARREADS(
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict, 
+        SAMBAMBA_MARKDUP.out.marked_bam)
+    GATK4_BASERECALIBRATOR(
+        GATK4_SPLITNCIGARREADS.out.bam, 
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict,  
+        ch_dbsnp,
+        ch_known_indels,
+        ch_indels_1000G,
+        ch_af_only_gnomad,
+        ch_small_exac_common_3)
+    GATK4_APPLYBQSR(
+        GATK4_SPLITNCIGARREADS.out.bam, 
+        GATK4_BASERECALIBRATOR.out.table, 
+        DOWNLOAD_HUMAN_REF.out.human_fasta,
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict)
+    GATK4_HAPLOTYPECALLER(GATK4_APPLYBQSR.out.bam, 
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict,
+        ch_dbsnp)
+    
     // Upload selected output files
     UPLOAD_FILES(
         params.family_id, 
