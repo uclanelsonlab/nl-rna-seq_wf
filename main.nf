@@ -13,7 +13,7 @@ log.info """\
     .stripIndent(true)
 
 include { RNASEQC } from './modules/rnaseqc.nf'
-include { UPLOAD_FILES; UP_SJ } from './modules/upload_outputs.nf'
+include { UPLOAD_FILES } from './modules/upload_outputs.nf'
 include { IRFINDER } from './modules/irfinder.nf'
 include { BAM2SJ } from './modules/bam2sj/main.nf'
 include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
