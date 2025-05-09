@@ -25,20 +25,24 @@ include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
 include { BWA_MEM as BWA_MEM_RRNA; BWA_MEM as BWA_MEM_GLOBINRNA } from './modules/bwa.nf'
 include { 
     SAMTOOLS_VIEW as SAMTOOLS_VIEW_GLOBINRNA; 
-    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA } from './modules/samtools.nf'
+    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA
+} from './modules/samtools.nf'
 include { 
     DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_NORMAL; 
     DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_COLLAPSE; 
-    SUBREAD_FEATURECOUNTS } from './modules/subreads.nf'
+    SUBREAD_FEATURECOUNTS
+} from './modules/subreads.nf'
 include { 
     DOWNLOAD_MASTER_FEATURECOUNTS; 
     ADD_SAMPLE_COUNTS_MASTER; 
-    RUN_OUTRIDER } from './modules/outrider/main.nf'
+    RUN_OUTRIDER 
+} from './modules/outrider/main.nf'
 include { 
     GATK4_SPLITNCIGARREADS; 
     GATK4_BASERECALIBRATOR; 
     GATK4_APPLYBQSR; 
-    GATK4_HAPLOTYPECALLER } from './modules/gatk/main.nf'
+    GATK4_HAPLOTYPECALLER 
+} from './modules/gatk/main.nf'
 include { 
     DOWNLOAD_FASTQS; 
     DOWNLOAD_RNA_REF as DOWNLOAD_RRNA; 
@@ -46,14 +50,24 @@ include {
     DOWNLOAD_HUMAN_REF; 
     DOWNLOAD_IR_REF; 
     DOWNLOAD_BED;
-    DOWNLOAD_CRAM } from './modules/download_files.nf'
+    DOWNLOAD_CRAM
+} from './modules/download_files.nf'
 include { 
     SAMTOOLS_VIEW as SAMTOOLS_VIEW_RRNA; 
     SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_RRNA; 
     SAMTOOLS_INDEX; 
     SAMTOOLS_CRAM;
     SAMTOOLS_BAM2SAM;
-    SAMTOOLS_CRAM2BAM } from './modules/samtools.nf'
+    SAMTOOLS_CRAM2BAM
+} from './modules/samtools.nf'
+
+include {
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_DBSNP138;
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_KNOW_INDELS;
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_INDELS_1000G;
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_AF_ONLY_GNOMAD;
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_SMALL_EXAC;
+} from './modules/download_files.nf'
 
 workflow {
     DOWNLOAD_RRNA(params.rib_reference_path, "rrna") //DOWNLOAD_RRNA_ch
@@ -61,11 +75,11 @@ workflow {
     DOWNLOAD_HUMAN_REF(params.human_fasta, params.human_fai, params.human_dict)
     DOWNLOAD_BED(params.bed)
 
-    ch_dbsnp = Channel.value([[id:"dbsnp138"], params.dbsnp138, params.dbsnp138_index])
-    ch_known_indels = Channel.value([[id:"known_indels"], params.known_indels, params.known_indels_index])
-    ch_indels_1000G = Channel.value([[id:"indels_1000G"], params.indels_1000G, params.indels_1000G_index])
-    ch_af_only_gnomad = Channel.value([[id:"af_only_gnomad"], params.af_only_gnomad, params.af_only_gnomad_index])
-    ch_small_exac_common_3 = Channel.value([[id:"small_exac_common_3"], params.small_exac_common_3, params.small_exac_common_3_index])
+    ch_dbsnp = DOWNLOAD_DBSNP138("dbsnp138", params.dbsnp138, params.dbsnp138_index) //Channel.value([[id:"dbsnp138"], params.dbsnp138, params.dbsnp138_index])
+    ch_known_indels = DOWNLOAD_KNOW_INDELS("known_indels", params.known_indels, params.known_indels_index) //Channel.value([[id:"known_indels"], params.known_indels, params.known_indels_index])
+    ch_indels_1000G = DOWNLOAD_INDELS_1000G("indels_1000G", params.indels_1000G, params.indels_1000G_index) //Channel.value([[id:"indels_1000G"], params.indels_1000G, params.indels_1000G_index])
+    ch_af_only_gnomad = DOWNLOAD_AF_ONLY_GNOMAD("af_only_gnomad", params.af_only_gnomad, params.af_only_gnomad_index) //Channel.value([[id:"af_only_gnomad"], params.af_only_gnomad, params.af_only_gnomad_index])
+    ch_small_exac_common_3 = DOWNLOAD_SMALL_EXAC("small_exac_common_3", params.small_exac_common_3, params.small_exac_common_3_index) //Channel.value([[id:"small_exac_common_3"], params.small_exac_common_3, params.small_exac_common_3_index])
 
     
     if (params.use_cram) {

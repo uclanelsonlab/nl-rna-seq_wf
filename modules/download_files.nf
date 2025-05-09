@@ -103,3 +103,22 @@ process DOWNLOAD_CRAM {
     aws s3 cp ${cram} .
     """
 }
+
+process DOWNLOAD_ZIPPED_INDEX {
+    label "download_files_index"
+    tag "Download ${zipped}"
+
+    input:
+    val meta
+    val zipped
+    val index
+
+    output:
+    tuple val(meta), path("*.gz"), path(".gz.tbi"), emit: file_tuple
+
+    script:
+    """
+    aws s3 cp ${zipped} .
+    aws s3 cp ${index} . 
+    """
+}
