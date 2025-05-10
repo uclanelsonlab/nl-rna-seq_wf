@@ -46,6 +46,14 @@ q.gz --fastq_r2 s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN7
 
 - If you want to add OUTRIDER to your outputs just add the parameters: `--outrider true --tissue ${SAMPLE_TISSUE}`
 
+- Example of for loop to run samples over a samplesheet:
+```bash
+while IFS=, read fastq1 fastq2 prefix output_bucket family_id output_directory; do
+	nextflow run main.nf --fastq_r1 ${fastq1} --fastq_r2 ${fastq2} --prefix ${prefix} --family_id ${family_id} --bucket_dir ${output_directory} --output_bucket ${output_bucket}
+    rm -r work/ results/
+done < "2025-05-09_rna-seq_processing-request.csv"
+```
+
 - Check if you have your outputs on S3:
 ```bash
 aws s3 ls s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases/ --recursive | grep UDN748413
