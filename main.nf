@@ -128,7 +128,6 @@ workflow {
             DOWNLOAD_MASTER_FEATURECOUNTS.out.featurecounts_master, 
             SUBREAD_FEATURECOUNTS.out.gene_counts_short) //featurecounts_updated_ch
         RUN_OUTRIDER(ADD_SAMPLE_COUNTS_MASTER.out.featurecounts_updated, params.tissue) //outrider_table_ch
-        // Upload OUTRIDER outputs
         UPLOAD_OUTRIDER(
             params.family_id, 
             params.bucket_dir, 

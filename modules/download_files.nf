@@ -17,7 +17,7 @@ process DOWNLOAD_FASTQS {
 }
 
 process DOWNLOAD_RNA_REF {
-    tag "Download rna reference files"
+    tag "Download ${rna_reference_path}"
 
     input:
     val rna_reference_path
@@ -34,7 +34,7 @@ process DOWNLOAD_RNA_REF {
 }
 
 process DOWNLOAD_IR_REF {
-    tag "Download IRFinder reference files"
+    tag "Download ${ir_ref}"
 
     input:
     val ir_ref
@@ -50,7 +50,7 @@ process DOWNLOAD_IR_REF {
 }
 
 process DOWNLOAD_HUMAN_REF {
-    tag "Download rna reference files"
+    tag "Download ${fasta}"
 
     input:
     val fasta
