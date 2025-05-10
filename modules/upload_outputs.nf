@@ -113,15 +113,15 @@ process UPLOAD_FILES {
     aws s3 cp ${irfinder_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/irfinder/${irfinder_log}
     aws s3 cp ${irfinder_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/irfinder/${irfinder_versions}
     # bam2sj
-    aws s3 cp ${sj_tab_gz} ${output_bucket}/bam2sj/${sj_tab_gz}
+    aws s3 cp ${sj_tab_gz} ${output_bucket}/${family_id}/${bucket_dir}/hg38/bam2sj/${sj_tab_gz}
     # mosdepth
-    aws s3 cp ${global_dist} ${output_bucket}/mosdepth/${global_dist}
-    aws s3 cp ${region_dist} ${output_bucket}/mosdepth/${region_dist}
-    aws s3 cp ${summary} ${output_bucket}/mosdepth/${summary}
-    aws s3 cp ${perbase} ${output_bucket}/mosdepth/${perbase}
-    aws s3 cp ${perbase_index} ${output_bucket}/mosdepth/${perbase_index}
-    aws s3 cp ${regions_bed} ${output_bucket}/mosdepth/${regions_bed}
-    aws s3 cp ${regions_bed_index} ${output_bucket}/mosdepth/${regions_bed_index}
+    aws s3 cp ${global_dist} ${output_bucket}/${family_id}/${bucket_dir}/hg38/mosdepth/${global_dist}
+    aws s3 cp ${region_dist} ${output_bucket}/${family_id}/${bucket_dir}/hg38/mosdepth/${region_dist}
+    aws s3 cp ${summary} ${output_bucket}/${family_id}/${bucket_dir}/hg38/mosdepth/${summary}
+    aws s3 cp ${perbase} ${output_bucket}/${family_id}/${bucket_dir}/hg38/mosdepth/${perbase}
+    aws s3 cp ${perbase_index} ${output_bucket}/${family_id}/${bucket_dir}/hg38/mosdepth/${perbase_index}
+    aws s3 cp ${regions_bed} ${output_bucket}/${family_id}/${bucket_dir}/hg38/mosdepth/${regions_bed}
+    aws s3 cp ${regions_bed_index} ${output_bucket}/${family_id}/${bucket_dir}/hg38/mosdepth/${regions_bed_index}
     """
 }
 
