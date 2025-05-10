@@ -37,12 +37,18 @@ git clone https://github.com/uclanelsonlab/nl-rna-seq_wf.git
 ```bash
 cd nl-rna-seq_wf/
 chmod u+x -R modules/
-nextflow run main.nf --sample_name SH1311-P-muscle --proband SH1311-P --library SN_7RNA_S-24-0479_XA044
+nextflow run main.nf --fastq_r1 s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN748413-2931652-MGML0088-FBR1-R1_001.fast
+q.gz --fastq_r2 s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN748413-2931652-MGML0088-FBR1-R2_001.fastq.gz --prefix UDN748413-2931652-MGML0088-FBR1 --family_id UDN748413 --bucket_dir UDN748413-P_fibroblast_rnaseq
 ```
+> If something happens and you need to rerun the pipeline from where it stopped, remember you can use `-resume` for those cases.
+
+- If you want to add variant calling to your outputs just add the parameter: `--varcall true`
+
+- If you want to add OUTRIDER to your outputs just add the parameters: `--outrider true --tissue ${SAMPLE_TISSUE}`
 
 - Check if you have your outputs on S3:
 ```bash
-aws s3 ls s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases/ --recursive | grep SH1311-P-muscle
+aws s3 ls s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases/ --recursive | grep UDN748413
 ```
 
 - The expected outputs:
