@@ -23,6 +23,7 @@ include { CHECK_STAR_REF; STAR_ALIGNREADS } from './modules/star.nf'
 include { run_markdup } from './modules/picard.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
 include { BWA_MEM as BWA_MEM_RRNA; BWA_MEM as BWA_MEM_GLOBINRNA } from './modules/bwa.nf'
+include { KALLISTO_QUANT } from './modules/kallisto/main.nf'
 include { 
     SAMTOOLS_VIEW as SAMTOOLS_VIEW_GLOBINRNA; 
     SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA
@@ -50,7 +51,8 @@ include {
     DOWNLOAD_HUMAN_REF; 
     DOWNLOAD_IR_REF; 
     DOWNLOAD_BED;
-    DOWNLOAD_CRAM
+    DOWNLOAD_CRAM;
+    DOWNLOAD_KALLISTO_INDEX
 } from './modules/download_files.nf'
 include { 
     SAMTOOLS_VIEW as SAMTOOLS_VIEW_RRNA; 
@@ -104,7 +106,9 @@ workflow {
         SAMTOOLS_VIEW_GLOBINRNA(BWA_MEM_GLOBINRNA.out.bwa_bam, "globinrna") //globinrna_SAMTOOLS_VIEW_ch
         SAMTOOLS_FLAGSTAT_RRNA(SAMTOOLS_VIEW_RRNA.out.view_bam, "rrna") //rrna_SAMTOOLS_FLAGSTAT_ch
         SAMTOOLS_FLAGSTAT_GLOBINRNA(SAMTOOLS_VIEW_GLOBINRNA.out.view_bam, "globinrna") //globinrna_SAMTOOLS_FLAGSTAT_ch
-
+        // Kallisto quantification
+        DOWNLOAD_KALLISTO_INDEX(params.kallisto_index)
+        KALLISTO_QUANT(RUN_FASTP.out.reads, DOWNLOAD_KALLISTO_INDEX.out.index)
         // STAR alignment
         CHECK_STAR_REF(DOWNLOAD_FASTQS.out.reads) //star_index_ref_ch
         STAR_ALIGNREADS(

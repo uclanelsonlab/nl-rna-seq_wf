@@ -122,3 +122,19 @@ process DOWNLOAD_ZIPPED_INDEX {
     aws s3 cp ${index} . 
     """
 }
+
+process DOWNLOAD_KALLISTO_INDEX {
+    label "download_kallisto_index"
+    tag "Download ${kallisto_index}"
+
+    input:
+    val kallisto_index
+
+    output:
+    path "*.idx", emit: index
+
+    script:
+    """
+    aws s3 cp ${kallisto_index} .
+    """
+}
