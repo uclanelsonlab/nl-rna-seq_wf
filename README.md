@@ -37,8 +37,7 @@ git clone https://github.com/uclanelsonlab/nl-rna-seq_wf.git
 ```bash
 cd nl-rna-seq_wf/
 chmod u+x -R modules/
-nextflow run main.nf --fastq_r1 s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN748413-2931652-MGML0088-FBR1-R1_001.fast
-q.gz --fastq_r2 s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN748413-2931652-MGML0088-FBR1-R2_001.fastq.gz --prefix UDN748413-2931652-MGML0088-FBR1 --family_id UDN748413 --bucket_dir UDN748413-P_fibroblast_rnaseq
+nextflow run main.nf --fastq_r1 s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN748413-2931652-MGML0088-FBR1-R1_001.fastq.gz --fastq_r2 s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN748413-2931652-MGML0088-FBR1-R2_001.fastq.gz --prefix UDN748413-2931652-MGML0088-FBR1 --family_id UDN748413 --bucket_dir UDN748413-P_fibroblast_rnaseq
 ```
 > If something happens and you need to rerun the pipeline from where it stopped, remember you can use `-resume` for those cases.
 
