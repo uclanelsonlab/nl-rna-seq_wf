@@ -1,12 +1,10 @@
-process samtools_view {
+process SAMTOOLS_VIEW {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 20
     tag "Samtools view on $meta"
 
     input:
     tuple val(meta), path(bwa_bam)
-    tuple val(meta2), path(log)
-    path versions
     val reference
 
     output:
@@ -18,7 +16,6 @@ process samtools_view {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
@@ -31,15 +28,13 @@ process samtools_view {
     """
 }
 
-process samtools_flagstat {
+process SAMTOOLS_FLAGSTAT {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     tag "Samtools flagstat on $meta"
     publishDir params.outdir, mode:'symlink'
 
     input:
     tuple val(meta), path(view_bam)
-    tuple val(meta2), path(log)
-    path versions
     val reference
 
     output:
@@ -50,7 +45,6 @@ process samtools_flagstat {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
@@ -63,19 +57,13 @@ process samtools_flagstat {
     """
 }
 
-process samtools_index {
+process SAMTOOLS_INDEX {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 20
     tag "Samtools index on $bam"
 
     input:
-    tuple val(meta), path(reads_gene)
-    tuple val(meta2), path(reads_gene_log)
-    tuple val(meta3), path(final_log)
-    tuple val(meta4), path(sj_tab)
-    tuple val(meta5), path(bam)
-    tuple val(meta6), path(log)
-    path versions
+    tuple val(meta), path(bam)
 
     output:
     tuple val(meta), path("*.bai"), emit: bam_index
@@ -95,7 +83,7 @@ process samtools_index {
     """
 }
 
-process samtools_cram {
+process SAMTOOLS_CRAM {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 40
     tag "Samtools view on $meta BAM to CRAM"
@@ -106,8 +94,6 @@ process samtools_cram {
     path fai
     path dict
     tuple val(meta), path(bam)
-    tuple val(meta2), path(log)
-    path versions
 
     output:
     tuple val(meta), path("*.hg38_rna.normal.cram"),        emit: rna_cram
@@ -119,7 +105,6 @@ process samtools_cram {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """
@@ -136,7 +121,7 @@ process samtools_cram {
 process SAMTOOLS_BAM2SAM {
     container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
     cpus 40
-    tag "Samtools view on $meta CRAM to SAM"
+    tag "Samtools view on $meta BAM to SAM"
     publishDir params.outdir, mode:'symlink'
 
     input:
@@ -144,8 +129,6 @@ process SAMTOOLS_BAM2SAM {
     path fai
     path dict    
     tuple val(meta), path(bam)
-    tuple val(meta2), path(log)
-    path versions
 
     output:
     tuple val(meta), path("*.hg38_rna.normal.sam"),  emit: rna_sam
@@ -158,6 +141,37 @@ process SAMTOOLS_BAM2SAM {
     script:
     """
     samtools view -@ $task.cpus -h -o ${meta}.hg38_rna.normal.sam ${bam} 2> >(tee ${meta}.sam.log >&2)
+
+    cat <<-END_VERSIONS > bam2sam_versions.yml
+    "${task.process}":
+        samtools: \$(echo \$(samtools --version 2>&1) | awk '{print \$2}' )
+    END_VERSIONS
+    """
+}
+
+process SAMTOOLS_CRAM2BAM {
+    container "quay.io/biocontainers/samtools:1.19.1--h50ea8bc_0"
+    cpus 40
+    tag "Samtools view on $meta CRAM to BAM"
+    publishDir params.outdir, mode:'symlink'
+
+    input:
+    path fasta
+    path fai
+    path dict    
+    tuple val(meta), path(cram)
+
+    output:
+    tuple val(meta), path("*.hg38_rna.normal.bam"),  emit: bam
+    path '*.bam.log',                                emit: log
+    path "*versions.yml",                            emit: versions
+    
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:
+    """
+    samtools view -@ $task.cpus -T ${fasta} -o ${meta}.hg38_rna.normal.bam ${cram} 2> >(tee ${meta}.bam.log >&2)
 
     cat <<-END_VERSIONS > cram_versions.yml
     "${task.process}":

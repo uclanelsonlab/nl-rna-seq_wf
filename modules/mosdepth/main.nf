@@ -11,8 +11,6 @@ process MOSDEPTH_BED {
     path bed
     tuple val(meta), path(cram)
     tuple val(meta2), path(crai)
-    path cram_log
-    path cram_version
 
 
     output:
@@ -24,7 +22,7 @@ process MOSDEPTH_BED {
     path "*.regions.bed.gz",           emit: regions_bed
     path "*.regions.bed.gz.csi",       emit: regions_bed_index
     path '*.log',                      emit: log
-    path "mosdepth_versions.yml",              emit: versions
+    path "mosdepth_versions.yml",      emit: versions
     
     when:
     task.ext.when == null || task.ext.when

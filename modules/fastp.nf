@@ -1,4 +1,4 @@
-process run_fastp {
+process RUN_FASTP {
     container "quay.io/biocontainers/fastp:0.24.1--heae3180_0"
     cpus 36
     tag "Fastp on $meta"
@@ -18,7 +18,6 @@ process run_fastp {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
 
     """

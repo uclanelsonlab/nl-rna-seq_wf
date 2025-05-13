@@ -1,29 +1,30 @@
-process download_fastqs {
-    tag "Download ${meta} FASTQ files"
+process DOWNLOAD_FASTQS {
+    tag "Download ${prefix} FASTQ files"
 
     input:
-    val meta
-    val library
-    val fastq_bucket
+    val prefix
+    val fastq_r1
+    val fastq_r2
 
     output:
-    tuple val(meta), path('*.fastq.gz'), emit: reads
+    tuple val(prefix), path('*.fastq.gz'), emit: reads
 
     script:
     """
-    aws s3 cp ${fastq_bucket}/${library}/ . --exclude "*" --recursive --include "${meta}*" --force-glacier-transfer
+    aws s3 cp ${fastq_r1} .
+    aws s3 cp ${fastq_r2} .
     """
 }
 
-process download_rna_ref {
-    tag "Download rna reference files"
+process DOWNLOAD_RNA_REF {
+    tag "Download ${rna_reference_path}"
 
     input:
     val rna_reference_path
     val type
 
     output:
-    path "${type}_reference", emit: rrna_reference_dir
+    path "${type}_reference", emit: reference_dir
 
     script:
     """
@@ -32,8 +33,8 @@ process download_rna_ref {
     """
 }
 
-process download_ir_ref {
-    tag "Download IRFinder reference files"
+process DOWNLOAD_IR_REF {
+    tag "Download ${ir_ref}"
 
     input:
     val ir_ref
@@ -48,8 +49,8 @@ process download_ir_ref {
     """
 }
 
-process download_human_ref {
-    tag "Download rna reference files"
+process DOWNLOAD_HUMAN_REF {
+    tag "Download ${fasta}"
 
     input:
     val fasta
@@ -71,6 +72,7 @@ process download_human_ref {
 
 process DOWNLOAD_BED {
     label "download_bed"
+    tag "Download ${bed}"
 
     input:
     val bed
@@ -81,5 +83,42 @@ process DOWNLOAD_BED {
     script:
     """
     aws s3 cp ${bed} .
+    """
+}
+
+process DOWNLOAD_CRAM {
+    label "download_cram"
+    tag "Download ${cram}"
+
+
+    input:
+    val meta
+    val cram
+
+    output:
+    tuple val(meta), path("*.cram"), emit: cram
+
+    script:
+    """
+    aws s3 cp ${cram} .
+    """
+}
+
+process DOWNLOAD_ZIPPED_INDEX {
+    label "download_files_index"
+    tag "Download ${zipped}"
+
+    input:
+    val meta
+    val zipped
+    val index
+
+    output:
+    tuple val(meta), path("*.gz"), path("*.gz.tbi"), emit: file_tuple
+
+    script:
+    """
+    aws s3 cp ${zipped} .
+    aws s3 cp ${index} . 
     """
 }

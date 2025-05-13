@@ -1,4 +1,4 @@
-process download_master_featureCounts {
+process DOWNLOAD_MASTER_FEATURECOUNTS {
     tag "Download featureCounts master file"
 
     input:
@@ -13,18 +13,14 @@ process download_master_featureCounts {
     """
 }
 
-process add_sample_counts_master {
+process ADD_SAMPLE_COUNTS_MASTER {
     tag "Add sample's counts to featureCounts master file"
     conda 'pandas'
     publishDir params.outdir, mode:'symlink'
 
     input:
     path featurecounts_master_path
-    tuple val(meta), path(gene_counts)
     tuple val(meta), path(gene_counts_short)
-    tuple val(meta), path(gene_counts_summary)
-    tuple val(meta), path(log)
-    path versions
 
     output:
     tuple val(meta), path("*_updated.tsv"), emit: featurecounts_updated
@@ -35,7 +31,7 @@ process add_sample_counts_master {
     """
 }
 
-process run_outrider {
+process RUN_OUTRIDER {
     tag "Rscript to run outrider"
     container 'gvcn/outrider:1.20.1'
     publishDir params.outdir, mode:'symlink'
@@ -45,15 +41,14 @@ process run_outrider {
     val tissue
 
     output:
-    tuple val(meta), path("*_results.tsv"),    emit: outrider_table
-    tuple val(meta), path("*.rds"),             emit: outrider_project
-    tuple val(meta), path("*.log"),             emit: log
+    tuple val(meta), path("*_results.tsv"), emit: outrider_table
+    tuple val(meta), path("*.rds"),         emit: outrider_project
+    path("*.log"),                          emit: log
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta}"
     """
     run_outrider.R -f ${featurecounts_updated} -t ${tissue} -o ${prefix}_${tissue}_results.tsv 2> >(tee ${prefix}.outrider.log >&2)

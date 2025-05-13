@@ -1,129 +1,234 @@
 nextflow.enable.dsl = 2
 
-params.sample_name = 'NB-8204-M'
-params.library = "SN_7RNA_S-24-0479_XA044"
-params.proband = "SAMPLE"
-params.tissue = "fibroblast"
-params.meta = params.sample_name + "-" + params.tissue
-params.fastq_bucket = "s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq"
-params.rib_reference_path = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference"
-params.gencode_gtf_path = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/gencode.v43.primary_assembly.annotation.gtf"
-params.gencode_gtf_collapse = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/gencode.v43.primary_assembly.annotation.collapse.gtf"
-params.outdir = "results"
-params.human_fai = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa.fai"
-params.human_dict = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.dict"
-params.human_fasta = "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa"
-params.output_bucket = "s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases"
-params.features_master_file = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/drop/test/fibroblast/featureCounts_fibroblast_24-07-22.tsv"
-params.ir_ref = "s3://ucla-rare-diseases/UCLA-UDN/assets/IRFinder-1.3.1/REF/GRCh38.p13/"
-params.bed = "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/rnaseq/hg38/XBP1-NM_001079539-hg38.bed"
-
 log.info """\
     R N A - S E Q _ W F   P I P E L I N E
     ===================================
-    sample_name         : ${params.sample_name}
-    library             : ${params.library}
-    fastq_bucket        : ${params.fastq_bucket}
+    prefix              : ${params.prefix}
+    family_id           : ${params.family_id}
+    bucket_dir          : ${params.bucket_dir}
     rib_reference_path  : ${params.rib_reference_path}
     outdir              : ${params.outdir}
     bucket output       : ${params.output_bucket}
     """
     .stripIndent(true)
 
-include { download_fastqs; download_rna_ref as download_rrna; download_rna_ref as download_globinrna; download_human_ref; download_ir_ref; DOWNLOAD_BED } from './modules/download_files.nf'
-include { run_fastp } from './modules/fastp.nf'
-include { filter_fastq } from './modules/filters.nf'
-include { bwa_mem as bwa_mem_rrna; bwa_mem as bwa_mem_globinrna } from './modules/bwa.nf'
-include { samtools_view as samtools_view_rrna; samtools_flagstat as samtools_flagstat_rrna; samtools_index; samtools_cram } from './modules/samtools.nf'
-include { samtools_view as samtools_view_globinrna; samtools_flagstat as samtools_flagstat_globinrna; SAMTOOLS_BAM2SAM } from './modules/samtools.nf'
-include { check_star_reference; star_alignreads } from './modules/star.nf'
-include { run_markdup } from './modules/picard.nf'
-include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
-include { download_gencode as download_gencode_normal; download_gencode as download_gencode_collapse; subread_featurecounts } from './modules/subreads.nf'
-include { download_master_featureCounts; add_sample_counts_master; run_outrider } from './modules/outrider/main.nf'
 include { RNASEQC } from './modules/rnaseqc.nf'
-include { upload_files; UP_SJ } from './modules/upload_outputs.nf'
-include {IRFINDER } from './modules/irfinder.nf'
+include { UPLOAD_FILES; UPLOAD_OUTRIDER; UPLOAD_VARCALL } from './modules/upload_outputs.nf'
+include { IRFINDER } from './modules/irfinder.nf'
 include { BAM2SJ } from './modules/bam2sj/main.nf'
 include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
+include { RUN_FASTP } from './modules/fastp.nf'
+include { FILTER_FASTQ } from './modules/filters.nf'
+include { CHECK_STAR_REF; STAR_ALIGNREADS } from './modules/star.nf'
+include { run_markdup } from './modules/picard.nf'
+include { SAMBAMBA_MARKDUP } from './modules/sambamba.nf'
+include { BWA_MEM as BWA_MEM_RRNA; BWA_MEM as BWA_MEM_GLOBINRNA } from './modules/bwa.nf'
+include { 
+    SAMTOOLS_VIEW as SAMTOOLS_VIEW_GLOBINRNA; 
+    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_GLOBINRNA
+} from './modules/samtools.nf'
+include { 
+    DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_NORMAL; 
+    DOWNLOAD_GENCODE as DOWNLOAD_GENCODE_COLLAPSE; 
+    SUBREAD_FEATURECOUNTS
+} from './modules/subreads.nf'
+include { 
+    DOWNLOAD_MASTER_FEATURECOUNTS; 
+    ADD_SAMPLE_COUNTS_MASTER; 
+    RUN_OUTRIDER 
+} from './modules/outrider/main.nf'
+include { 
+    GATK4_SPLITNCIGARREADS; 
+    GATK4_BASERECALIBRATOR; 
+    GATK4_APPLYBQSR; 
+    GATK4_HAPLOTYPECALLER 
+} from './modules/gatk/main.nf'
+include { 
+    DOWNLOAD_FASTQS; 
+    DOWNLOAD_RNA_REF as DOWNLOAD_RRNA; 
+    DOWNLOAD_RNA_REF as DOWNLOAD_GLOBINRNA; 
+    DOWNLOAD_HUMAN_REF; 
+    DOWNLOAD_IR_REF; 
+    DOWNLOAD_BED;
+    DOWNLOAD_CRAM
+} from './modules/download_files.nf'
+include { 
+    SAMTOOLS_VIEW as SAMTOOLS_VIEW_RRNA; 
+    SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_RRNA; 
+    SAMTOOLS_INDEX; 
+    SAMTOOLS_CRAM;
+    SAMTOOLS_BAM2SAM;
+    SAMTOOLS_CRAM2BAM
+} from './modules/samtools.nf'
+
+include {
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_DBSNP138;
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_KNOW_INDELS;
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_INDELS_1000G;
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_AF_ONLY_GNOMAD;
+    DOWNLOAD_ZIPPED_INDEX as DOWNLOAD_SMALL_EXAC;
+} from './modules/download_files.nf'
 
 workflow {
-    download_fastqs_ch = download_fastqs(params.meta, params.library, params.fastq_bucket)
-    download_rrna_ch = download_rrna(params.rib_reference_path, "rrna")
-    download_globinrna_ch = download_globinrna(params.rib_reference_path, "globinrna")
+    DOWNLOAD_RRNA(params.rib_reference_path, "rrna") //DOWNLOAD_RRNA_ch
+    DOWNLOAD_GLOBINRNA(params.rib_reference_path, "globinrna") //DOWNLOAD_GLOBINRNA_ch
+    DOWNLOAD_HUMAN_REF(params.human_fasta, params.human_fai, params.human_dict)
     DOWNLOAD_BED(params.bed)
 
-    // contamination check
-    fastp_ch = run_fastp(download_fastqs_ch)
-    filtered_fastq_ch = filter_fastq(fastp_ch)
-    rrna_bwa_ch = bwa_mem_rrna(filtered_fastq_ch, download_rrna_ch, "human_rRNA_strict.fasta", "rrna")
-    globinrna_bwa_ch = bwa_mem_globinrna(filtered_fastq_ch, download_globinrna_ch, "human_globinRNA.fa", "globinrna")
-    rrna_samtools_view_ch = samtools_view_rrna(rrna_bwa_ch, "rrna")
-    globinrna_samtools_view_ch = samtools_view_globinrna(globinrna_bwa_ch, "globinrna")
-    rrna_samtools_flagstat_ch = samtools_flagstat_rrna(rrna_samtools_view_ch, "rrna")
-    globinrna_samtools_flagstat_ch = samtools_flagstat_globinrna(globinrna_samtools_view_ch, "globinrna")
+    ch_dbsnp = DOWNLOAD_DBSNP138("dbsnp138", params.dbsnp138, params.dbsnp138_index) //Channel.value([[id:"dbsnp138"], params.dbsnp138, params.dbsnp138_index])
+    ch_known_indels = DOWNLOAD_KNOW_INDELS("known_indels", params.known_indels, params.known_indels_index) //Channel.value([[id:"known_indels"], params.known_indels, params.known_indels_index])
+    ch_indels_1000G = DOWNLOAD_INDELS_1000G("indels_1000G", params.indels_1000G, params.indels_1000G_index) //Channel.value([[id:"indels_1000G"], params.indels_1000G, params.indels_1000G_index])
+    ch_af_only_gnomad = DOWNLOAD_AF_ONLY_GNOMAD("af_only_gnomad", params.af_only_gnomad, params.af_only_gnomad_index) //Channel.value([[id:"af_only_gnomad"], params.af_only_gnomad, params.af_only_gnomad_index])
+    ch_small_exac_common_3 = DOWNLOAD_SMALL_EXAC("small_exac_common_3", params.small_exac_common_3, params.small_exac_common_3_index) //Channel.value([[id:"small_exac_common_3"], params.small_exac_common_3, params.small_exac_common_3_index])
 
-    // STAR alignment
-    star_index_ref_ch = check_star_reference(download_fastqs_ch)
-    star_alignreads_ch = star_alignreads(star_index_ref_ch, fastp_ch)
-    samtools_index(star_alignreads_ch)
-    mark_dup_ch = SAMBAMBA_MARKDUP(star_alignreads_ch)
+    
+    if (params.use_cram) {
+        // download cram 
+        DOWNLOAD_CRAM(params.prefix, params.cram)
+        // CRAM to BAM
+        SAMTOOLS_CRAM2BAM(
+            DOWNLOAD_HUMAN_REF.out.human_fasta,
+            DOWNLOAD_HUMAN_REF.out.human_fai,
+            DOWNLOAD_HUMAN_REF.out.human_dict,
+            DOWNLOAD_CRAM.out.cram)
+        // transform it to BAM to be mark_dup_ch
+        SAMBAMBA_MARKDUP(SAMTOOLS_CRAM2BAM.out.bam)
+    } else {
+        DOWNLOAD_FASTQS(params.prefix, params.fastq_r1, params.fastq_r2) //DOWNLOAD_FASTQS_ch
+        // contamination check
+        RUN_FASTP(DOWNLOAD_FASTQS.out.reads) //fastp_ch
+        FILTER_FASTQ(RUN_FASTP.out.reads) //filtered_fastq_ch
+        BWA_MEM_RRNA(FILTER_FASTQ.out.reads, DOWNLOAD_RRNA.out.reference_dir, "human_rRNA_strict.fasta", "rrna") //rrna_bwa_ch
+        BWA_MEM_GLOBINRNA(FILTER_FASTQ.out.reads, DOWNLOAD_GLOBINRNA.out.reference_dir, "human_globinRNA.fa", "globinrna") //globinrna_bwa_ch
+        SAMTOOLS_VIEW_RRNA(BWA_MEM_RRNA.out.bwa_bam, "rrna") //rrna_SAMTOOLS_VIEW_ch
+        SAMTOOLS_VIEW_GLOBINRNA(BWA_MEM_GLOBINRNA.out.bwa_bam, "globinrna") //globinrna_SAMTOOLS_VIEW_ch
+        SAMTOOLS_FLAGSTAT_RRNA(SAMTOOLS_VIEW_RRNA.out.view_bam, "rrna") //rrna_SAMTOOLS_FLAGSTAT_ch
+        SAMTOOLS_FLAGSTAT_GLOBINRNA(SAMTOOLS_VIEW_GLOBINRNA.out.view_bam, "globinrna") //globinrna_SAMTOOLS_FLAGSTAT_ch
+
+        // STAR alignment
+        CHECK_STAR_REF(DOWNLOAD_FASTQS.out.reads) //star_index_ref_ch
+        STAR_ALIGNREADS(
+            CHECK_STAR_REF.out.star_index,
+            CHECK_STAR_REF.out.sjdb_overhang,
+            RUN_FASTP.out.reads) //STAR_ALIGNREADS_ch
+        SAMTOOLS_INDEX(STAR_ALIGNREADS.out.star_bam)
+        SAMBAMBA_MARKDUP(STAR_ALIGNREADS.out.star_bam) //mark_dup_ch
+    }
 
     // Create counts by gene
-    gencode_pc_ch = download_gencode_normal(params.gencode_gtf_path)
-    feature_counts_ch = subread_featurecounts(gencode_pc_ch, mark_dup_ch)
-    featurecounts_master_ch = download_master_featureCounts(params.features_master_file)
-    featurecounts_updated_ch = add_sample_counts_master(featurecounts_master_ch, feature_counts_ch)
-    outrider_table_ch = run_outrider(featurecounts_updated_ch, params.tissue)
-
+    DOWNLOAD_GENCODE_NORMAL(params.gencode_gtf_path) //gencode_pc_ch
+    SUBREAD_FEATURECOUNTS(
+        DOWNLOAD_GENCODE_NORMAL.out.gencode_gtf, 
+        SAMBAMBA_MARKDUP.out.marked_bam) //feature_counts_ch
+    
+    // Run OUTRIDER
+    if ( params.outrider ) {
+        DOWNLOAD_MASTER_FEATURECOUNTS(params.features_master_file) //featurecounts_master_ch
+        ADD_SAMPLE_COUNTS_MASTER(
+            DOWNLOAD_MASTER_FEATURECOUNTS.out.featurecounts_master, 
+            SUBREAD_FEATURECOUNTS.out.gene_counts_short) //featurecounts_updated_ch
+        RUN_OUTRIDER(ADD_SAMPLE_COUNTS_MASTER.out.featurecounts_updated, params.tissue) //outrider_table_ch
+        UPLOAD_OUTRIDER(
+            params.family_id, 
+            params.bucket_dir, 
+            params.output_bucket,
+            RUN_OUTRIDER.out.outrider_table,
+            RUN_OUTRIDER.out.outrider_project,
+            RUN_OUTRIDER.out.log
+        )
+    }
     // Run QC
-    gencode_collapse_ch = download_gencode_collapse(params.gencode_gtf_collapse)
-    rnaseqc_ch = RNASEQC(gencode_collapse_ch, mark_dup_ch)
+    DOWNLOAD_GENCODE_COLLAPSE(params.gencode_gtf_collapse) //gencode_collapse_ch
+    RNASEQC(
+        DOWNLOAD_GENCODE_COLLAPSE.out.gencode_gtf, 
+        SAMBAMBA_MARKDUP.out.marked_bam) //rnaseqc_ch
 
     // Create CRAM files
-    download_human_ref(params.human_fasta, params.human_fai, params.human_dict)
-    cram_ch = samtools_cram(download_human_ref.out.human_fasta, download_human_ref.out.human_fai, download_human_ref.out.human_dict, mark_dup_ch)
+    SAMTOOLS_CRAM(
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict, 
+        SAMBAMBA_MARKDUP.out.marked_bam) //cram_ch
 
     // Run IRFinder
-    ir_ref_ch = download_ir_ref(params.ir_ref)
-    irfinder_ch = IRFINDER(ir_ref_ch, mark_dup_ch)
+    DOWNLOAD_IR_REF(params.ir_ref) //ir_ref_ch
+    IRFINDER(
+        DOWNLOAD_IR_REF.out.ir_reference_dir, 
+        SAMBAMBA_MARKDUP.out.marked_bam) //irfinder_ch
 
     // Calculate XBP1 coverage
-    MOSDEPTH_BED(download_human_ref.out.human_fasta, download_human_ref.out.human_fai, download_human_ref.out.human_dict, DOWNLOAD_BED.out.bed, cram_ch)
+    MOSDEPTH_BED(
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict, 
+        DOWNLOAD_BED.out.bed, 
+        SAMTOOLS_CRAM.out.rna_cram,
+        SAMTOOLS_CRAM.out.rna_crai)
     
     // CRAM to SAM 
-    SAMTOOLS_BAM2SAM(download_human_ref.out.human_fasta, download_human_ref.out.human_fai, download_human_ref.out.human_dict, mark_dup_ch)
+    SAMTOOLS_BAM2SAM(
+        DOWNLOAD_HUMAN_REF.out.human_fasta, 
+        DOWNLOAD_HUMAN_REF.out.human_fai, 
+        DOWNLOAD_HUMAN_REF.out.human_dict, 
+        SAMBAMBA_MARKDUP.out.marked_bam)
     
     // SAM to SJ
     BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
+
+    // Run GATK variant calling
+    if ( params.varcall ) {
+        GATK4_SPLITNCIGARREADS(
+            DOWNLOAD_HUMAN_REF.out.human_fasta, 
+            DOWNLOAD_HUMAN_REF.out.human_fai, 
+            DOWNLOAD_HUMAN_REF.out.human_dict, 
+            SAMBAMBA_MARKDUP.out.marked_bam)
+        GATK4_BASERECALIBRATOR(
+            GATK4_SPLITNCIGARREADS.out.bam, 
+            DOWNLOAD_HUMAN_REF.out.human_fasta, 
+            DOWNLOAD_HUMAN_REF.out.human_fai, 
+            DOWNLOAD_HUMAN_REF.out.human_dict,  
+            ch_dbsnp,
+            ch_known_indels,
+            ch_indels_1000G,
+            ch_af_only_gnomad,
+            ch_small_exac_common_3)
+        GATK4_APPLYBQSR(
+            GATK4_SPLITNCIGARREADS.out.bam, 
+            GATK4_BASERECALIBRATOR.out.table, 
+            DOWNLOAD_HUMAN_REF.out.human_fasta,
+            DOWNLOAD_HUMAN_REF.out.human_fai, 
+            DOWNLOAD_HUMAN_REF.out.human_dict)
+        GATK4_HAPLOTYPECALLER(GATK4_APPLYBQSR.out.bam, 
+            DOWNLOAD_HUMAN_REF.out.human_fasta, 
+            DOWNLOAD_HUMAN_REF.out.human_fai, 
+            DOWNLOAD_HUMAN_REF.out.human_dict,
+            ch_dbsnp)
+        UPLOAD_VARCALL(
+            params.family_id, 
+            params.bucket_dir, 
+            params.output_bucket,
+            GATK4_HAPLOTYPECALLER.out.vcf, 
+            GATK4_HAPLOTYPECALLER.out.tbi, 
+            GATK4_HAPLOTYPECALLER.out.versions
+        )
+    }
     
     // Upload selected output files
-    upload_files(
-        params.sample_name, 
-        params.proband, 
-        params.tissue, 
-        params.output_bucket, 
-        rrna_samtools_flagstat_ch, 
-        globinrna_samtools_flagstat_ch, 
-        star_alignreads_ch, 
-        feature_counts_ch, 
-        outrider_table_ch, 
-        rnaseqc_ch, 
-        cram_ch, 
-        irfinder_ch,
-        fastp_ch
-    )
-
-    // Uplaod SJ
-    UP_SJ(
+    UPLOAD_FILES(
+        params.family_id, 
+        params.bucket_dir, 
+        params.output_bucket,
+        RUN_FASTP.out.json, RUN_FASTP.out.html, RUN_FASTP.out.log, RUN_FASTP.out.versions, //fastp
+        SAMTOOLS_FLAGSTAT_RRNA.out.flagstat_file, SAMTOOLS_FLAGSTAT_RRNA.out.versions, //flagstat_rrna
+        SAMTOOLS_FLAGSTAT_GLOBINRNA.out.flagstat_file, SAMTOOLS_FLAGSTAT_GLOBINRNA.out.versions, //flagstat_globinrna
+        STAR_ALIGNREADS.out.reads_gene, STAR_ALIGNREADS.out.reads_gene_log, STAR_ALIGNREADS.out.final_log, STAR_ALIGNREADS.out.sj_tab, STAR_ALIGNREADS.out.log, STAR_ALIGNREADS.out.versions, //star
+        SAMBAMBA_MARKDUP.out.log, SAMBAMBA_MARKDUP.out.versions, //sambamba
+        SUBREAD_FEATURECOUNTS.out.gene_counts, SUBREAD_FEATURECOUNTS.out.gene_counts_short, SUBREAD_FEATURECOUNTS.out.gene_counts_summary, SUBREAD_FEATURECOUNTS.out.log, SUBREAD_FEATURECOUNTS.out.versions, //featurecounts
+        RNASEQC.out.coverage, RNASEQC.out.exon_cv, RNASEQC.out.exon_reads, RNASEQC.out.gene_fragments, RNASEQC.out.gene_reads, RNASEQC.out.gene_tpm, RNASEQC.out.metrics, RNASEQC.out.log, RNASEQC.out.versions, //rnaseqc
+        SAMTOOLS_CRAM.out.rna_cram, SAMTOOLS_CRAM.out.rna_crai, SAMTOOLS_CRAM.out.log, SAMTOOLS_CRAM.out.versions, //cram
+        IRFINDER.out.irfinder_chr_coverage, IRFINDER.out.irfinder_dir_val, IRFINDER.out.irfinder_dir, IRFINDER.out.irfinder_nondir_val, IRFINDER.out.irfinder_nondir, IRFINDER.out.irfinder_junc_count, IRFINDER.out.irfinder_roi, IRFINDER.out.irfinder_spans_point, IRFINDER.out.log, IRFINDER.out.versions, //irfinder
+        SAMTOOLS_BAM2SAM.out.log, SAMTOOLS_BAM2SAM.out.versions, //sam
         BAM2SJ.out.sj_tab_gz,
-        MOSDEPTH_BED.out.global_dist, 
-        MOSDEPTH_BED.out.region_dist, 
-        MOSDEPTH_BED.out.summary, 
-        MOSDEPTH_BED.out.perbase, 
-        MOSDEPTH_BED.out.perbase_index, 
-        MOSDEPTH_BED.out.regions_bed, 
-        MOSDEPTH_BED.out.regions_bed_index,
-        params.output_bucket
+        MOSDEPTH_BED.out.global_dist, MOSDEPTH_BED.out.region_dist, MOSDEPTH_BED.out.summary, MOSDEPTH_BED.out.perbase, MOSDEPTH_BED.out.perbase_index, MOSDEPTH_BED.out.regions_bed, MOSDEPTH_BED.out.regions_bed_index,
     )
 }
