@@ -13,7 +13,7 @@ log.info """\
     .stripIndent(true)
 
 include { RNASEQC } from './modules/rnaseqc.nf'
-include { UPLOAD_FILES; UPLOAD_OUTRIDER; UPLOAD_VARCALL } from './modules/upload_outputs.nf'
+include { UPLOAD_PART1_FILES; UPLOAD_PART2_FILES; UPLOAD_OUTRIDER; UPLOAD_VARCALL } from './modules/upload_outputs.nf'
 include { IRFINDER } from './modules/irfinder.nf'
 include { BAM2SJ } from './modules/bam2sj/main.nf'
 include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
@@ -117,6 +117,17 @@ workflow {
             RUN_FASTP.out.reads) //STAR_ALIGNREADS_ch
         SAMTOOLS_INDEX(STAR_ALIGNREADS.out.star_bam)
         SAMBAMBA_MARKDUP(STAR_ALIGNREADS.out.star_bam) //mark_dup_ch
+        // Upload part 1 files
+        UPLOAD_PART1_FILES(
+            params.family_id, 
+            params.bucket_dir, 
+            params.output_bucket,
+            RUN_FASTP.out.json, RUN_FASTP.out.html, RUN_FASTP.out.log, RUN_FASTP.out.versions, //fastp
+            SAMTOOLS_FLAGSTAT_RRNA.out.flagstat_file, SAMTOOLS_FLAGSTAT_RRNA.out.versions, //flagstat_rrna
+            SAMTOOLS_FLAGSTAT_GLOBINRNA.out.flagstat_file, SAMTOOLS_FLAGSTAT_GLOBINRNA.out.versions, //flagstat_globinrna
+            STAR_ALIGNREADS.out.reads_gene, STAR_ALIGNREADS.out.reads_gene_log, STAR_ALIGNREADS.out.final_log, STAR_ALIGNREADS.out.sj_tab, STAR_ALIGNREADS.out.log, STAR_ALIGNREADS.out.versions, //star
+            KALLISTO_QUANT.out.abundance_h5, KALLISTO_QUANT.out.abundance_tsv, KALLISTO_QUANT.out.run_info, KALLISTO_QUANT.out.log, KALLISTO_QUANT.out.versions)  //kallisto
+
     }
 
     // Create counts by gene
@@ -218,14 +229,10 @@ workflow {
     }
     
     // Upload selected output files
-    UPLOAD_FILES(
+    UPLOAD_PART2_FILES(
         params.family_id, 
         params.bucket_dir, 
         params.output_bucket,
-        RUN_FASTP.out.json, RUN_FASTP.out.html, RUN_FASTP.out.log, RUN_FASTP.out.versions, //fastp
-        SAMTOOLS_FLAGSTAT_RRNA.out.flagstat_file, SAMTOOLS_FLAGSTAT_RRNA.out.versions, //flagstat_rrna
-        SAMTOOLS_FLAGSTAT_GLOBINRNA.out.flagstat_file, SAMTOOLS_FLAGSTAT_GLOBINRNA.out.versions, //flagstat_globinrna
-        STAR_ALIGNREADS.out.reads_gene, STAR_ALIGNREADS.out.reads_gene_log, STAR_ALIGNREADS.out.final_log, STAR_ALIGNREADS.out.sj_tab, STAR_ALIGNREADS.out.log, STAR_ALIGNREADS.out.versions, //star
         SAMBAMBA_MARKDUP.out.log, SAMBAMBA_MARKDUP.out.versions, //sambamba
         SUBREAD_FEATURECOUNTS.out.gene_counts, SUBREAD_FEATURECOUNTS.out.gene_counts_short, SUBREAD_FEATURECOUNTS.out.gene_counts_summary, SUBREAD_FEATURECOUNTS.out.log, SUBREAD_FEATURECOUNTS.out.versions, //featurecounts
         RNASEQC.out.coverage, RNASEQC.out.exon_cv, RNASEQC.out.exon_reads, RNASEQC.out.gene_fragments, RNASEQC.out.gene_reads, RNASEQC.out.gene_tpm, RNASEQC.out.metrics, RNASEQC.out.log, RNASEQC.out.versions, //rnaseqc

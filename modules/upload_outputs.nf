@@ -1,5 +1,5 @@
-process UPLOAD_FILES {
-    tag "Upload all the necessary output files"
+process UPLOAD_PART1_FILES {
+    tag "Upload part 1 output files"
 
     input:
     val family_id
@@ -19,6 +19,46 @@ process UPLOAD_FILES {
     tuple val(meta7), path(star_sj_tab)
     tuple val(meta8), path(star_log)
     path star_versions
+    path kallisto_abundance_h5
+    path kallisto_abundance_tsv
+    path kallisto_run_info
+    path kallisto_log
+    path kallisto_versions
+
+    script:
+    """
+    # qc
+    aws s3 cp ${fastp_json} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${fastp_json}
+    aws s3 cp ${fastp_html} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${fastp_html}
+    aws s3 cp ${fastp_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${fastp_log}
+    aws s3 cp ${fastp_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${fastp_versions}
+    aws s3 cp ${rrna_flagstat_file} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${rrna_flagstat_file}
+    aws s3 cp ${rrna_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${rrna_versions}
+    aws s3 cp ${globinrna_flagstat_file} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${globinrna_flagstat_file}
+    aws s3 cp ${globinrna_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${globinrna_versions}
+    # alignment
+    aws s3 cp ${star_reads_gene} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_reads_gene}
+    aws s3 cp ${star_reads_gene_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_reads_gene_log}
+    aws s3 cp ${star_final_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_final_log}
+    aws s3 cp ${star_sj_tab} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_sj_tab}
+    aws s3 cp ${star_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_log}
+    aws s3 cp ${star_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_versions}
+    # kallisto
+    aws s3 cp ${kallisto_abundance_h5} ${output_bucket}/${family_id}/${bucket_dir}/hg38/kallisto/${kallisto_abundance_h5}
+    aws s3 cp ${kallisto_abundance_tsv} ${output_bucket}/${family_id}/${bucket_dir}/hg38/kallisto/${kallisto_abundance_tsv}
+    aws s3 cp ${kallisto_run_info} ${output_bucket}/${family_id}/${bucket_dir}/hg38/kallisto/${kallisto_run_info}
+    aws s3 cp ${kallisto_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/kallisto/${kallisto_log}
+    aws s3 cp ${kallisto_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/kallisto/${kallisto_versions}
+    """
+}
+
+process UPLOAD_PART2_FILES {
+    tag "Upload part 2 output files"
+
+    input:
+    val family_id
+    val bucket_dir
+    val output_bucket
     tuple val(meta9), path(sambamba_log)
     path sambamba_versions
     tuple val(meta10), path(featurecounts_gene_counts)
@@ -63,14 +103,6 @@ process UPLOAD_FILES {
     script:
     """
     # qc
-    aws s3 cp ${fastp_json} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${fastp_json}
-    aws s3 cp ${fastp_html} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${fastp_html}
-    aws s3 cp ${fastp_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${fastp_log}
-    aws s3 cp ${fastp_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${fastp_versions}
-    aws s3 cp ${rrna_flagstat_file} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${rrna_flagstat_file}
-    aws s3 cp ${rrna_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${rrna_versions}
-    aws s3 cp ${globinrna_flagstat_file} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${globinrna_flagstat_file}
-    aws s3 cp ${globinrna_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${globinrna_versions}
     aws s3 cp ${rnaseqc_coverage} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${rnaseqc_coverage}
     aws s3 cp ${rnaseqc_exon_cv} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${rnaseqc_exon_cv}
     aws s3 cp ${rnaseqc_exon_reads} ${output_bucket}/${family_id}/${bucket_dir}/hg38/qc/${rnaseqc_exon_reads}
@@ -83,12 +115,6 @@ process UPLOAD_FILES {
     # alignment
     aws s3 cp ${bam2sam_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${bam2sam_log}
     aws s3 cp ${bam2sam_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${bam2sam_versions}
-    aws s3 cp ${star_reads_gene} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_reads_gene}
-    aws s3 cp ${star_reads_gene_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_reads_gene_log}
-    aws s3 cp ${star_final_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_final_log}
-    aws s3 cp ${star_sj_tab} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_sj_tab}
-    aws s3 cp ${star_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_log}
-    aws s3 cp ${star_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${star_versions}
     aws s3 cp ${sambamba_log} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${sambamba_log}
     aws s3 cp ${sambamba_versions} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${sambamba_versions}
     aws s3 cp ${bam2cram_rna_cram} ${output_bucket}/${family_id}/${bucket_dir}/hg38/alignment/${bam2cram_rna_cram}
