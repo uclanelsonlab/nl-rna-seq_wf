@@ -48,19 +48,18 @@ process check_star_reference {
 }
 
 process star_alignreads {
-    container 'bioconda::star=2.6.0c'
+    container 'quay.io/biocontainers/star:2.6.0c--2'
     cpus 32
     publishDir params.outdir, mode:'symlink'
     tag "STAR alignReads on $meta"   
     
     input:
-    val meta
     val reference
     val sjdb_overhang
     tuple val(meta), path(reads)
-    tuple val(meta), path(json)
-    tuple val(meta), path(html)
-    tuple val(meta), path(log)
+    tuple val(meta2), path(json)
+    tuple val(meta3), path(html)
+    tuple val(meta4), path(log)
 
     output:
     path "*.ReadsPerGene.out.tab.gz", emit: reads_gene

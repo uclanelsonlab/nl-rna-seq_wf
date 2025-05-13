@@ -3,11 +3,12 @@ nextflow.enable.dsl = 2
 log.info """\
     R N A - S E Q _ W F   P I P E L I N E
     ===================================
-    sample_name         : ${params.sample_name}
-    library             : ${params.library}
-    fastq_bucket        : ${params.fastq_bucket}
-    rib_reference_path  : ${params.rib_reference_path}
-    outdir              : ${params.outdir}
+    prefix         : ${params.prefix}
+    family_id      : ${params.family_id}
+    bucket_dir     : ${params.bucket_dir}
+    output_bucket  : ${params.output_bucket}
+    fastq_r1       : ${params.fastq_r1}
+    fastq_r2       : ${params.fastq_r2}
     """
     .stripIndent(true)
 
@@ -40,7 +41,7 @@ workflow {
 
     // STAR alignment
     star_index_ref_ch = check_star_reference(download_fastqs_ch)
-    star_alignreads_ch = star_alignreads(params.prefix, star_index_ref_ch, fastp_ch)
+    star_alignreads_ch = star_alignreads(star_index_ref_ch, fastp_ch)
     samtools_index(star_alignreads_ch)
 
     // Create SJ tab file
