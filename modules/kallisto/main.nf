@@ -10,8 +10,8 @@ process KALLISTO_QUANT {
 
     output:
         path "${meta}/abundance.h5",    emit: abundance_h5
-        path "${meta}/abundance.tsv",   emit: abundance_h5
-        path "${meta}/run_info.json",   emit: abundance_h5
+        path "${meta}/abundance.tsv",   emit: abundance_tsv
+        path "${meta}/run_info.json",   emit: run_info
         path "${meta}.kallisto.log",    emit: log
         path "kallisto_versions.yml",   emit: versions
     
