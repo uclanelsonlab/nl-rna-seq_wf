@@ -60,16 +60,16 @@ workflow {
     cram_ch = samtools_cram(params.prefix, download_human_ref_ch, star_alignreads_ch)
 
     // Upload selected output files
-    // upload_files(
-        // params.family_id, 
-        // params.bucket_dir, 
-        // params.output_bucket,
-    //     rrna_samtools_flagstat_ch, 
-    //     globinrna_samtools_flagstat_ch, 
-    //     star_alignreads_ch, 
-    //     sj_tab_ch, 
-    //     splice_junctions_ch, 
-    //     feature_counts_ch, 
-    //     cram_ch, 
-    //     params.output_bucket)
+    upload_files(
+        params.family_id, 
+        params.bucket_dir, 
+        params.output_bucket,
+        rrna_samtools_flagstat_ch, 
+        globinrna_samtools_flagstat_ch, 
+        star_alignreads_ch, 
+        sj_tab_ch, 
+        splice_junctions_ch, 
+        feature_counts_ch, 
+        cram_ch, 
+        params.output_bucket)
 }
