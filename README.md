@@ -14,7 +14,7 @@ git clone https://github.com/uclanelsonlab/nl-rna-seq_wf.git
 ```bash
 cd nl-rna-seq_wf/
 chmod u+x -R modules/
-nextflow run main.nf --sample_name SH1311-P-muscle --library SN_7RNA_S-24-0479_XA044 -with-trace -with-report SH1311-P-muscle_report.html -with-timeline SH1311-P-muscle_timeline.html
+nextflow run main.nf --prefix UDN486800-2931649-MGML0089-FBR1 --family_id UDN486800 --bucket_dir UDN486800_fibroblast_rnaseq --output_bucket s3://ucla-rare-diseases/UCLA-UDN/Analysis/UDN_cases --fastq_r1 s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN486800-2931649-MGML0089-FBR1_R1_001.fastq.gz --fastq_r2 s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN486800-2931649-MGML0089-FBR1_R2_001.fastq.gz
 ```
 
 - Check if you have your outputs on S3:

@@ -61,9 +61,9 @@ workflow {
 
     // Upload selected output files
     // upload_files(
-    //     params.sample_name, 
-    //     params.proband, 
-    //     params.tissue, 
+        // params.family_id, 
+        // params.bucket_dir, 
+        // params.output_bucket,
     //     rrna_samtools_flagstat_ch, 
     //     globinrna_samtools_flagstat_ch, 
     //     star_alignreads_ch, 
