@@ -70,6 +70,5 @@ workflow {
         sj_tab_ch, 
         splice_junctions_ch, 
         feature_counts_ch, 
-        cram_ch, 
-        params.output_bucket)
+        cram_ch)
 }
