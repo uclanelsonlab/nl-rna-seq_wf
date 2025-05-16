@@ -61,7 +61,7 @@ def add_canonical_annotations_to_index(input_df):
   input_df_with_annotations = input_df_index.join(
     sjdb_list, on=['chr', 'start', 'end']).join(
     canonical_starts, on=['chr', 'start'], rsuffix='_start').join(
-    canonical_ends, on=['chr', 'end'], rsuffix='_end').fillna(False)
+    canonical_ends, on=['chr', 'end'], rsuffix='_end').fillna(False).infer_objects(copy=False)
   input_df_with_annotations = input_df_with_annotations.set_index(['is_canonical', 'is_canonical_start', 'is_canonical_end'], append=True)
   input_df_with_annotations = input_df.reindex(index=input_df_with_annotations.index)
   return input_df_with_annotations
@@ -110,7 +110,8 @@ df_start_mean_family_ratio = df_start_family_ratios.mean(axis=1).rename('mean_fa
 
 # get top family ratios
 arr = np.argsort(-df_start_family_ratios.values, axis=1)
-df_start_family_sorted_column_names = pd.DataFrame(df_start_family_ratios.columns[arr], index=df_start_family_ratios.index)
+columns_array = np.array(df_start_family_ratios.columns)
+df_start_family_sorted_column_names = pd.DataFrame(columns_array[arr], index=df_start_family_ratios.index)
 df_start_family_sorted_ratios = np.sort(-df_start_family_ratios.values, axis=1)
 n_top = 4
 df_start_family_top_ratios = df_start_family_sorted_column_names.loc[:, list(range(n_top))].copy()
@@ -120,7 +121,8 @@ for i in range(n_top):
 
 # get top sample ratios -- this is not as important but it's a kludge to get the number of reads
 arr = np.argsort(-df_start_ratios.values, axis=1)
-df_start_sorted_column_names = pd.DataFrame(df_start_ratios.columns[arr], index=df_start_ratios.index)
+columns_array = np.array(df_start_ratios.columns)
+df_start_sorted_column_names = pd.DataFrame(columns_array[arr], index=df_start_ratios.index)
 df_start_sorted_ratios = np.sort(-df_start_ratios.values, axis=1)
 n_top = 4
 df_start_top_ratios = df_start_sorted_column_names.loc[:, list(range(n_top))].copy()
@@ -148,7 +150,8 @@ df_end_mean_family_ratio = df_end_family_ratios.mean(axis=1).rename('mean_family
 
 # get top family ratios
 arr = np.argsort(-df_end_family_ratios.values, axis=1)
-df_end_family_sorted_column_names = pd.DataFrame(df_end_family_ratios.columns[arr], index=df_end_family_ratios.index)
+columns_array = np.array(df_end_family_ratios.columns)
+df_end_family_sorted_column_names = pd.DataFrame(columns_array[arr], index=df_end_family_ratios.index)
 df_end_family_sorted_ratios = np.sort(-df_end_family_ratios.values, axis=1)
 n_top = 4
 df_end_family_top_ratios = df_end_family_sorted_column_names.loc[:, list(range(n_top))].copy()
@@ -158,7 +161,8 @@ for i in range(n_top):
 
 # get top sample ratios -- this is not as important but it's a kludge to get the number of reads
 arr = np.argsort(-df_end_ratios.values, axis=1)
-df_end_sorted_column_names = pd.DataFrame(df_end_ratios.columns[arr], index=df_end_ratios.index)
+columns_array = np.array(df_end_ratios.columns)
+df_end_sorted_column_names = pd.DataFrame(columns_array[arr], index=df_end_ratios.index)
 df_end_sorted_ratios = np.sort(-df_end_ratios.values, axis=1)
 n_top = 4
 df_end_top_ratios = df_end_sorted_column_names.loc[:, list(range(n_top))].copy()
