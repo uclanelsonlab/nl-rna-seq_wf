@@ -61,7 +61,7 @@ def add_canonical_annotations_to_index(input_df):
   input_df_with_annotations = input_df_index.join(
     sjdb_list, on=['chr', 'start', 'end']).join(
     canonical_starts, on=['chr', 'start'], rsuffix='_start').join(
-    canonical_ends, on=['chr', 'end'], rsuffix='_end').fillna(False).infer_objects(copy=False)
+    canonical_ends, on=['chr', 'end'], rsuffix='_end').fillna(False).infer_objects()
   input_df_with_annotations = input_df_with_annotations.set_index(['is_canonical', 'is_canonical_start', 'is_canonical_end'], append=True)
   input_df_with_annotations = input_df.reindex(index=input_df_with_annotations.index)
   return input_df_with_annotations
