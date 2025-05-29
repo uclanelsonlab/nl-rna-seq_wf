@@ -1,0 +1,595 @@
+digraph "pipeline_dag" {
+rankdir=TB;
+v0 [shape=point,label="",fixedsize=true,width=0.1];
+v2 [label="DOWNLOAD_RRNA"];
+v0 -> v2 [label="rna_reference_path"];
+
+v1 [shape=point,label="",fixedsize=true,width=0.1];
+v2 [label="DOWNLOAD_RRNA"];
+v1 -> v2 [label="type"];
+
+v2 [label="DOWNLOAD_RRNA"];
+v45 [label="BWA_MEM_RRNA"];
+v2 -> v45;
+
+v3 [shape=point,label="",fixedsize=true,width=0.1];
+v5 [label="DOWNLOAD_GLOBINRNA"];
+v3 -> v5 [label="rna_reference_path"];
+
+v4 [shape=point,label="",fixedsize=true,width=0.1];
+v5 [label="DOWNLOAD_GLOBINRNA"];
+v4 -> v5 [label="type"];
+
+v5 [label="DOWNLOAD_GLOBINRNA"];
+v50 [label="BWA_MEM_GLOBINRNA"];
+v5 -> v50;
+
+v6 [shape=point,label="",fixedsize=true,width=0.1];
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v6 -> v9 [label="fasta"];
+
+v7 [shape=point,label="",fixedsize=true,width=0.1];
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v7 -> v9 [label="fai"];
+
+v8 [shape=point,label="",fixedsize=true,width=0.1];
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v8 -> v9 [label="dict"];
+
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v77 [label="SAMTOOLS_CRAM"];
+v9 -> v77;
+
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v77 [label="SAMTOOLS_CRAM"];
+v9 -> v77;
+
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v77 [label="SAMTOOLS_CRAM"];
+v9 -> v77;
+
+v10 [shape=point,label="",fixedsize=true,width=0.1];
+v11 [label="DOWNLOAD_BED"];
+v10 -> v11 [label="bed"];
+
+v11 [label="DOWNLOAD_BED"];
+v81 [label="MOSDEPTH_BED"];
+v11 -> v81;
+
+v12 [shape=point,label="",fixedsize=true,width=0.1];
+v15 [label="DOWNLOAD_DBSNP138"];
+v12 -> v15 [label="meta"];
+
+v13 [shape=point,label="",fixedsize=true,width=0.1];
+v15 [label="DOWNLOAD_DBSNP138"];
+v13 -> v15 [label="zipped"];
+
+v14 [shape=point,label="",fixedsize=true,width=0.1];
+v15 [label="DOWNLOAD_DBSNP138"];
+v14 -> v15 [label="index"];
+
+v15 [label="DOWNLOAD_DBSNP138"];
+v16 [shape=point];
+v15 -> v16;
+
+v17 [shape=point,label="",fixedsize=true,width=0.1];
+v20 [label="DOWNLOAD_KNOW_INDELS"];
+v17 -> v20 [label="meta"];
+
+v18 [shape=point,label="",fixedsize=true,width=0.1];
+v20 [label="DOWNLOAD_KNOW_INDELS"];
+v18 -> v20 [label="zipped"];
+
+v19 [shape=point,label="",fixedsize=true,width=0.1];
+v20 [label="DOWNLOAD_KNOW_INDELS"];
+v19 -> v20 [label="index"];
+
+v20 [label="DOWNLOAD_KNOW_INDELS"];
+v21 [shape=point];
+v20 -> v21;
+
+v22 [shape=point,label="",fixedsize=true,width=0.1];
+v25 [label="DOWNLOAD_INDELS_1000G"];
+v22 -> v25 [label="meta"];
+
+v23 [shape=point,label="",fixedsize=true,width=0.1];
+v25 [label="DOWNLOAD_INDELS_1000G"];
+v23 -> v25 [label="zipped"];
+
+v24 [shape=point,label="",fixedsize=true,width=0.1];
+v25 [label="DOWNLOAD_INDELS_1000G"];
+v24 -> v25 [label="index"];
+
+v25 [label="DOWNLOAD_INDELS_1000G"];
+v26 [shape=point];
+v25 -> v26;
+
+v27 [shape=point,label="",fixedsize=true,width=0.1];
+v30 [label="DOWNLOAD_AF_ONLY_GNOMAD"];
+v27 -> v30 [label="meta"];
+
+v28 [shape=point,label="",fixedsize=true,width=0.1];
+v30 [label="DOWNLOAD_AF_ONLY_GNOMAD"];
+v28 -> v30 [label="zipped"];
+
+v29 [shape=point,label="",fixedsize=true,width=0.1];
+v30 [label="DOWNLOAD_AF_ONLY_GNOMAD"];
+v29 -> v30 [label="index"];
+
+v30 [label="DOWNLOAD_AF_ONLY_GNOMAD"];
+v31 [shape=point];
+v30 -> v31;
+
+v32 [shape=point,label="",fixedsize=true,width=0.1];
+v35 [label="DOWNLOAD_SMALL_EXAC"];
+v32 -> v35 [label="meta"];
+
+v33 [shape=point,label="",fixedsize=true,width=0.1];
+v35 [label="DOWNLOAD_SMALL_EXAC"];
+v33 -> v35 [label="zipped"];
+
+v34 [shape=point,label="",fixedsize=true,width=0.1];
+v35 [label="DOWNLOAD_SMALL_EXAC"];
+v34 -> v35 [label="index"];
+
+v35 [label="DOWNLOAD_SMALL_EXAC"];
+v36 [shape=point];
+v35 -> v36;
+
+v37 [shape=point,label="",fixedsize=true,width=0.1];
+v40 [label="DOWNLOAD_FASTQS"];
+v37 -> v40 [label="prefix"];
+
+v38 [shape=point,label="",fixedsize=true,width=0.1];
+v40 [label="DOWNLOAD_FASTQS"];
+v38 -> v40 [label="fastq_r1"];
+
+v39 [shape=point,label="",fixedsize=true,width=0.1];
+v40 [label="DOWNLOAD_FASTQS"];
+v39 -> v40 [label="fastq_r2"];
+
+v40 [label="DOWNLOAD_FASTQS"];
+v41 [label="RUN_FASTP"];
+v40 -> v41;
+
+v41 [label="RUN_FASTP"];
+v42 [label="FILTER_FASTQ"];
+v41 -> v42;
+
+v41 [label="RUN_FASTP"];
+v89 [label="UPLOAD_FILES"];
+v41 -> v89;
+
+v41 [label="RUN_FASTP"];
+v89 [label="UPLOAD_FILES"];
+v41 -> v89;
+
+v41 [label="RUN_FASTP"];
+v89 [label="UPLOAD_FILES"];
+v41 -> v89;
+
+v41 [label="RUN_FASTP"];
+v89 [label="UPLOAD_FILES"];
+v41 -> v89;
+
+v42 [label="FILTER_FASTQ"];
+v45 [label="BWA_MEM_RRNA"];
+v42 -> v45;
+
+v43 [shape=point,label="",fixedsize=true,width=0.1];
+v45 [label="BWA_MEM_RRNA"];
+v43 -> v45 [label="fasta"];
+
+v44 [shape=point,label="",fixedsize=true,width=0.1];
+v45 [label="BWA_MEM_RRNA"];
+v44 -> v45 [label="reference"];
+
+v45 [label="BWA_MEM_RRNA"];
+v54 [label="SAMTOOLS_VIEW_RRNA"];
+v45 -> v54;
+
+v45 [label="BWA_MEM_RRNA"];
+v47 [shape=point];
+v45 -> v47;
+
+v45 [label="BWA_MEM_RRNA"];
+v46 [shape=point];
+v45 -> v46;
+
+v42 [label="FILTER_FASTQ"];
+v50 [label="BWA_MEM_GLOBINRNA"];
+v42 -> v50;
+
+v48 [shape=point,label="",fixedsize=true,width=0.1];
+v50 [label="BWA_MEM_GLOBINRNA"];
+v48 -> v50 [label="fasta"];
+
+v49 [shape=point,label="",fixedsize=true,width=0.1];
+v50 [label="BWA_MEM_GLOBINRNA"];
+v49 -> v50 [label="reference"];
+
+v50 [label="BWA_MEM_GLOBINRNA"];
+v58 [label="SAMTOOLS_VIEW_GLOBINRNA"];
+v50 -> v58;
+
+v50 [label="BWA_MEM_GLOBINRNA"];
+v52 [shape=point];
+v50 -> v52;
+
+v50 [label="BWA_MEM_GLOBINRNA"];
+v51 [shape=point];
+v50 -> v51;
+
+v53 [shape=point,label="",fixedsize=true,width=0.1];
+v54 [label="SAMTOOLS_VIEW_RRNA"];
+v53 -> v54 [label="reference"];
+
+v54 [label="SAMTOOLS_VIEW_RRNA"];
+v62 [label="SAMTOOLS_FLAGSTAT_RRNA"];
+v54 -> v62;
+
+v54 [label="SAMTOOLS_VIEW_RRNA"];
+v56 [shape=point];
+v54 -> v56;
+
+v54 [label="SAMTOOLS_VIEW_RRNA"];
+v55 [shape=point];
+v54 -> v55;
+
+v57 [shape=point,label="",fixedsize=true,width=0.1];
+v58 [label="SAMTOOLS_VIEW_GLOBINRNA"];
+v57 -> v58 [label="reference"];
+
+v58 [label="SAMTOOLS_VIEW_GLOBINRNA"];
+v64 [label="SAMTOOLS_FLAGSTAT_GLOBINRNA"];
+v58 -> v64;
+
+v58 [label="SAMTOOLS_VIEW_GLOBINRNA"];
+v60 [shape=point];
+v58 -> v60;
+
+v58 [label="SAMTOOLS_VIEW_GLOBINRNA"];
+v59 [shape=point];
+v58 -> v59;
+
+v61 [shape=point,label="",fixedsize=true,width=0.1];
+v62 [label="SAMTOOLS_FLAGSTAT_RRNA"];
+v61 -> v62 [label="reference"];
+
+v62 [label="SAMTOOLS_FLAGSTAT_RRNA"];
+v89 [label="UPLOAD_FILES"];
+v62 -> v89;
+
+v62 [label="SAMTOOLS_FLAGSTAT_RRNA"];
+v89 [label="UPLOAD_FILES"];
+v62 -> v89;
+
+v63 [shape=point,label="",fixedsize=true,width=0.1];
+v64 [label="SAMTOOLS_FLAGSTAT_GLOBINRNA"];
+v63 -> v64 [label="reference"];
+
+v64 [label="SAMTOOLS_FLAGSTAT_GLOBINRNA"];
+v89 [label="UPLOAD_FILES"];
+v64 -> v89;
+
+v64 [label="SAMTOOLS_FLAGSTAT_GLOBINRNA"];
+v89 [label="UPLOAD_FILES"];
+v64 -> v89;
+
+v40 [label="DOWNLOAD_FASTQS"];
+v65 [label="CHECK_STAR_REF"];
+v40 -> v65;
+
+v65 [label="CHECK_STAR_REF"];
+v66 [label="STAR_ALIGNREADS"];
+v65 -> v66;
+
+v65 [label="CHECK_STAR_REF"];
+v66 [label="STAR_ALIGNREADS"];
+v65 -> v66 [label="sjdb_overhang"];
+
+v41 [label="RUN_FASTP"];
+v66 [label="STAR_ALIGNREADS"];
+v41 -> v66;
+
+v66 [label="STAR_ALIGNREADS"];
+v89 [label="UPLOAD_FILES"];
+v66 -> v89;
+
+v66 [label="STAR_ALIGNREADS"];
+v89 [label="UPLOAD_FILES"];
+v66 -> v89;
+
+v66 [label="STAR_ALIGNREADS"];
+v89 [label="UPLOAD_FILES"];
+v66 -> v89;
+
+v66 [label="STAR_ALIGNREADS"];
+v89 [label="UPLOAD_FILES"];
+v66 -> v89;
+
+v66 [label="STAR_ALIGNREADS"];
+v67 [label="SAMTOOLS_INDEX"];
+v66 -> v67;
+
+v66 [label="STAR_ALIGNREADS"];
+v89 [label="UPLOAD_FILES"];
+v66 -> v89;
+
+v66 [label="STAR_ALIGNREADS"];
+v89 [label="UPLOAD_FILES"];
+v66 -> v89;
+
+v67 [label="SAMTOOLS_INDEX"];
+v69 [shape=point];
+v67 -> v69;
+
+v67 [label="SAMTOOLS_INDEX"];
+v68 [shape=point];
+v67 -> v68;
+
+v66 [label="STAR_ALIGNREADS"];
+v70 [label="SAMBAMBA_MARKDUP"];
+v66 -> v70;
+
+v70 [label="SAMBAMBA_MARKDUP"];
+v73 [label="SUBREAD_FEATURECOUNTS"];
+v70 -> v73;
+
+v70 [label="SAMBAMBA_MARKDUP"];
+v89 [label="UPLOAD_FILES"];
+v70 -> v89;
+
+v70 [label="SAMBAMBA_MARKDUP"];
+v89 [label="UPLOAD_FILES"];
+v70 -> v89;
+
+v71 [shape=point,label="",fixedsize=true,width=0.1];
+v72 [label="DOWNLOAD_GENCODE_NORMAL"];
+v71 -> v72 [label="gencode_gtf_path"];
+
+v72 [label="DOWNLOAD_GENCODE_NORMAL"];
+v73 [label="SUBREAD_FEATURECOUNTS"];
+v72 -> v73;
+
+v73 [label="SUBREAD_FEATURECOUNTS"];
+v89 [label="UPLOAD_FILES"];
+v73 -> v89;
+
+v73 [label="SUBREAD_FEATURECOUNTS"];
+v89 [label="UPLOAD_FILES"];
+v73 -> v89;
+
+v73 [label="SUBREAD_FEATURECOUNTS"];
+v89 [label="UPLOAD_FILES"];
+v73 -> v89;
+
+v73 [label="SUBREAD_FEATURECOUNTS"];
+v89 [label="UPLOAD_FILES"];
+v73 -> v89;
+
+v73 [label="SUBREAD_FEATURECOUNTS"];
+v89 [label="UPLOAD_FILES"];
+v73 -> v89;
+
+v74 [shape=point,label="",fixedsize=true,width=0.1];
+v75 [label="DOWNLOAD_GENCODE_COLLAPSE"];
+v74 -> v75 [label="gencode_gtf_path"];
+
+v75 [label="DOWNLOAD_GENCODE_COLLAPSE"];
+v76 [label="RNASEQC"];
+v75 -> v76;
+
+v70 [label="SAMBAMBA_MARKDUP"];
+v76 [label="RNASEQC"];
+v70 -> v76;
+
+v76 [label="RNASEQC"];
+v89 [label="UPLOAD_FILES"];
+v76 -> v89;
+
+v76 [label="RNASEQC"];
+v89 [label="UPLOAD_FILES"];
+v76 -> v89;
+
+v76 [label="RNASEQC"];
+v89 [label="UPLOAD_FILES"];
+v76 -> v89;
+
+v76 [label="RNASEQC"];
+v89 [label="UPLOAD_FILES"];
+v76 -> v89;
+
+v76 [label="RNASEQC"];
+v89 [label="UPLOAD_FILES"];
+v76 -> v89;
+
+v76 [label="RNASEQC"];
+v89 [label="UPLOAD_FILES"];
+v76 -> v89;
+
+v76 [label="RNASEQC"];
+v89 [label="UPLOAD_FILES"];
+v76 -> v89;
+
+v76 [label="RNASEQC"];
+v89 [label="UPLOAD_FILES"];
+v76 -> v89;
+
+v76 [label="RNASEQC"];
+v89 [label="UPLOAD_FILES"];
+v76 -> v89;
+
+v70 [label="SAMBAMBA_MARKDUP"];
+v77 [label="SAMTOOLS_CRAM"];
+v70 -> v77;
+
+v77 [label="SAMTOOLS_CRAM"];
+v81 [label="MOSDEPTH_BED"];
+v77 -> v81;
+
+v77 [label="SAMTOOLS_CRAM"];
+v81 [label="MOSDEPTH_BED"];
+v77 -> v81;
+
+v77 [label="SAMTOOLS_CRAM"];
+v89 [label="UPLOAD_FILES"];
+v77 -> v89;
+
+v77 [label="SAMTOOLS_CRAM"];
+v89 [label="UPLOAD_FILES"];
+v77 -> v89;
+
+v78 [shape=point,label="",fixedsize=true,width=0.1];
+v79 [label="DOWNLOAD_IR_REF"];
+v78 -> v79 [label="ir_ref"];
+
+v79 [label="DOWNLOAD_IR_REF"];
+v80 [label="IRFINDER"];
+v79 -> v80;
+
+v70 [label="SAMBAMBA_MARKDUP"];
+v80 [label="IRFINDER"];
+v70 -> v80;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v80 [label="IRFINDER"];
+v89 [label="UPLOAD_FILES"];
+v80 -> v89;
+
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v81 [label="MOSDEPTH_BED"];
+v9 -> v81 [label="fasta"];
+
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v81 [label="MOSDEPTH_BED"];
+v9 -> v81 [label="fai"];
+
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v81 [label="MOSDEPTH_BED"];
+v9 -> v81 [label="dict"];
+
+v81 [label="MOSDEPTH_BED"];
+v89 [label="UPLOAD_FILES"];
+v81 -> v89;
+
+v81 [label="MOSDEPTH_BED"];
+v89 [label="UPLOAD_FILES"];
+v81 -> v89;
+
+v81 [label="MOSDEPTH_BED"];
+v89 [label="UPLOAD_FILES"];
+v81 -> v89;
+
+v81 [label="MOSDEPTH_BED"];
+v89 [label="UPLOAD_FILES"];
+v81 -> v89;
+
+v81 [label="MOSDEPTH_BED"];
+v89 [label="UPLOAD_FILES"];
+v81 -> v89;
+
+v81 [label="MOSDEPTH_BED"];
+v89 [label="UPLOAD_FILES"];
+v81 -> v89;
+
+v81 [label="MOSDEPTH_BED"];
+v89 [label="UPLOAD_FILES"];
+v81 -> v89;
+
+v81 [label="MOSDEPTH_BED"];
+v83 [shape=point];
+v81 -> v83;
+
+v81 [label="MOSDEPTH_BED"];
+v82 [shape=point];
+v81 -> v82;
+
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v84 [label="SAMTOOLS_BAM2SAM"];
+v9 -> v84 [label="fasta"];
+
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v84 [label="SAMTOOLS_BAM2SAM"];
+v9 -> v84 [label="fai"];
+
+v9 [label="DOWNLOAD_HUMAN_REF"];
+v84 [label="SAMTOOLS_BAM2SAM"];
+v9 -> v84 [label="dict"];
+
+v70 [label="SAMBAMBA_MARKDUP"];
+v84 [label="SAMTOOLS_BAM2SAM"];
+v70 -> v84;
+
+v84 [label="SAMTOOLS_BAM2SAM"];
+v85 [label="BAM2SJ"];
+v84 -> v85;
+
+v84 [label="SAMTOOLS_BAM2SAM"];
+v89 [label="UPLOAD_FILES"];
+v84 -> v89;
+
+v84 [label="SAMTOOLS_BAM2SAM"];
+v89 [label="UPLOAD_FILES"];
+v84 -> v89;
+
+v85 [label="BAM2SJ"];
+v89 [label="UPLOAD_FILES"];
+v85 -> v89;
+
+v86 [shape=point,label="",fixedsize=true,width=0.1];
+v89 [label="UPLOAD_FILES"];
+v86 -> v89 [label="family_id"];
+
+v87 [shape=point,label="",fixedsize=true,width=0.1];
+v89 [label="UPLOAD_FILES"];
+v87 -> v89 [label="bucket_dir"];
+
+v88 [shape=point,label="",fixedsize=true,width=0.1];
+v89 [label="UPLOAD_FILES"];
+v88 -> v89 [label="output_bucket"];
+
+v77 [label="SAMTOOLS_CRAM"];
+v89 [label="UPLOAD_FILES"];
+v77 -> v89;
+
+v77 [label="SAMTOOLS_CRAM"];
+v89 [label="UPLOAD_FILES"];
+v77 -> v89;
+
+}

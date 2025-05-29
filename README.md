@@ -4,13 +4,22 @@ A Nextflow-based RNA-seq analysis pipeline for processing and analyzing RNA sequ
 
 ## Overview
 
-This pipeline processes RNA-seq data through a series of steps including:
-- Quality control and preprocessing
-- Alignment using STAR
-- Gene expression quantification
-- Junction analysis
-- Optional variant calling
-- Optional OUTRIDER analysis for outlier detection
+This RNA-seq workflow is designed to process and analyze RNA sequencing data, providing comprehensive quality control, alignment, and analysis capabilities.
+
+## Pipeline Overview
+
+The following diagram illustrates the complete workflow of the RNA-seq pipeline:
+
+![RNA-seq Pipeline DAG](pipeline_dag.svg)
+
+The pipeline consists of several main stages:
+- **Input**: Processing of FASTQ files and reference data
+- **Preprocessing**: Quality control, filtering, and contamination checks
+- **Alignment**: STAR alignment with duplicate marking and CRAM conversion
+- **Analysis**: Multiple analysis steps including gene expression quantification, quality metrics, and optional variant calling
+- **Output**: Generation and upload of all results
+
+For more details about each step, please refer to the [Documentation](docs/).
 
 ## Prerequisites
 

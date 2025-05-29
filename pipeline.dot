@@ -1,0 +1,119 @@
+digraph RNAseqPipeline {
+    // Graph settings
+    graph [rankdir=TB, splines=ortho, nodesep=0.8];
+    node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial"];
+    edge [fontname="Arial"];
+
+    // Input nodes
+    subgraph cluster_input {
+        label="Input";
+        style=filled;
+        color=lightgrey;
+        node [style=filled, fillcolor=lightpink];
+        FASTQ [label="FASTQ Files"];
+        REFS [label="Reference Files"];
+    }
+
+    // Preprocessing nodes
+    subgraph cluster_preprocessing {
+        label="Preprocessing";
+        style=filled;
+        color=lightgrey;
+        node [style=filled, fillcolor=lightblue];
+        FASTP [label="Fastp QC"];
+        FILTER [label="Filter FASTQ"];
+        CONTAM [label="Contamination Check"];
+        RRNA [label="BWA rRNA"];
+        GLOBIN [label="BWA GlobinRNA"];
+    }
+
+    // Alignment nodes
+    subgraph cluster_alignment {
+        label="Alignment";
+        style=filled;
+        color=lightgrey;
+        node [style=filled, fillcolor=lightgreen];
+        STAR [label="STAR Alignment"];
+        MARKDUP [label="Mark Duplicates"];
+        CRAM [label="Create CRAM"];
+    }
+
+    // Analysis nodes
+    subgraph cluster_analysis {
+        label="Analysis";
+        style=filled;
+        color=lightgrey;
+        node [style=filled, fillcolor=lightcoral];
+        FEATURECOUNTS [label="FeatureCounts"];
+        RNASEQC [label="RNA-SeQC"];
+        IRFINDER [label="IRFinder"];
+        BAM2SJ [label="BAM2SJ"];
+        MOSDEPTH [label="MOSDEPTH"];
+
+        // Optional Variant Calling
+        subgraph cluster_varcall {
+            label="Optional Variant Calling";
+            style=filled;
+            color=lightgrey;
+            node [style=filled, fillcolor=lightyellow];
+            SPLITNCIGAR [label="GATK SplitNCigarReads"];
+            BQSR [label="Base Recalibration"];
+            APPLYBQSR [label="Apply BQSR"];
+            HAPLOTYPE [label="HaplotypeCaller"];
+        }
+
+        // Optional OUTRIDER
+        subgraph cluster_outrider {
+            label="Optional OUTRIDER";
+            style=filled;
+            color=lightgrey;
+            node [style=filled, fillcolor=lightyellow];
+            MASTER [label="Download Master Counts"];
+            ADDCOUNTS [label="Add Sample Counts"];
+            RUNOUTRIDER [label="Run OUTRIDER"];
+        }
+    }
+
+    // Output nodes
+    subgraph cluster_output {
+        label="Output";
+        style=filled;
+        color=lightgrey;
+        node [style=filled, fillcolor=lavender];
+        UPLOAD [label="Upload Files"];
+    }
+
+    // Edges
+    FASTQ -> FASTP;
+    REFS -> STAR;
+    FASTP -> FILTER;
+    FILTER -> CONTAM;
+    CONTAM -> RRNA;
+    CONTAM -> GLOBIN;
+    FILTER -> STAR;
+    STAR -> MARKDUP;
+    MARKDUP -> CRAM;
+    
+    MARKDUP -> FEATURECOUNTS;
+    MARKDUP -> RNASEQC;
+    MARKDUP -> IRFINDER;
+    MARKDUP -> BAM2SJ;
+    MARKDUP -> MOSDEPTH;
+    MARKDUP -> SPLITNCIGAR;
+
+    SPLITNCIGAR -> BQSR;
+    BQSR -> APPLYBQSR;
+    APPLYBQSR -> HAPLOTYPE;
+
+    FEATURECOUNTS -> MASTER;
+    MASTER -> ADDCOUNTS;
+    ADDCOUNTS -> RUNOUTRIDER;
+
+    FEATURECOUNTS -> UPLOAD;
+    RNASEQC -> UPLOAD;
+    IRFINDER -> UPLOAD;
+    BAM2SJ -> UPLOAD;
+    MOSDEPTH -> UPLOAD;
+    HAPLOTYPE -> UPLOAD;
+    RUNOUTRIDER -> UPLOAD;
+} 
