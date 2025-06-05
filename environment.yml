@@ -1,0 +1,11 @@
+name: rna-seq-outrider
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-base>=4.2.0
+  - r-essentials
+  - r-optparse
+  - bioconductor-outrider
+  - r-boutroslab.utilities 
