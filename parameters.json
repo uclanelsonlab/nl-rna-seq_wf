@@ -1,0 +1,86 @@
+{
+    "bwa_docker": {
+        "description": "BWA docker image"
+    },
+    "star_docker": {
+        "description": "Star docker image"
+    },
+    "samtools_docker": {
+        "description": "Samtools docker image"
+    },
+    "fastp_docker": {
+        "description": "Fastp docker image"
+    },
+    "sambamba_docker": {
+        "description": "Sambamba docker image"
+    },
+    "subread_docker": {
+        "description": "Subread docker image"
+    },
+    "irfinder_docker": {
+        "description": "IRFinder docker image"
+    },
+    "mosdepth_docker": {
+        "description": "Mosdepth docker image"
+    },
+    "rnaseqc_docker": {
+        "description": "RNA-SeQC docker image"
+    },
+    "fastq_r1": {
+        "description": "Fastq file for read 1"
+    },
+    "fastq_r2": {
+        "description": "Fastq file for read 2"
+    },
+    "sample_name": {
+        "description": "Sample name"
+    },
+    "globinrna_reference": {
+        "description": "Globin RNA reference path"
+    },
+    "rrna_reference": {
+        "description": "Ribossomal RNA reference path"
+    },
+    "gencode_gtf_path": {
+        "description": "Gencode gtf path"
+    },
+    "gencode_gtf_collapse": {
+        "description": "Gencode gtf collapse"
+    },
+    "human_fai": {
+        "description": "Human genome fai"
+    },
+    "human_dict": {
+        "description": "Human genome dict"
+    },
+    "human_fasta": {
+        "description": "Human genome fasta"
+    },
+    "ir_ref": {
+        "description": "IRFinder reference"
+    },
+    "xbp1_bed": {
+        "description": "XBP1 hg38 bed file"
+    },
+    "mt_bed": {
+        "description": "MT hg38 bed file"
+    },
+    "star_index_151": {
+        "description": "STAR index 151bp"
+    },
+    "star_index_150": {
+        "description": "STAR index 150bp"
+    },
+    "star_index_120": {
+        "description": "STAR index 120bp"
+    },
+    "star_index_100": {
+        "description": "STAR index 100bp"
+    },
+    "star_index_75": {
+        "description": "STAR index 75bp"
+    },
+    "star_index_69": {
+        "description": "STAR index 69bp"
+    }
+}
