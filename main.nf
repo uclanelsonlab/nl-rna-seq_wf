@@ -17,6 +17,7 @@ include { RNASEQC } from './modules/rnaseqc/main.nf'
 include { IRFINDER } from './modules/irfinder/main.nf'
 include { STAR_ALIGNREADS } from './modules/star/main.nf'
 include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
+include { KALLISTO_QUANT } from './modules/kallisto/main.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba/main.nf'
 include { SUBREAD_FEATURECOUNTS } from './modules/subreads/main.nf'
 include { 
@@ -78,6 +79,12 @@ workflow {
     SAMTOOLS_VIEW_GLOBINRNA(BWA_MEM_GLOBINRNA.out.bam, "globinrna")
     SAMTOOLS_FLAGSTAT_RRNA(SAMTOOLS_VIEW_RRNA.out.view_bam, "rrna")
     SAMTOOLS_FLAGSTAT_GLOBINRNA(SAMTOOLS_VIEW_GLOBINRNA.out.view_bam, "globinrna")
+    
+    // Kallisto quant
+    KALLISTO_QUANT(
+        ch_reads, 
+        params.kallisto_index)
+
     // STAR alignment
     STAR_ALIGNREADS(
         ch_reads, 
@@ -89,6 +96,7 @@ workflow {
         params.star_index_69)
     SAMTOOLS_INDEX(STAR_ALIGNREADS.out.star_bam)
     SAMBAMBA_MARKDUP(STAR_ALIGNREADS.out.star_bam)
+    
     // Create counts by gene
     SUBREAD_FEATURECOUNTS(
         params.gencode_gtf_path, 

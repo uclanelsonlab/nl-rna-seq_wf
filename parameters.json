@@ -26,6 +26,9 @@
     "rnaseqc_docker": {
         "description": "RNA-SeQC docker image"
     },
+    "kallisto_docker": {
+        "description": "Kallisto docker image"
+    },
     "fastq_r1": {
         "description": "Fastq file for read 1"
     },
@@ -82,5 +85,8 @@
     },
     "star_index_69": {
         "description": "STAR index 69bp"
+    },
+    "kallisto_index": {
+        "description": "Kallisto index"
     }
 }
