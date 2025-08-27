@@ -20,6 +20,8 @@ include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
 include { KALLISTO_QUANT } from './modules/kallisto/main.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba/main.nf'
 include { SUBREAD_FEATURECOUNTS } from './modules/subreads/main.nf'
+include { BEDTOOLS_MERGE_INTERSECT } from './modules/bedtools/main.nf'
+include { DEEPVARIANT_RUNDEEPVARIANT } from './modules/deepvariant/main.nf'
 include { 
     BWA_MEM as BWA_MEM_RRNA; 
     BWA_MEM as BWA_MEM_GLOBINRNA 
@@ -71,6 +73,22 @@ workflow {
         }
         .set { ch_globinrna_reference }
         
+    Channel.value([
+            [id:"model"],
+            file(params.model_data),
+            file(params.model_index),
+            file(params.model_meta),
+            file(params.model_info),
+        ])
+        .set { ch_model }
+
+    Channel.fromPath(params.human_fasta)
+        .map { fasta ->
+            return [[id:"reference"], fasta, params.human_fai, params.human_dict]
+        }
+        .collect()
+        .set { ch_reference }
+
     // contamination check
     FASTP(ch_reads)
     BWA_MEM_RRNA(FASTP.out.reads, ch_rrna_reference)
@@ -109,9 +127,7 @@ workflow {
 
     // Create CRAM files
     SAMTOOLS_CRAM(
-        params.human_fasta, 
-        params.human_fai, 
-        params.human_dict, 
+        ch_reference, 
         SAMBAMBA_MARKDUP.out.marked_bam)
 
     // Run IRFinder
@@ -121,19 +137,24 @@ workflow {
 
     // Calculate XBP1 coverage
     MOSDEPTH_BED(
-        params.human_fasta, 
-        params.human_fai, 
-        params.human_dict, 
+        ch_reference, 
         params.xbp1_bed, 
         params.mt_bed, 
         SAMTOOLS_CRAM.out.rna_cram,
         SAMTOOLS_CRAM.out.rna_crai)
 
+    // Create CDS bed file and run variant calling
+    BEDTOOLS_MERGE_INTERSECT(MOSDEPTH_BED.out.perbase, params.gencode_bed, params.min_coverage)
+
+    DEEPVARIANT_RUNDEEPVARIANT(
+        SAMBAMBA_MARKDUP.out.marked_bam,
+        ch_reference, 
+        BEDTOOLS_MERGE_INTERSECT.out.cds_bed, 
+        ch_model)
+
     // CRAM to SAM 
     SAMTOOLS_BAM2SAM(
-        params.human_fasta, 
-        params.human_fai, 
-        params.human_dict, 
+        ch_reference,
         SAMBAMBA_MARKDUP.out.marked_bam)
     
     // SAM to SJ

@@ -65,7 +65,7 @@ process SAMTOOLS_INDEX {
     label "samtools_index"
 
     input:
-        tuple val(meta), path(bam)
+        tuple val(meta), path(bam), path(bai)
 
     output:
         tuple val(meta), path("*.bai"), emit: bam_index
@@ -121,15 +121,14 @@ process SAMTOOLS_BAM2SAM {
     label "samtools_bam2sam"
     
     input:
-        path fasta
-        path fai
-        path dict    
-        tuple val(meta), path(bam)
+        tuple val(meta2), path(fasta), path(fai), path (dict)    
+        tuple val(meta), path(bam), path(bai)
 
     output:
-        tuple val(meta), path("*.hg38_rna.normal.sam"),  emit: rna_sam
+        tuple val(meta), path("*.hg38_rna.normal.sam"), emit: rna_sam
         path '*.sam.log',                                emit: log
         path "*versions.yml",                            emit: versions
+        tuple val(meta2), path("*.hg38_rna.normal.sam"), emit: rna_sam
     
     when:
         task.ext.when == null || task.ext.when
@@ -150,9 +149,7 @@ process SAMTOOLS_CRAM2BAM {
     label "samtools_cram2bam"
 
     input:
-        path fasta
-        path fai
-        path dict    
+        tuple val(meta2), path(fasta), path(fai), path (dict)    
         tuple val(meta), path(cram)
 
     output:

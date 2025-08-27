@@ -3,7 +3,7 @@ process RNASEQC {
 
     input:
         path gencode_gtf
-        tuple val(meta), path(bam)
+        tuple val(meta), path(bam), path(bai)
 
     output:
         path "*.coverage.tsv"       , emit: coverage

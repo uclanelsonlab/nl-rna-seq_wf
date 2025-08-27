@@ -3,7 +3,7 @@ process IRFINDER {
 
     input:
         path ir_reference_gz
-        tuple val(meta), path(bam)
+        tuple val(meta), path(bam), path(bai)
 
     output:
         tuple val(meta), path("*IRFinder-ChrCoverage.txt"),   emit: irfinder_chr_coverage  

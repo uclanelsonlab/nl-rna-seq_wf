@@ -2,9 +2,7 @@ process MOSDEPTH_BED {
     label "mosdepth"
 
     input:
-        path fasta
-        path fai
-        path dict    
+        tuple val(meta), path(fasta), path(fai), path (dict)  
         path xbp1_bed
         path mt_bed
         tuple val(meta), path(cram)
