@@ -3,7 +3,7 @@ process SUBREAD_FEATURECOUNTS {
 
     input:
         path gencode_pc
-        tuple val(meta), path(bam)
+        tuple val(meta), path(bam), path(bai)
 
     output:
         tuple val(meta), path("*.gene_id.exon.ct"),             emit: gene_counts

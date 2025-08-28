@@ -9,6 +9,8 @@
     "mosdepth_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/mosdepth:0.3.1--h4dc83fb_1",
     "rnaseqc_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/rnaseqc:2.4.2",
     "kallisto_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/kallisto:0.51.1--ha4fb952_1",
+    "bedtools_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/bedtools:2.23.0--h5b5514e_6",
+    "deepvariant_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/deepvariant:1.3.0",
     "fastq_r1": "s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN486800-2931649-MGML0089-FBR1_R1_001.fastq.gz",
     "fastq_r2": "s3://ucla-rare-diseases/UCLA-UDN/rnaseq/fastq/BG-2024-10-15/UDN486800-2931649-MGML0089-FBR1_R2_001.fastq.gz",
     "sample_name": "UDN486800-2931649-MGML0089-FBR1",
@@ -28,5 +30,11 @@
     "star_index_100": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/star_index_100bp_gencode43.tar.gz",
     "star_index_75": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/star_index_75bp_gencode43.tar.gz",
     "star_index_69": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/star_index_69bp_gencode43.tar.gz",
-    "kallisto_index": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/kallisto/GRCh38.gencode.v43.primary_assembly.annotation.contig.genome.idx"
+    "kallisto_index": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/kallisto/GRCh38.gencode.v43.primary_assembly.annotation.contig.genome.idx",
+    "gencode_bed": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/gencode.v43.basic.annotation.cds.bed",
+    "min_coverage": 3,
+    "model_data": "s3://ucla-rare-diseases/UCLA-UDN/assets/deepvariant/rnaseq/model.ckpt.data-00000-of-00001",
+    "model_index": "s3://ucla-rare-diseases/UCLA-UDN/assets/deepvariant/rnaseq/model.ckpt.index",
+    "model_meta": "s3://ucla-rare-diseases/UCLA-UDN/assets/deepvariant/rnaseq/model.ckpt.meta",
+    "model_info": "s3://ucla-rare-diseases/UCLA-UDN/assets/deepvariant/rnaseq/model.ckpt.example_info.json"
 }

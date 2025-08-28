@@ -29,6 +29,12 @@
     "kallisto_docker": {
         "description": "Kallisto docker image"
     },
+    "bedtools_docker": {
+        "description": "ECR image URI for bedtools docker image"
+    },
+    "deepvariant_docker": {
+        "description": "ECR image URI for deepvariant docker image"
+    },
     "fastq_r1": {
         "description": "Fastq file for read 1"
     },
@@ -88,5 +94,23 @@
     },
     "kallisto_index": {
         "description": "Kallisto index"
+    },
+    "gencode_bed": {
+        "description": "Gencode BED file"
+    },
+    "min_coverage": {
+        "description": "Minimum coverage"
+    },
+    "model_data": {
+        "description": "DeepVariant model data"
+    },
+    "model_index": {
+        "description": "DeepVariant model index"
+    },
+    "model_meta": {
+        "description": "DeepVariant model meta"
+    },
+    "model_info": {
+        "description": "DeepVariant model info"
     }
 }
