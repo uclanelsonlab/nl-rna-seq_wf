@@ -5,6 +5,35 @@ All notable changes to the RNA-seq Workflow (nl-rna-seq_wf) will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-12-27
+
+### 🔧 Fixed
+- **Channel Input Mismatch**: Resolved "Process declares 4 input channels but 2 were specified" error in SAMTOOLS_CRAM process
+- **Duplicate Output Channels**: Fixed duplicate output channel name `rna_sam` in SAMTOOLS_BAM2SAM process
+- **Reference Channel Structure**: Simplified reference channel creation to resolve input channel compatibility issues
+
+### ✨ Added
+- **Enhanced Coverage Analysis**: Added new MOSDEPTH process for comprehensive coverage analysis alongside existing MOSDEPTH_BED
+- **Improved Process Integration**: Better integration between coverage analysis and downstream BED tools processing
+- **Advanced Variant Calling**: Enhanced DEEPVARIANT integration with optimized input handling and model support
+- **CDS Region Analysis**: Improved BEDTOOLS processing for coding sequence identification and coverage filtering
+
+### 🔧 Changed
+- **Reference Channel Management**: Streamlined reference file handling using `Channel.value()` instead of complex channel mapping
+- **Process Input Structure**: Updated SAMTOOLS processes to properly handle reference file inputs
+- **Module Imports**: Added MOSDEPTH module import for enhanced coverage analysis capabilities
+- **Variant Calling Pipeline**: Enhanced DEEPVARIANT workflow integration with improved input channel handling
+- **Coverage Analysis Flow**: Updated workflow to use MOSDEPTH output for BEDTOOLS processing and variant calling
+
+### 🚀 Performance Improvements
+- **Channel Efficiency**: Optimized channel structure for better memory usage and processing flow
+- **Process Compatibility**: Improved compatibility between different workflow modules
+
+### 🐛 Bug Fixes
+- **Input Channel Errors**: Fixed all input channel count mismatches across samtools processes
+- **Output Channel Conflicts**: Resolved duplicate output channel naming issues
+- **Workflow Execution**: Pipeline now runs without channel-related errors
+
 ## [1.0.0] - 2024-12-19
 
 ### 🎉 Initial Release

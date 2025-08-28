@@ -2,6 +2,8 @@
 
 A comprehensive Nextflow-based RNA-seq analysis pipeline for processing and analyzing RNA sequencing data, featuring quality control, alignment, quantification, and advanced analysis capabilities including IRFinder, RNA-SeQC, and Kallisto quantification.
 
+**Current Version**: v1.1.0 - Enhanced stability and coverage analysis capabilities
+
 ## 🚀 Features
 
 - **Quality Control**: Fastp preprocessing with rRNA and globin RNA contamination detection
@@ -14,7 +16,9 @@ A comprehensive Nextflow-based RNA-seq analysis pipeline for processing and anal
 - **Advanced Analysis**: 
   - IRFinder for intron retention detection
   - Splice junction analysis with BAM2SJ
-  - Coverage analysis with Mosdepth
+  - Enhanced coverage analysis with dual Mosdepth processes (MOSDEPTH + MOSDEPTH_BED)
+  - CDS region analysis and filtering with BEDTOOLS
+  - Advanced variant calling with DEEPVARIANT
 - **Output Formats**: CRAM compression for efficient storage
 - **Containerized**: Docker-based execution for reproducibility
 
@@ -42,8 +46,11 @@ graph TB
         F2 --> G1[FeatureCounts]
         F2 --> G2[RNA-SeQC]
         F2 --> G3[IRFinder]
-        F2 --> G4[Mosdepth Coverage]
+        F2 --> G4[Mosdepth Coverage Analysis]
+        F2 --> G4b[Enhanced Mosdepth Coverage]
         F2 --> G5[BAM2SJ]
+        F2 --> G6[BEDTOOLS CDS Analysis]
+        F2 --> G7[DEEPVARIANT Variant Calling]
     end
 
     subgraph Output
@@ -51,8 +58,11 @@ graph TB
         G2 --> H2[QC Reports]
         G3 --> H3[IRFinder Results]
         G4 --> H4[Coverage Files]
+        G4b --> H4b[Enhanced Coverage Analysis]
         G5 --> H5[Splice Junctions]
-        F2 --> H6[CRAM Files]
+        G6 --> H6[CDS Region Files]
+        G7 --> H7[Variant Call Files]
+        F2 --> H8[CRAM Files]
     end
 
     style Input fill:#e1f5fe,stroke:#01579b,stroke-width:2px
@@ -159,7 +169,14 @@ results/
 │   └── *.bw                    # Coverage bigWig files
 ├── MOSDEPTH/                    # Coverage analysis
 │   ├── *.mosdepth.global.dist.txt # Global coverage
-│   └── *.regions.bed.gz        # Region-specific coverage
+│   ├── *.regions.bed.gz        # Region-specific coverage
+│   └── *.per-base.bed.gz       # Per-base coverage analysis
+├── BEDTOOLS/                    # CDS analysis and filtering
+│   └── *_cds_3x.bed            # Coding sequence regions with coverage filtering
+├── DEEPVARIANT/                 # Variant calling
+│   ├── *.vcf.gz                # Variant call format files
+│   ├── *.g.vcf.gz              # Genomic variant call format
+│   └── *.visual_report.html    # Variant calling reports
 └── BAM2SJ/                      # Splice junction analysis
     ├── *_rare_junctions_all.tsv # All detected junctions
     └── *_rare_junctions_filtered.xlsx # Filtered junctions
@@ -222,7 +239,9 @@ process {
 ### 6. Advanced Analysis
 - **IRFinder**: Intron retention detection
 - **BAM2SJ**: Splice junction reconstruction
-- **Mosdepth**: Coverage analysis
+- **Mosdepth**: Enhanced coverage analysis with dual processes for comprehensive coverage assessment
+- **BEDTOOLS**: CDS region identification and coverage-based filtering for variant calling
+- **DEEPVARIANT**: Advanced variant calling with custom model support and comprehensive reporting
 
 ## 🐛 Troubleshooting
 
@@ -239,6 +258,11 @@ process {
 3. **Reference File Errors**:
    - Ensure all reference files are accessible
    - Verify file formats and integrity
+
+4. **Channel Input Errors** (Fixed in v1.1.0):
+   - All input channel mismatches have been resolved
+   - Reference file handling has been optimized
+   - Duplicate output channel issues have been fixed
 
 ## 📈 Performance
 
@@ -290,4 +314,30 @@ For aberrant expression analysis, use the R script in `script/run_outrider.R`.
 
 ### Batch Processing
 Use the provided sample annotation files for processing multiple samples.
+
+## 🔄 Recent Updates (v1.1.0)
+
+### Stability Improvements
+- **Fixed Channel Errors**: Resolved all input channel count mismatches across samtools processes
+- **Eliminated Duplicates**: Fixed duplicate output channel naming issues
+- **Optimized References**: Streamlined reference file handling for better compatibility
+
+### Enhanced Coverage Analysis
+- **Dual Mosdepth Processes**: Added comprehensive coverage analysis with both MOSDEPTH and MOSDEPTH_BED
+- **Improved Integration**: Better workflow integration between coverage analysis and downstream processing
+- **Performance Optimization**: Enhanced channel efficiency and process compatibility
+
+### Advanced Variant Calling & Analysis
+- **Enhanced DEEPVARIANT Integration**: Improved variant calling pipeline with optimized input handling
+- **CDS Region Analysis**: Advanced BEDTOOLS processing for coding sequence identification and coverage filtering
+- **Comprehensive Variant Reports**: Enhanced VCF outputs with visual reporting and gVCF support
+
+### What's New
+- Pipeline now runs without channel-related errors
+- Enhanced coverage analysis capabilities
+- Improved stability and reliability
+- Better resource utilization and workflow efficiency
+- Advanced variant calling with DEEPVARIANT integration
+- Enhanced CDS region analysis and filtering capabilities
+- Comprehensive variant reporting and visualization
 
