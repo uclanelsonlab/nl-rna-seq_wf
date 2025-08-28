@@ -50,7 +50,7 @@ graph TB
         F2 --> G4b[Enhanced Mosdepth Coverage]
         F2 --> G5[BAM2SJ]
         F2 --> G6[BEDTOOLS CDS Analysis]
-        F2 --> G7[DEEPVARIANT Variant Calling]
+        G6 --> G7[DEEPVARIANT Variant Calling]
     end
 
     subgraph Output
@@ -70,6 +70,17 @@ graph TB
     style Alignment fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
     style Output fill:#fff3e0,stroke:#e65100,stroke-width:2px
 ```
+
+### 🔄 Workflow Process Flow
+
+The pipeline follows a logical sequence where each step builds upon the previous:
+
+1. **Quality Control & Alignment**: FASTQ files are processed and aligned to generate BAM files
+2. **Coverage Analysis**: Mosdepth processes analyze coverage across the genome and coding regions
+3. **CDS Region Identification**: BEDTOOLS processes the coverage data to identify coding sequences with adequate coverage
+4. **Variant Calling**: DEEPVARIANT uses the BEDTOOLS-generated CDS bed file to focus variant calling on well-covered coding regions
+
+**Key Dependency**: DEEPVARIANT requires the CDS bed file from BEDTOOLS to define the regions for variant calling, ensuring efficient and accurate variant detection in coding sequences.
 
 ## 📋 Prerequisites
 
@@ -243,6 +254,8 @@ process {
 - **BEDTOOLS**: CDS region identification and coverage-based filtering for variant calling
 - **DEEPVARIANT**: Advanced variant calling with custom model support and comprehensive reporting
 
+**Workflow Dependencies**: DEEPVARIANT requires BEDTOOLS to run first, as it uses the generated CDS bed file to define the regions for variant calling. This ensures variant calling is focused on coding sequences with adequate coverage.
+
 ## 🐛 Troubleshooting
 
 ### Common Issues
@@ -331,6 +344,8 @@ Use the provided sample annotation files for processing multiple samples.
 - **Enhanced DEEPVARIANT Integration**: Improved variant calling pipeline with optimized input handling
 - **CDS Region Analysis**: Advanced BEDTOOLS processing for coding sequence identification and coverage filtering
 - **Comprehensive Variant Reports**: Enhanced VCF outputs with visual reporting and gVCF support
+- **Sequential Processing**: BEDTOOLS runs first to generate CDS bed files, which DEEPVARIANT then uses for targeted variant calling
+- **Coverage-Based Filtering**: Variant calling is restricted to coding regions with adequate coverage, improving accuracy and efficiency
 
 ### What's New
 - Pipeline now runs without channel-related errors
