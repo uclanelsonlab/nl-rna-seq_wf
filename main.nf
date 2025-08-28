@@ -16,7 +16,7 @@ include { BAM2SJ } from './modules/bam2sj/main.nf'
 include { RNASEQC } from './modules/rnaseqc/main.nf'
 include { IRFINDER } from './modules/irfinder/main.nf'
 include { STAR_ALIGNREADS } from './modules/star/main.nf'
-include { MOSDEPTH_BED } from './modules/mosdepth/main.nf'
+include { MOSDEPTH_BED; MOSDEPTH } from './modules/mosdepth/main.nf'
 include { KALLISTO_QUANT } from './modules/kallisto/main.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba/main.nf'
 include { SUBREAD_FEATURECOUNTS } from './modules/subreads/main.nf'
@@ -82,11 +82,12 @@ workflow {
         ])
         .set { ch_model }
 
-    Channel.fromPath(params.human_fasta)
-        .map { fasta ->
-            return [[id:"reference"], fasta, params.human_fai, params.human_dict]
-        }
-        .collect()
+    Channel.value([
+            [id:"reference"], 
+            file(params.human_fasta), 
+            file(params.human_fai), 
+            file(params.human_dict)
+        ])
         .set { ch_reference }
 
     // contamination check
@@ -144,7 +145,8 @@ workflow {
         SAMTOOLS_CRAM.out.rna_crai)
 
     // Create CDS bed file and run variant calling
-    BEDTOOLS_MERGE_INTERSECT(MOSDEPTH_BED.out.perbase, params.gencode_bed, params.min_coverage)
+    MOSDEPTH(SAMBAMBA_MARKDUP.out.marked_bam, ch_reference)
+    BEDTOOLS_MERGE_INTERSECT(MOSDEPTH.out.per_base_bed, params.gencode_bed, params.min_coverage)
 
     DEEPVARIANT_RUNDEEPVARIANT(
         SAMBAMBA_MARKDUP.out.marked_bam,
