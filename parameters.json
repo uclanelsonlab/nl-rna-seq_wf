@@ -35,6 +35,12 @@
     "deepvariant_docker": {
         "description": "ECR image URI for deepvariant docker image"
     },
+    "qualimap_docker": {
+        "description": "Qualimap docker image"
+    },
+    "multiqc_docker": {
+        "description": "MultiQC docker image"
+    },
     "fastq_r1": {
         "description": "Fastq file for read 1"
     },
