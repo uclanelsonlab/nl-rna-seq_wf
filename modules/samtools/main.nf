@@ -90,7 +90,7 @@ process SAMTOOLS_CRAM {
 
     input:
         tuple val(meta2), path(fasta), path(fai), path(dict) 
-        tuple val(meta), path(bam)
+        tuple val(meta), path(bam), path(bai)
 
     output:
         tuple val(meta), path("*.hg38_rna.normal.cram"),        emit: rna_cram

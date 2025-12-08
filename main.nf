@@ -14,10 +14,12 @@ log.info """\
 include { FASTP } from './modules/fastp/main.nf'
 include { BAM2SJ } from './modules/bam2sj/main.nf'
 include { RNASEQC } from './modules/rnaseqc/main.nf'
+include { MULTIQC } from './modules/multiqc/main.nf'
 include { IRFINDER } from './modules/irfinder/main.nf'
 include { STAR_ALIGNREADS } from './modules/star/main.nf'
 include { MOSDEPTH_BED; MOSDEPTH } from './modules/mosdepth/main.nf'
 include { KALLISTO_QUANT } from './modules/kallisto/main.nf'
+include { QUALIMAP_RNASEQ } from './modules/qualimap/main.nf'
 include { SAMBAMBA_MARKDUP } from './modules/sambamba/main.nf'
 include { SUBREAD_FEATURECOUNTS } from './modules/subreads/main.nf'
 include { BEDTOOLS_MERGE_INTERSECT } from './modules/bedtools/main.nf'
@@ -89,7 +91,7 @@ workflow {
             file(params.human_dict)
         ])
         .set { ch_reference }
-
+    
     // contamination check
     FASTP(ch_reads)
     BWA_MEM_RRNA(FASTP.out.reads, ch_rrna_reference)
@@ -122,6 +124,10 @@ workflow {
         SAMBAMBA_MARKDUP.out.marked_bam)
 
     // QC
+    QUALIMAP_RNASEQ(
+        SAMBAMBA_MARKDUP.out.marked_bam,
+        params.gencode_gtf_path)
+
     RNASEQC(
         params.gencode_gtf_collapse, 
         SAMBAMBA_MARKDUP.out.marked_bam)
@@ -161,4 +167,16 @@ workflow {
     
     // SAM to SJ
     BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
+
+    // Run MultiQC
+    MULTIQC(
+        FASTP.out.json,
+        SAMTOOLS_FLAGSTAT_RRNA.out.flagstat_file,
+        SAMTOOLS_FLAGSTAT_GLOBINRNA.out.flagstat_file,
+        STAR_ALIGNREADS.out.final_log,
+        SUBREAD_FEATURECOUNTS.out.gene_counts_summary,
+        QUALIMAP_RNASEQ.out.results,
+        RNASEQC.out.gene_tpm,
+        KALLISTO_QUANT.out.run_info_json
+    )
 }
