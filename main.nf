@@ -102,9 +102,9 @@ workflow {
     SAMTOOLS_FLAGSTAT_GLOBINRNA(SAMTOOLS_VIEW_GLOBINRNA.out.view_bam, "globinrna")
     
     // Kallisto quant
-    KALLISTO_QUANT(
-        ch_reads, 
-        params.kallisto_index)
+    // KALLISTO_QUANT(
+    //     ch_reads, 
+    //     params.kallisto_index)
 
     // STAR alignment
     STAR_ALIGNREADS(
@@ -114,23 +114,24 @@ workflow {
         params.star_index_120, 
         params.star_index_100, 
         params.star_index_75, 
-        params.star_index_69)
+        params.star_index_69,
+        params.star_index)
     SAMTOOLS_INDEX(STAR_ALIGNREADS.out.star_bam)
     SAMBAMBA_MARKDUP(STAR_ALIGNREADS.out.star_bam)
     
     // Create counts by gene
-    SUBREAD_FEATURECOUNTS(
-        params.gencode_gtf_path, 
-        SAMBAMBA_MARKDUP.out.marked_bam)
+    // SUBREAD_FEATURECOUNTS(
+    //     params.gencode_gtf_path, 
+    //     SAMBAMBA_MARKDUP.out.marked_bam)
 
     // QC
-    QUALIMAP_RNASEQ(
-        SAMBAMBA_MARKDUP.out.marked_bam,
-        params.gencode_gtf_path)
+    // QUALIMAP_RNASEQ(
+    //     SAMBAMBA_MARKDUP.out.marked_bam,
+    //     params.gencode_gtf_path)
 
-    RNASEQC(
-        params.gencode_gtf_collapse, 
-        SAMBAMBA_MARKDUP.out.marked_bam)
+    // RNASEQC(
+    //     params.gencode_gtf_collapse, 
+    //     SAMBAMBA_MARKDUP.out.marked_bam)
 
     // Create CRAM files
     SAMTOOLS_CRAM(
@@ -138,45 +139,45 @@ workflow {
         SAMBAMBA_MARKDUP.out.marked_bam)
 
     // Run IRFinder
-    IRFINDER(
-        params.ir_ref, 
-        SAMBAMBA_MARKDUP.out.marked_bam) 
+    // IRFINDER(
+    //     params.ir_ref, 
+    //     SAMBAMBA_MARKDUP.out.marked_bam) 
 
     // Calculate XBP1 coverage
-    MOSDEPTH_BED(
-        ch_reference, 
-        params.xbp1_bed, 
-        params.mt_bed, 
-        SAMTOOLS_CRAM.out.rna_cram,
-        SAMTOOLS_CRAM.out.rna_crai)
+    // MOSDEPTH_BED(
+    //     ch_reference, 
+    //     params.xbp1_bed, 
+    //     params.mt_bed, 
+    //     SAMTOOLS_CRAM.out.rna_cram,
+    //     SAMTOOLS_CRAM.out.rna_crai)
 
     // Create CDS bed file and run variant calling
-    MOSDEPTH(SAMBAMBA_MARKDUP.out.marked_bam, ch_reference)
-    BEDTOOLS_MERGE_INTERSECT(MOSDEPTH.out.per_base_bed, params.gencode_bed, params.min_coverage)
+    // MOSDEPTH(SAMBAMBA_MARKDUP.out.marked_bam, ch_reference)
+    // BEDTOOLS_MERGE_INTERSECT(MOSDEPTH.out.per_base_bed, params.gencode_bed, params.min_coverage)
 
-    DEEPVARIANT_RUNDEEPVARIANT(
-        SAMBAMBA_MARKDUP.out.marked_bam,
-        ch_reference, 
-        BEDTOOLS_MERGE_INTERSECT.out.cds_bed, 
-        ch_model)
+    // DEEPVARIANT_RUNDEEPVARIANT(
+    //     SAMBAMBA_MARKDUP.out.marked_bam,
+    //     ch_reference, 
+    //     BEDTOOLS_MERGE_INTERSECT.out.cds_bed, 
+    //     ch_model)
 
     // CRAM to SAM 
-    SAMTOOLS_BAM2SAM(
-        ch_reference,
-        SAMBAMBA_MARKDUP.out.marked_bam)
+    // SAMTOOLS_BAM2SAM(
+    //     ch_reference,
+    //     SAMBAMBA_MARKDUP.out.marked_bam)
     
     // SAM to SJ
-    BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
+    // BAM2SJ(SAMTOOLS_BAM2SAM.out.rna_sam)
 
     // Run MultiQC
-    MULTIQC(
-        FASTP.out.json,
-        SAMTOOLS_FLAGSTAT_RRNA.out.flagstat_file,
-        SAMTOOLS_FLAGSTAT_GLOBINRNA.out.flagstat_file,
-        STAR_ALIGNREADS.out.final_log,
-        SUBREAD_FEATURECOUNTS.out.gene_counts_summary,
-        QUALIMAP_RNASEQ.out.results,
-        RNASEQC.out.gene_tpm,
-        KALLISTO_QUANT.out.run_info_json
-    )
+    // MULTIQC(
+    //     FASTP.out.json,
+    //     SAMTOOLS_FLAGSTAT_RRNA.out.flagstat_file,
+    //     SAMTOOLS_FLAGSTAT_GLOBINRNA.out.flagstat_file,
+    //     STAR_ALIGNREADS.out.final_log,
+    //     SUBREAD_FEATURECOUNTS.out.gene_counts_summary,
+    //     QUALIMAP_RNASEQ.out.results,
+    //     RNASEQC.out.gene_tpm,
+    //     KALLISTO_QUANT.out.run_info_json
+    // )
 }

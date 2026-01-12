@@ -98,6 +98,9 @@
     "star_index_69": {
         "description": "STAR index 69bp"
     },
+    "star_index": {
+        "description": "STAR index"
+    },
     "kallisto_index": {
         "description": "Kallisto index"
     },
