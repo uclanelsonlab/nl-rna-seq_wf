@@ -16,6 +16,7 @@ include { BAM2SJ } from './modules/bam2sj/main.nf'
 include { RNASEQC } from './modules/rnaseqc/main.nf'
 include { MULTIQC } from './modules/multiqc/main.nf'
 include { IRFINDER } from './modules/irfinder/main.nf'
+include { ARCASHLA } from './modules/arcashla/main.nf'
 include { STAR_ALIGNREADS } from './modules/star/main.nf'
 include { MOSDEPTH_BED; MOSDEPTH } from './modules/mosdepth/main.nf'
 include { KALLISTO_QUANT } from './modules/kallisto/main.nf'
@@ -92,6 +93,9 @@ workflow {
         ])
         .set { ch_reference }
     
+    Channel.value(file(params.arcashla_reference))
+        .set { ch_arcashla_ref }
+    
     // contamination check
     FASTP(ch_reads)
     BWA_MEM_RRNA(FASTP.out.reads, ch_rrna_reference)
@@ -118,6 +122,12 @@ workflow {
     SAMTOOLS_INDEX(STAR_ALIGNREADS.out.star_bam)
     SAMBAMBA_MARKDUP(STAR_ALIGNREADS.out.star_bam)
     
+    // HLA typing with arcasHLA
+    ARCASHLA(
+        SAMBAMBA_MARKDUP.out.marked_bam,
+        ch_arcashla_ref
+    )
+
     // Create counts by gene
     SUBREAD_FEATURECOUNTS(
         params.gencode_gtf_path, 

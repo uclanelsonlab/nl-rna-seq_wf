@@ -26,6 +26,7 @@
   "star_index_75": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/star_index_75bp_gencode43.tar.gz",
   "samtools_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/samtools:1.19.2--h50ea8bc_1",
   "qualimap_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/qualimap:2.3--hdfd78af_0",
+  "arcashla_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/arcas-hla:0.6.0--hdfd78af_2",
   "model_meta": "s3://ucla-rare-diseases/UCLA-UDN/assets/deepvariant/rnaseq/model.ckpt.meta",
   "subread_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/subread:2.0.6--he4a0461_0",
   "human_fasta": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/GRCh38.primary_assembly.genome.fa",
