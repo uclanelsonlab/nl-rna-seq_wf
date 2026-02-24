@@ -104,6 +104,12 @@
     "gencode_bed": {
         "description": "Gencode BED file"
     },
+    "arcashla_docker": {
+        "description": "ARCASHLA docker image"
+    },
+    "arcashla_reference": {
+        "description": "ARCASHLA reference"
+    },
     "min_coverage": {
         "description": "Minimum coverage"
     },
