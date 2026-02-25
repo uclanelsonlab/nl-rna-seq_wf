@@ -8,6 +8,7 @@ log.info """\
     fastq_r2            : ${params.fastq_r2}
     rrna_reference      : ${params.rrna_reference}
     globinrna_reference : ${params.globinrna_reference}
+    variant_calling     : ${params.variant_calling ?: false}
     """
     .stripIndent(true)
 
@@ -54,6 +55,17 @@ workflow {
     if (!params.globinrna_reference) {
         error "Missing required parameter: --globinrna_reference"
     }
+    
+    // Validate variant calling parameters if enabled
+    if (params.variant_calling) {
+        if (!params.model_data || !params.model_index || !params.model_meta || !params.model_info) {
+            error "Variant calling is enabled but missing model parameters: --model_data, --model_index, --model_meta, --model_info"
+        }
+        if (!params.gencode_bed) {
+            error "Variant calling is enabled but missing required parameter: --gencode_bed"
+        }
+    }
+    
     Channel
     .fromPath(params.fastq_r1)
     .map { fastq_r1 ->
@@ -75,15 +87,6 @@ workflow {
             ["globinrna", globinrna_zip]
         }
         .set { ch_globinrna_reference }
-        
-    Channel.value([
-            [id:"model"],
-            file(params.model_data),
-            file(params.model_index),
-            file(params.model_meta),
-            file(params.model_info),
-        ])
-        .set { ch_model }
 
     Channel.value([
             [id:"reference"], 
@@ -160,15 +163,27 @@ workflow {
         SAMTOOLS_CRAM.out.rna_cram,
         SAMTOOLS_CRAM.out.rna_crai)
 
-    // Create CDS bed file and run variant calling
-    MOSDEPTH(SAMBAMBA_MARKDUP.out.marked_bam, ch_reference)
-    BEDTOOLS_MERGE_INTERSECT(MOSDEPTH.out.per_base_bed, params.gencode_bed, params.min_coverage)
+    // Variant calling (optional)
+    if (params.variant_calling) {
+        Channel.value([
+                [id:"model"],
+                file(params.model_data),
+                file(params.model_index),
+                file(params.model_meta),
+                file(params.model_info),
+            ])
+            .set { ch_model }
+        
+        // Create CDS bed file and run variant calling
+        MOSDEPTH(SAMBAMBA_MARKDUP.out.marked_bam, ch_reference)
+        BEDTOOLS_MERGE_INTERSECT(MOSDEPTH.out.per_base_bed, params.gencode_bed, params.min_coverage)
 
-    DEEPVARIANT_RUNDEEPVARIANT(
-        SAMBAMBA_MARKDUP.out.marked_bam,
-        ch_reference, 
-        BEDTOOLS_MERGE_INTERSECT.out.cds_bed, 
-        ch_model)
+        DEEPVARIANT_RUNDEEPVARIANT(
+            SAMBAMBA_MARKDUP.out.marked_bam,
+            ch_reference, 
+            BEDTOOLS_MERGE_INTERSECT.out.cds_bed, 
+            ch_model)
+    }
 
     // CRAM to SAM 
     SAMTOOLS_BAM2SAM(

@@ -122,6 +122,9 @@
     "model_meta": {
         "description": "DeepVariant model meta"
     },
+    "variant_calling": {
+        "description": "Variant calling enabled (true/false)"
+    },
     "model_info": {
         "description": "DeepVariant model info"
     }
