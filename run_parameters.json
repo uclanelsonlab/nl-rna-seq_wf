@@ -42,5 +42,4 @@
     "model_meta": "s3://ucla-rare-diseases/UCLA-UDN/assets/deepvariant/rnaseq/model.ckpt.meta",
     "variant_calling": false,
     "model_info": "s3://ucla-rare-diseases/UCLA-UDN/assets/deepvariant/rnaseq/model.ckpt.example_info.json"
-    
 }

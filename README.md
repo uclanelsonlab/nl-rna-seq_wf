@@ -27,47 +27,67 @@ A comprehensive Nextflow-based RNA-seq analysis pipeline for processing and anal
 ```mermaid
 graph TB
     subgraph Input
-        A1[FASTQ Files] --> B1[Fastp QC]
-        A2[Reference Data] --> B1
+        A1[FASTQ Files]
+        A2[Reference Data]
     end
 
-    subgraph Contamination Check
+    subgraph Contamination_Check["Contamination Check"]
+        A1 --> B1[Fastp QC]
         B1 --> C1[BWA rRNA Check]
         B1 --> C2[BWA Globin Check]
-        C1 --> D1[Samtools Flagstat]
-        C2 --> D2[Samtools Flagstat]
+        C1 --> D1[Samtools View]
+        C2 --> D2[Samtools View]
+        D1 --> E1[Samtools Flagstat]
+        D2 --> E2[Samtools Flagstat]
     end
 
-    subgraph Alignment & Quantification
-        B1 --> E1[STAR Alignment]
-        B1 --> E2[Kallisto Quant]
-        E1 --> F1[Samtools Index]
-        F1 --> F2[Sambamba MarkDup]
-        F2 --> G1[FeatureCounts]
-        F2 --> G2[RNA-SeQC]
-        F2 --> G3[IRFinder]
-        F2 --> G4[Mosdepth Coverage Analysis]
-        F2 --> G4b[Enhanced Mosdepth Coverage]
-        F2 --> G5[BAM2SJ]
-        F2 --> G6[BEDTOOLS CDS Analysis]
-        G6 --> G7[DEEPVARIANT Variant Calling]
+    subgraph Alignment_Quant["Alignment & Quantification"]
+        A1 --> F1[STAR Alignment]
+        A1 --> F2[Kallisto Quant]
+        F1 --> G1[Samtools Index]
+        G1 --> G2[Sambamba MarkDup]
+        G2 --> H1[Subread FeatureCounts]
+        G2 --> H2[Qualimap RNA-Seq]
+        G2 --> H3[RNA-SeQC]
+        G2 --> H4[arcasHLA]
+        G2 --> H5[IRFinder]
+        G2 --> H6[Samtools CRAM]
+        G2 --> H7[Samtools BAM2SAM]
+        H7 --> H8[BAM2SJ]
+        H6 --> H9[Mosdepth BED]
+        G2 --> H10[Mosdepth]
+        H10 --> H11[BEDTOOLS CDS Analysis]
+        H11 --> H12[DEEPVARIANT]
+    end
+
+    subgraph QC_Aggregation["QC Aggregation"]
+        B1 --> M1
+        E1 --> M1[MultiQC]
+        E2 --> M1
+        F1 --> M1
+        H1 --> M1
+        H2 --> M1
+        H3 --> M1
+        F2 --> M1
     end
 
     subgraph Output
-        G1 --> H1[Gene Counts]
-        G2 --> H2[QC Reports]
-        G3 --> H3[IRFinder Results]
-        G4 --> H4[Coverage Files]
-        G4b --> H4b[Enhanced Coverage Analysis]
-        G5 --> H5[Splice Junctions]
-        G6 --> H6[CDS Region Files]
-        G7 --> H7[Variant Call Files]
-        F2 --> H8[CRAM Files]
+        H1 --> O1[Gene Counts]
+        H2 --> O2[Qualimap Reports]
+        H3 --> O3[QC Reports]
+        H4 --> O4[HLA Results]
+        H5 --> O5[IRFinder Results]
+        H6 --> O6[CRAM Files]
+        H8 --> O7[Splice Junctions]
+        H9 --> O8[Coverage Files]
+        H11 --> O9[CDS BED Files]
+        H12 --> O10[Variant Files]
     end
 
     style Input fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    style Contamination Check fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    style Alignment fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    style Contamination_Check fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style Alignment_Quant fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    style QC_Aggregation fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
     style Output fill:#fff3e0,stroke:#e65100,stroke-width:2px
 ```
 
