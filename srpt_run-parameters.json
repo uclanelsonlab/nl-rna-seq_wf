@@ -10,7 +10,7 @@
   "gencode_gtf_path": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/gencode.v43.primary_assembly.annotation.gtf",
   "star_index": "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/dmd_transgene/GRCh38_dystrophin20210393801_fixed.tar.gz",
   "bedtools_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/bedtools:2.23.0--h5b5514e_6",
-  "kallisto_index": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/kallisto/GRCh38.gencode.v43.primary_assembly.annotation.contig.genome.idx",
+  "kallisto_index": "s3://ucla-rare-diseases/UCLA-UDN/gcarvalho_test/dmd_transgene/MANE.GRCh38.v1.0.refseq_rna.seq9_codon.idx",
   "min_coverage": 3,
   "star_index_100": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/gencode43/GRCh38.p13/star_index_100bp_gencode43.tar.gz",
   "ir_ref": "s3://ucla-rare-diseases/UCLA-UDN/assets/IRFinder-1.3.1/REF/IRFinder-1-3-1_GRCh38-p13.tar.gz",
@@ -40,5 +40,7 @@
   "irfinder_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/irfinder:2.0.1",
   "deepvariant_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/deepvariant:1.3.0",
   "model_index": "s3://ucla-rare-diseases/UCLA-UDN/assets/deepvariant/rnaseq/model.ckpt.index",
-  "multiqc_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/multiqc:1.30--pyhdfd78af_0"
+  "multiqc_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/multiqc:1.30--pyhdfd78af_0",
+  "variant_calling": false,
+  "arcashla_reference": "s3://ucla-rare-diseases/aws-healthomics-pipelines/assets/references/arcashla_reference.tar.gz"
 }
