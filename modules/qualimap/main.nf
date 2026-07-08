@@ -25,7 +25,8 @@ process QUALIMAP_RNASEQ {
             rnaseq \\
             -bam ${bam} \\
             -gtf ${gtf} \\
-            -outdir ${prefix}
+            -outdir ${prefix} \\
+            -nt ${task.cpus}
 
         cat <<-END_VERSIONS > qualimap_versions.yml
         "${task.process}":
