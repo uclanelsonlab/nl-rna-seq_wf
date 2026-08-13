@@ -7,8 +7,8 @@ process IRFINDER {
 
     output:
         tuple val(meta), path("*IRFinder-ChrCoverage.txt"),   emit: irfinder_chr_coverage  
-        tuple val(meta), path("*IRFinder-IR-dir-val.txt"),    emit: irfinder_dir_val  
-        tuple val(meta), path("*IRFinder-IR-dir.txt"),        emit: irfinder_dir  
+        tuple val(meta), path("*IRFinder-IR-dir-val.txt"),    emit: irfinder_dir_val, optional: true
+        tuple val(meta), path("*IRFinder-IR-dir.txt"),        emit: irfinder_dir,     optional: true
         tuple val(meta), path("*IRFinder-IR-nondir-val.txt"), emit: irfinder_nondir_val 
         tuple val(meta), path("*IRFinder-IR-nondir.txt"),     emit: irfinder_nondir  
         tuple val(meta), path("*IRFinder-JuncCount.txt"),     emit: irfinder_junc_count  
